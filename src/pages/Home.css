@@ -938,7 +938,7 @@
   .hm-lead { margin-top: 18px; }
   .hm-cta { margin-top: 24px; }
   .hm-regions-line { margin-top: 20px; font-size: .86rem; }
-  .hm-hero-art { max-width: 100%; overflow: hidden; }
+  .hm-hero-art { max-width: 100%; overflow: visible; }
 
   /* services */
   .hm-split { gap: 18px; }

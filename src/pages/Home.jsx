@@ -265,12 +265,13 @@ export default function Home() {
         <div className="hm-hero-copy" data-reveal>
           <span className="hm-pill hm-pill-glass"><i />Software · Web · Mobile · Digital</span>
           <h1 id="hm-hero-title" className="hm-h1">
-            <span className="hm-l">Transforming </span>
-            <span className="hm-l hm-grad">Business Ideas </span>
-            <span className="hm-l">into Powerful </span>
-            <span className="hm-l hm-grad hm-grad-cyan">Digital Solutions.</span>
+            <span className="hm-l">improving  </span>
+            <span className="hm-l hm-grad">Your Business </span>
+            <span className="hm-l">Potential with</span>
+            <span className="hm-l hm-grad hm-grad-cyan">innovation & technology.</span>
           </h1>
-          <p className="hm-lead">We design and build custom software, web and mobile applications and digital marketing solutions that help businesses work smarter, serve customers better and grow with confidence.</p>
+          <p className="hm-lead">Best software development company In Palakkad</p>
+
           <div className="hm-cta">
             <Link to="/contact" className="hm-btn hm-btn-primary">Let's Discuss Your Project <ArrowUpRight size={18} aria-hidden="true" /></Link>
             <Link to="/service" className="hm-btn hm-btn-ghost">Explore Our Services <ArrowRight size={18} aria-hidden="true" /></Link>
@@ -290,43 +291,13 @@ export default function Home() {
         ))}
       </ul>
     </div>
-
-    {/* ================= SERVICES ================= */}
-    <section className="hm-sec hm-services" aria-labelledby="hm-services-title">
-      <div className="hm-wrap">
-        <div className="hm-split">
-          <div data-reveal className="hm-head">
-            <span className="hm-pill"><i />Our Services</span>
-            <h2 id="hm-services-title">One Partner for Every Digital Need</h2>
-            <p>From custom software to marketing, our services work together so your product looks, performs and grows as one.</p>
-          </div>
-          <Link to="/service" data-reveal className="hm-btn hm-btn-outline hm-btn-sm">View All Services <ArrowRight size={16} aria-hidden="true" /></Link>
-        </div>
-        <ul className="hm-grid-services">
-          {SERVICES.map(s => {
-            const Icon = Icons[s.icon] || Icons.Code2
-            return (
-              <li key={s.slug}>
-                <Link to={`/service/${s.slug}`} data-reveal className="hm-card">
-                  <span className="hm-ico"><Icon size={26} strokeWidth={1.7} aria-hidden="true" /></span>
-                  <h3>{s.title}</h3>
-                  <p>{s.summary}</p>
-                  <span className="hm-more">Learn more <ArrowRight size={15} aria-hidden="true" /></span>
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-    </section>
-
-    {/* ================= ABOUT ================= */}
+ {/* ================= ABOUT ================= */}
     <section id="about" className="hm-sec hm-about" aria-labelledby="hm-about-title">
       <div className="hm-wrap">
         <div className="hm-ab-shell">
           <div className="hm-ab-copy">
             <div data-reveal className="hm-head">
-              <span className="hm-pill"><i />About CodeZyntax</span>
+              <span className="hm-pill"><i />About</span>
               <h2 id="hm-about-title">Empowering Businesses with Smart Digital Solutions</h2>
             </div>
             <p data-reveal className="hm-ab-lead">We are a <strong>software development company in Palakkad</strong> committed to providing smart, scalable and easy-to-use digital solutions for businesses of any size. Our services cover <strong>custom software development</strong>, <strong>web and mobile applications</strong>, and <strong>digital marketing</strong> created to enhance your online presence.</p>
@@ -371,6 +342,36 @@ export default function Home() {
       </div>
     </section>
 
+    {/* ================= SERVICES ================= */}
+    <section className="hm-sec hm-services" aria-labelledby="hm-services-title">
+      <div className="hm-wrap">
+        <div className="hm-split">
+          <div data-reveal className="hm-head">
+            <span className="hm-pill"><i />Our Services</span>
+            <h2 id="hm-services-title">One Partner for Every Digital Need</h2>
+            <p>From custom software to marketing, our services work together so your product looks, performs and grows as one.</p>
+          </div>
+          <Link to="/service" data-reveal className="hm-btn hm-btn-outline hm-btn-sm">View All Services <ArrowRight size={16} aria-hidden="true" /></Link>
+        </div>
+        <ul className="hm-grid-services">
+          {SERVICES.map(s => {
+            const Icon = Icons[s.icon] || Icons.Code2
+            return (
+              <li key={s.slug}>
+                <Link to={`/service/${s.slug}`} data-reveal className="hm-card">
+                  <span className="hm-ico"><Icon size={26} strokeWidth={1.7} aria-hidden="true" /></span>
+                  <h3>{s.title}</h3>
+                  <p>{s.summary}</p>
+                  <span className="hm-more">Learn more <ArrowRight size={15} aria-hidden="true" /></span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    </section>
+
+   
     {/* ================= SELECTED WORK ================= */}
     <section className="hm-sec hm-projects" aria-labelledby="hm-projects-title">
       <div className="hm-wrap">
