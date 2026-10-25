@@ -1,7 +1,8 @@
 @tailwind base; @tailwind components; @tailwind utilities;
 @layer base {
-  html { scroll-behavior: smooth }
-  body { @apply bg-surface font-sans text-body antialiased }
+  html { scroll-behavior: smooth; max-width: 100%; overflow-x: hidden; overflow-x: clip }
+  body { @apply bg-surface font-sans text-body antialiased; max-width: 100%; overflow-x: clip }
+  #root, main { max-width: 100%; overflow-x: clip }
   h1, h2, h3 { @apply font-display font-bold tracking-tight text-heading }
   h1 { @apply font-extrabold }
 }

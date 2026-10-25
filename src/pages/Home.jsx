@@ -275,7 +275,6 @@ export default function Home() {
             <Link to="/contact" className="hm-btn hm-btn-primary">Let's Discuss Your Project <ArrowUpRight size={18} aria-hidden="true" /></Link>
             <Link to="/service" className="hm-btn hm-btn-ghost">Explore Our Services <ArrowRight size={18} aria-hidden="true" /></Link>
           </div>
-          <p className="hm-regions-line"><Globe size={16} aria-hidden="true" />Serving businesses across {REGIONS[0]} and the Gulf region</p>
         </div>
         <div className="hm-hero-art" data-reveal>
           <HomeHeroScene />

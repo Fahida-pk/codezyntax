@@ -509,9 +509,9 @@
   display: block;
 
   /* Full browser width */
-  width: 100vw;
-  max-width: none;
-  margin-left: calc(50% - 50vw);
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
 
   /* Space between hero and banner */
   margin-top: 32px;
@@ -1012,3 +1012,45 @@
   .hm-testimonial-rail { max-width: calc(100% + 40px); }
   .hm-testimonials-intro h2 { font-size: clamp(1.8rem, 8vw, 2.3rem); letter-spacing: -.035em; }
 }
+
+/* ==========================================================================
+   SELECTED WORK: show every screenshot in full (no crop, no inset)
+   Frame matches the 1440x900 (16:10) screenshots; object-fit: contain
+   guarantees nothing is ever cut off, even for other aspect ratios.
+   ========================================================================== */
+.hm-work-media { aspect-ratio: 16 / 10; height: auto; min-height: 0; padding: 0; background: var(--wk-dark); }
+.hm-work-media img,
+.hm-work-media .hm-project-ph {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; object-position: center; border-radius: 0;
+}
+.hm-work-media .hm-project-ph svg { width: 100%; height: 100%; }
+.hm-work:hover .hm-work-media img, .hm-work:hover .hm-project-ph { transform: none; }
+
+@media (min-width: 900px) {
+  .hm-work { min-height: 0; }
+  .hm-work-media { aspect-ratio: 16 / 10; min-height: 0; height: auto; padding: 0; align-self: stretch; }
+  .hm-work-media img,
+  .hm-work-media .hm-project-ph { inset: 0; width: 100%; height: 100%; }
+}
+@media (max-width: 899px) {
+  .hm-work-media { aspect-ratio: 16 / 10; }
+}
+@media (max-width: 767px) {
+  .hm-work-media { aspect-ratio: 16 / 10; }
+  .hm-work-media img,
+  .hm-work-media .hm-project-ph { inset: 0; width: 100%; height: 100%; border-radius: 0; }
+}
+@media (max-width: 430px) {
+  .hm-work-media img,
+  .hm-work-media .hm-project-ph { inset: 0; width: 100%; height: 100%; }
+}
+
+/* Mobile: nothing inside the Home page may be wider than the screen (removes the extra white space on the right) */
+@media (max-width: 900px) {
+  .hm, .hm > section, .hm > div { max-width: 100%; overflow-x: clip; }
+  .hm-wrap { max-width: 100%; }
+}
+
+/* Selected Work: the carousel's scrolling content must never widen the page (this was the extra white space) */
+.hm-projects { contain: paint; }
