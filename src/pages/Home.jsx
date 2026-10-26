@@ -1,12 +1,11 @@
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import { Link } from 'react-router-dom'
 import * as Icons from 'lucide-react'
 import {
   ArrowUpRight, ArrowRight, ExternalLink, Globe, SlidersHorizontal, Users, LifeBuoy, Wallet,
-  Target, Eye, Zap, Briefcase, Award, ShieldCheck, MessagesSquare, Headphones, Search, ClipboardList, Code2, Rocket,
+  Target, Eye, Zap, Briefcase, Award, ShieldCheck, Layers, Headphones, Search, ClipboardList, Code2, Rocket,
 } from 'lucide-react'
 import Seo from '../components/Seo'
-import HomeHeroScene from '../components/HomeHeroScene'
 import { SERVICES, PROJECTS, REGIONS } from '../data/site'
 import './Home.css'
 
@@ -41,10 +40,10 @@ const WU_POINTS = [
 ]
 
 const WHY = [
-  [Target, 'Tailored Solutions', 'We build around your goals and workflows instead of forcing a one-size-fits-all template.'],
-  [ShieldCheck, 'Quality-Focused Development', 'Clean, documented and maintainable code, tested before every launch.'],
-  [MessagesSquare, 'Clear Communication', 'Regular reviews and plain-language updates, so you always know where your project stands.'],
-  [Headphones, 'Ongoing Support', 'Updates, fixes and new features after launch, as your business grows.'],
+  [Target, 'Client-Centric Approach', 'We understand your goals and build solutions that truly fit your business needs.'],
+  [Users, 'Experienced Team', 'A skilled team of developers, designers and project managers focused on quality and results.'],
+  [Layers, 'End-to-End Services', 'From planning and design to development, deployment and support — everything in one place.'],
+  [LifeBuoy, 'Long-Term Support', 'We stay with you even after launch with reliable support, updates and new feature development.'],
 ]
 
 const STEPS = [
@@ -52,6 +51,16 @@ const STEPS = [
   [ClipboardList, 'Plan', 'We define scope, structure, interface and technical approach.'],
   [Code2, 'Develop', 'We build in stages, with regular reviews along the way.'],
   [Rocket, 'Launch & Support', 'We test, launch and keep improving after release.'],
+]
+
+/* FAQ content. Questions and answers are plain data, so edit the text here. */
+const FAQS = [
+  ['What services does CodeZyntax Softwares LLP offer as the Best Software Company in Palakkad?', 'We offer a wide range of digital solutions, from custom software development to flexible business tools. As a trusted software development company in Palakkad, we build custom systems that improve productivity and support long-term growth.'],
+  ['Do you provide web-based solutions and application development?', 'Yes. We build high-performance digital platforms, including web app development, with smooth functionality, secure architecture and better performance for businesses of all sizes.'],
+  ['Can CodeZyntax help with SEO and digital marketing services?', 'Yes. We provide search engine optimization and online branding services, including SEO services in Pattambi. As a digital marketing agency in Palakkad, we help businesses become more visible, reach customers faster and grow their online presence.'],
+  ['Do you build websites using WordPress or other CMS platforms?', 'Yes. We build responsive, visually appealing CMS-based websites, including WordPress web design in Palakkad, so your site is professional, fast and SEO-friendly.'],
+  ['Do you offer branding tools like NFC cards and customer review systems?', 'Yes. We offer branding products such as NFC business cards in Palakkad, Google review scanners in Palakkad and Google review stands in Pattambi. They boost customer engagement, make collecting reviews easier and strengthen your online presence.'],
+  ['Do you also offer mobile app development, billing software, or accounting tools?', 'Yes. We provide app development services and build billing software and accounting software for businesses in Palakkad and Pattambi, as a complete technology partner for growing businesses.'],
 ]
 
 /* Section heading used throughout the page */
@@ -64,7 +73,47 @@ const Heading = ({ k, t, d, center, light }) => (
 )
 
 /* Hostname for display, e.g. "https://www.1card.co.in/" -> "1card.co.in" */
-const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, '') } catch { return '' } }
+const hostOf = (u) => {
+  try {
+    return new URL(u).hostname.replace(/^www\./, '')
+  } catch {
+    return ''
+  }
+}
+
+const findProject = (pattern) =>
+  PROJECTS.find((p) =>
+    pattern.test(
+      `${p.title || ''} ${p.slug || ''} ${p.image || ''} ${p.url || ''}`
+    )
+  )
+
+const HERO_SHOWCASE = [
+  {
+    title: 'Zynta ERP',
+    category: 'Business Software',
+    image: '/images/projects/zynta%20erp.webp',
+    project: findProject(/zynta.*erp|erp.*zynta/i),
+  },
+  {
+    title: 'Zynta CRM',
+    category: 'CRM Software',
+    image: '/images/projects/zynta-crm.webp',
+    project: findProject(/zynta.*crm|crm.*zynta/i),
+  },
+  {
+    title: 'ZyntaWeb',
+    category: 'Website',
+    image: '/images/projects/zynta.webp',
+    project: findProject(/zyntaweb|zynta\.web|zynta web/i),
+  },
+  {
+    title: '1Card',
+    category: 'Digital Business Card',
+    image: '/images/projects/1card-home.webp',
+    project: findProject(/1card|1 card/i),
+  },
+]
 
 /* Project preview: the real screenshot when it exists, otherwise a clean browser-window placeholder
    (shows the real address, never a fake screenshot), so a missing file never shows a broken image. */
@@ -142,115 +191,151 @@ function CtaArt({ side }) {
   )
 }
 
-/* Original isometric 3D illustration for "Why Choose CodeZyntax": layered platform, glossy shield
-   and four floating tokens (target, chat, support ring, quality check). Inline SVG only.
-   Built for a light panel; colours that must change in dark mode are CSS classes (wy-*). */
-function Slab({ cx, cy, a, b, t, id }) {
-  return (
-    <g>
-      <path d={`M${cx - a} ${cy}L${cx} ${cy + b}V${cy + b + t}L${cx - a} ${cy + t}Z`} fill={`url(#wy-${id}-l)`} />
-      <path d={`M${cx + a} ${cy}L${cx} ${cy + b}V${cy + b + t}L${cx + a} ${cy + t}Z`} fill={`url(#wy-${id}-r)`} />
-      <path d={`M${cx} ${cy - b}L${cx + a} ${cy}L${cx} ${cy + b}L${cx - a} ${cy}Z`} fill={`url(#wy-${id}-t)`} />
-      <path d={`M${cx} ${cy - b}L${cx + a} ${cy}L${cx} ${cy + b}L${cx - a} ${cy}Z`} fill="none" stroke="#fff" strokeOpacity=".7" strokeWidth="1.2" />
-    </g>
-  )
-}
-function Token({ x, y, cls, children }) {
+/* "Why Choose CodeZyntax" illustration: a 3D-style laptop showing a website interface, surrounded by
+   floating blue technology tiles. Original inline SVG, no external images.
+   Colours that must change in dark mode are CSS classes (wy-*). */
+function Tile({ x, y, cls, children }) {
   return (
     <g className={cls}>
-      <rect x={x} y={y + 8} width="76" height="76" rx="22" fill="#1d3fa8" opacity=".16" filter="url(#wy-blur-s)" />
-      <rect x={x} y={y} width="76" height="76" rx="22" className="wy-tok" />
-      <rect x={x + 4} y={y + 4} width="68" height="30" rx="16" fill="#fff" opacity=".55" className="wy-tok-hi" />
-      <g transform={`translate(${x + 38} ${y + 38})`}>{children}</g>
+      <rect x={x} y={y + 10} width="72" height="72" rx="20" fill="#1d3fa8" opacity=".2" filter="url(#wy-blur-s)" />
+      <rect x={x} y={y} width="72" height="72" rx="20" className="wy-tile" />
+      <rect x={x + 4} y={y + 4} width="64" height="28" rx="15" fill="#fff" opacity=".6" className="wy-tile-hi" />
+      <g transform={`translate(${x + 36} ${y + 36})`} fill="none" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" className="wy-ico">{children}</g>
     </g>
   )
 }
-function WhyArt() {
-  const slabs = [['s1', 280, 392, 222, 122, 26], ['s2', 280, 368, 176, 97, 24], ['s3', 280, 346, 134, 74, 22]]
+
+function WhyScene() {
   return (
-    <svg className="hm-why-art" viewBox="0 0 560 540" role="img" aria-label="Isometric illustration of a glowing shield on a layered platform, surrounded by icons for tailored solutions, communication, support and quality" focusable="false">
+    <svg className="hm-why-art" viewBox="0 0 560 420" role="img" aria-label="Illustration of a laptop showing a website interface, surrounded by floating icons for code, security, analytics and layered services" focusable="false">
       <defs>
-        <radialGradient id="wy-glow" cx=".5" cy=".5" r=".5"><stop offset="0" stopColor="#4f8cff" stopOpacity=".28" /><stop offset="1" stopColor="#4f8cff" stopOpacity="0" /></radialGradient>
-        <linearGradient id="wy-s1-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#5b7cff" /><stop offset="1" stopColor="#3f5de0" /></linearGradient>
-        <linearGradient id="wy-s1-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2c3fc4" /><stop offset="1" stopColor="#141f78" /></linearGradient>
-        <linearGradient id="wy-s1-r" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#4a3bd0" /><stop offset="1" stopColor="#1c1a85" /></linearGradient>
-        <linearGradient id="wy-s2-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#8fb4ff" /><stop offset="1" stopColor="#5b7cff" /></linearGradient>
-        <linearGradient id="wy-s2-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3d63e8" /><stop offset="1" stopColor="#2230a8" /></linearGradient>
-        <linearGradient id="wy-s2-r" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#6552e6" /><stop offset="1" stopColor="#2c2a9c" /></linearGradient>
-        <linearGradient id="wy-s3-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f2f8ff" /><stop offset="1" stopColor="#bcd4ff" /></linearGradient>
-        <linearGradient id="wy-s3-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#6f95ff" /><stop offset="1" stopColor="#3550d6" /></linearGradient>
-        <linearGradient id="wy-s3-r" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#6f8fff" /><stop offset="1" stopColor="#2b3fb0" /></linearGradient>
-        <linearGradient id="wy-shield" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#6fb2ff" /><stop offset=".55" stopColor="#3b63f0" /><stop offset="1" stopColor="#2f4fd0" /></linearGradient>
-        <linearGradient id="wy-shield-in" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#9fd0ff" /><stop offset="1" stopColor="#4a6cf5" /></linearGradient>
-        <linearGradient id="wy-shield-d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#1f2fa8" /><stop offset="1" stopColor="#3a1f9a" /></linearGradient>
-        <linearGradient id="wy-orbit" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#22d3ee" stopOpacity="0" /><stop offset=".5" stopColor="#4f7dff" stopOpacity=".7" /><stop offset="1" stopColor="#6f8fff" stopOpacity="0" /></linearGradient>
-        <linearGradient id="wy-ck-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#e4f1ff" /><stop offset="1" stopColor="#8fb6ff" /></linearGradient>
-        <linearGradient id="wy-ck-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#4d86ff" /><stop offset="1" stopColor="#2a45d8" /></linearGradient>
-        <linearGradient id="wy-ck-r" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#7f9bff" /><stop offset="1" stopColor="#2b3fb8" /></linearGradient>
+        <radialGradient id="wy-glow" cx=".5" cy=".5" r=".5"><stop offset="0" stopColor="#4f8cff" stopOpacity=".26" /><stop offset="1" stopColor="#4f8cff" stopOpacity="0" /></radialGradient>
+        <linearGradient id="wy-bezel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#1c2d63" /><stop offset="1" stopColor="#0b1433" /></linearGradient>
+        <linearGradient id="wy-base" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#eef3ff" /><stop offset="1" stopColor="#b7c8ee" /></linearGradient>
+        <linearGradient id="wy-blue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#5a95ff" /><stop offset="1" stopColor="#1f4fd8" /></linearGradient>
+        <linearGradient id="wy-cube-t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#e4f1ff" /><stop offset="1" stopColor="#8fb6ff" /></linearGradient>
+        <linearGradient id="wy-cube-l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#4d86ff" /><stop offset="1" stopColor="#2a45d8" /></linearGradient>
+        <linearGradient id="wy-cube-r" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#7f9bff" /><stop offset="1" stopColor="#2b3fb8" /></linearGradient>
         <radialGradient id="wy-orb" cx=".3" cy=".25" r=".8"><stop offset="0" stopColor="#fff" /><stop offset=".45" stopColor="#7fb2ff" /><stop offset="1" stopColor="#3b4fe0" /></radialGradient>
-        <filter id="wy-blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="12" /></filter>
-        <filter id="wy-blur-s" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7" /></filter>
+        <filter id="wy-blur" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="10" /></filter>
+        <filter id="wy-blur-s" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6" /></filter>
       </defs>
 
-      {/* ambient light + ground shadow */}
-      <ellipse cx="280" cy="300" rx="270" ry="220" fill="url(#wy-glow)" />
-      <ellipse cx="280" cy="506" rx="215" ry="20" fill="#1d3fa8" opacity=".28" filter="url(#wy-blur)" />
+      {/* soft light behind the laptop and ground shadow */}
+      <ellipse cx="280" cy="215" rx="268" ry="196" fill="url(#wy-glow)" />
+      <ellipse cx="280" cy="372" rx="205" ry="14" fill="#1d3fa8" opacity=".3" filter="url(#wy-blur)" />
+      <ellipse cx="280" cy="214" rx="252" ry="92" fill="none" stroke="#7aa6ff" strokeOpacity=".35" strokeWidth="1.2" transform="rotate(-8 280 214)" />
 
-      {/* orbit rings behind the model */}
-      <ellipse cx="280" cy="300" rx="236" ry="88" fill="none" stroke="url(#wy-orbit)" strokeWidth="1.6" transform="rotate(-12 280 300)" />
-      <ellipse cx="280" cy="300" rx="200" ry="70" fill="none" stroke="url(#wy-orbit)" strokeWidth="1" opacity=".7" transform="rotate(10 280 300)" />
+      {/* laptop base */}
+      <path d="M92 306H468L506 346Q511 360 494 360H66Q49 360 54 346Z" fill="url(#wy-base)" />
+      <path d="M92 306H468L474 313H86Z" fill="#fff" opacity=".7" />
+      <rect x="236" y="306" width="88" height="8" rx="4" fill="#97abd8" />
+      <path d="M58 352H502" stroke="#8aa0d0" strokeOpacity=".55" strokeWidth="1.2" />
 
-      {/* layered platform */}
-      {slabs.map(([id, cx, cy, a, b, t]) => <Slab key={id} id={id} cx={cx} cy={cy} a={a} b={b} t={t} />)}
-      {/* glowing inlay on the top slab */}
-      <path d="M280 306 L336 346 L280 386 L224 346Z" fill="#fff" opacity=".55" />
-      <path d="M280 318 L322 346 L280 374 L238 346Z" fill="none" stroke="#4f7dff" strokeOpacity=".85" strokeWidth="1.4" />
+      {/* laptop screen */}
+      <rect x="120" y="92" width="320" height="214" rx="14" fill="url(#wy-bezel)" />
+      <rect x="130" y="102" width="300" height="194" rx="7" fill="#fff" />
+      {/* browser bar */}
+      <path d="M130 109a7 7 0 0 1 7-7h286a7 7 0 0 1 7 7v13H130Z" fill="#eef3fd" />
+      <circle cx="143" cy="112" r="2.6" fill="#ff8a80" /><circle cx="152" cy="112" r="2.6" fill="#ffd166" /><circle cx="161" cy="112" r="2.6" fill="#7ddf9b" />
+      <rect x="176" y="107" width="160" height="10" rx="5" fill="#fff" stroke="#d9e3f7" />
+      {/* site navigation */}
+      <rect x="146" y="132" width="11" height="11" rx="3.5" fill="url(#wy-blue)" />
+      <rect x="161" y="135" width="30" height="5" rx="2.5" fill="#1b2a52" opacity=".8" />
+      <rect x="318" y="135" width="20" height="5" rx="2.5" fill="#c3d0ee" /><rect x="344" y="135" width="20" height="5" rx="2.5" fill="#c3d0ee" /><rect x="370" y="135" width="20" height="5" rx="2.5" fill="#c3d0ee" />
+      <rect x="396" y="131" width="24" height="13" rx="6.5" fill="url(#wy-blue)" />
+      {/* hero copy */}
+      <rect x="146" y="162" width="118" height="10" rx="5" fill="#1b2a52" opacity=".88" />
+      <rect x="146" y="178" width="86" height="10" rx="5" fill="url(#wy-blue)" />
+      <rect x="146" y="196" width="122" height="4.5" rx="2.25" fill="#c9d6f2" /><rect x="146" y="205" width="98" height="4.5" rx="2.25" fill="#d8e2f6" />
+      <rect x="146" y="219" width="52" height="15" rx="7.5" fill="url(#wy-blue)" />
+      <rect x="204" y="219" width="46" height="15" rx="7.5" fill="none" stroke="#b9c9ec" />
+      {/* hero analytics card */}
+      <rect x="290" y="156" width="130" height="82" rx="9" fill="#eaf1ff" />
+      <rect x="302" y="198" width="14" height="30" rx="3" fill="#8fb4ff" /><rect x="322" y="186" width="14" height="42" rx="3" fill="#6f9bff" />
+      <rect x="342" y="194" width="14" height="34" rx="3" fill="#4f82f5" /><rect x="362" y="176" width="14" height="52" rx="3" fill="url(#wy-blue)" />
+      <path d="M302 178 330 168 352 174 396 162" fill="none" stroke="#22b8ff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="396" cy="162" r="3.2" fill="#fff" stroke="#22b8ff" strokeWidth="2" />
+      {/* feature cards */}
+      {[146, 240, 334].map(cx => (
+        <g key={cx}>
+          <rect x={cx} y="250" width="86" height="36" rx="8" fill="#f3f7ff" stroke="#dfe8f8" />
+          <circle cx={cx + 14} cy="268" r="6.5" fill="url(#wy-blue)" />
+          <rect x={cx + 26} y="261" width="44" height="5" rx="2.5" fill="#1b2a52" opacity=".7" />
+          <rect x={cx + 26} y="271" width="32" height="4" rx="2" fill="#c3d0ee" />
+        </g>
+      ))}
+      {/* screen glare */}
+      <path d="M130 102H300L220 296H130Z" fill="#fff" opacity=".1" />
 
-      {/* shield (depth layer, body, bevel, check) */}
-      <g className="hm-fl-a">
-        <path d="M288 166 360 193 V268 C360 311 329 338 288 355 C247 338 216 311 216 268 V193Z" fill="url(#wy-shield-d)" opacity=".95" />
-        <path d="M280 150 350 177 V252 C350 295 319 322 280 339 C241 322 210 295 210 252 V177Z" fill="url(#wy-shield)" />
-        <path d="M280 164 337 186 V250 C337 285 312 308 280 322 C248 308 223 285 223 250 V186Z" fill="url(#wy-shield-in)" opacity=".5" />
-        <path d="M280 150 350 177 V252 C350 295 319 322 280 339" fill="none" stroke="#fff" strokeOpacity=".35" strokeWidth="1.6" />
-        <path d="M222 190 C248 176 270 172 280 170 C260 200 240 246 240 300 C226 284 222 268 222 252Z" fill="#fff" opacity=".22" />
-        <path d="M246 252 L271 277 L318 220" fill="none" stroke="#0d1a6b" strokeOpacity=".35" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" transform="translate(3 6)" />
-        <path d="M246 252 L271 277 L318 220" fill="none" stroke="#fff" strokeWidth="20" strokeLinecap="round" strokeLinejoin="round" />
-      </g>
-
-      {/* small isometric cube, upper left */}
+      {/* small floating cube */}
       <g className="hm-fl-b">
-        <path d="M110 120 150 142 110 164 70 142Z" fill="url(#wy-ck-t)" />
-        <path d="M70 142 110 164V212L70 190Z" fill="url(#wy-ck-l)" />
-        <path d="M150 142 110 164V212L150 190Z" fill="url(#wy-ck-r)" />
-        <path d="M110 120 150 142 110 164 70 142Z" fill="#fff" opacity=".3" />
+        <path d="M140 26 166 40 140 54 114 40Z" fill="url(#wy-cube-t)" />
+        <path d="M114 40 140 54V84L114 70Z" fill="url(#wy-cube-l)" />
+        <path d="M166 40 140 54V84L166 70Z" fill="url(#wy-cube-r)" />
+        <path d="M140 26 166 40 140 54 114 40Z" fill="#fff" opacity=".3" />
       </g>
 
-      {/* tokens, each tied to one strength */}
-      <Token x={414} y={112} cls="hm-fl-c">
-        <circle r="20" fill="none" className="wy-st-a" strokeWidth="3.5" />
-        <circle r="11" fill="none" stroke="#22b8ff" strokeWidth="3.5" />
-        <circle r="3.5" className="wy-fi-a" />
-        <path d="M0 0 18 -18" className="wy-st-a" strokeWidth="3.5" strokeLinecap="round" />
-      </Token>
-      <Token x={46} y={286} cls="hm-fl-a">
-        <path d="M-21 -15a8 8 0 0 1 8-8h26a8 8 0 0 1 8 8v16a8 8 0 0 1-8 8H-3L-14 24V9h-1a8 8 0 0 1-6-8Z" className="wy-fi-b" />
-        <circle cx="-9" cy="-7" r="2.8" fill="#fff" /><circle cx="0" cy="-7" r="2.8" fill="#fff" /><circle cx="9" cy="-7" r="2.8" fill="#fff" />
-      </Token>
-      <Token x={438} y={296} cls="hm-fl-b">
-        <circle r="19" fill="none" className="wy-st-soft" strokeWidth="9" />
-        <circle r="19" fill="none" stroke="#22b8ff" strokeWidth="9" strokeDasharray="14.9 14.9" />
-      </Token>
-      <Token x={204} y={52} cls="hm-fl-b">
-        <path d="M0 -22 18 -14V3C18 14 9 21 0 25 -9 21 -18 14 -18 3V-14Z" className="wy-fi-b" />
-        <path d="M-8 2 -2 8 9 -6" fill="none" stroke="#fff" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
-      </Token>
+      {/* floating technology tiles */}
+      <Tile x={30} y={116} cls="hm-fl-a">
+        <path d="M-8 -10 -18 0 -8 10" /><path d="M8 -10 18 0 8 10" /><path d="M3 -14 -3 14" />
+      </Tile>
+      <Tile x={458} y={58} cls="hm-fl-c">
+        <path d="M0 -20 16 -13V2C16 12 8 18 0 22 -8 18 -16 12 -16 2V-13Z" /><path d="M-7 1 -2 6 8 -6" />
+      </Tile>
+      <Tile x={474} y={214} cls="hm-fl-b">
+        <path d="M-14 14V-2" /><path d="M0 14V-14" /><path d="M14 14V6" />
+      </Tile>
+      <Tile x={14} y={248} cls="hm-fl-c">
+        <path d="M0 -18 18 -8 0 2 -18 -8Z" /><path d="M-18 2 0 12 18 2" />
+      </Tile>
 
       {/* decorative orbs */}
-      <circle className="hm-fl-a" cx="372" cy="96" r="12" fill="url(#wy-orb)" />
-      <circle className="hm-fl-c" cx="504" cy="228" r="8" fill="url(#wy-orb)" />
-      <circle className="hm-fl-b" cx="36" cy="236" r="9" fill="url(#wy-orb)" />
-      <circle className="hm-fl-a" cx="116" cy="470" r="7" fill="url(#wy-orb)" />
+      <circle className="hm-fl-a" cx="424" cy="36" r="10" fill="url(#wy-orb)" />
+      <circle className="hm-fl-c" cx="536" cy="178" r="7" fill="url(#wy-orb)" />
+      <circle className="hm-fl-b" cx="64" cy="70" r="8" fill="url(#wy-orb)" />
+      <circle className="hm-fl-a" cx="522" cy="338" r="8" fill="url(#wy-orb)" />
+      <circle className="hm-fl-c" cx="38" cy="372" r="6" fill="url(#wy-orb)" />
     </svg>
+  )
+}
+
+/* FAQ: editorial list on a soft tinted band, with a smooth accordion. */
+function HomeFaq() {
+  const [open, setOpen] = useState(0)
+  const uid = useId()
+  return (
+    <section className="hm-faq" aria-labelledby={`${uid}-title`}>
+      <div className="hm-faq-wrap">
+        <div className="hm-faq-grid">
+          <header className="hm-faq-intro" data-reveal>
+            <p className="hm-faq-label"><span aria-hidden="true">+</span>Frequently Asked</p>
+            <h2 id={`${uid}-title`} className="hm-faq-title">Find Out Answers Here</h2>
+            <p className="hm-faq-desc">Clear answers to the questions we hear most about our software, web, marketing and branding services.</p>
+          </header>
+          <ul className="hm-faq-list">
+            {FAQS.map(([q, a], i) => {
+              const isOpen = open === i
+              const btnId = `${uid}-q${i}`
+              const panelId = `${uid}-a${i}`
+              return (
+                <li key={btnId} className={`hm-faq-item${isOpen ? ' is-open' : ''}`}>
+                  <h3 className="hm-faq-q">
+                    <button type="button" id={btnId} className="hm-faq-btn" aria-expanded={isOpen} aria-controls={panelId} onClick={() => setOpen(isOpen ? -1 : i)}>
+                      <span className="hm-faq-q-text">{q}</span>
+                      <span className="hm-faq-icon" aria-hidden="true"><i /><i /></span>
+                    </button>
+                  </h3>
+                  <div id={panelId} className="hm-faq-panel" role="region" aria-labelledby={btnId}>
+                    <div className="hm-faq-panel-inner"><div className="hm-faq-a"><p>{a}</p></div></div>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -259,26 +344,44 @@ export default function Home() {
     <Seo title="Software Development Company" description="CodeZyntax Softwares L.L.P. builds modern websites, custom software, web applications and digital solutions for businesses in India and the Gulf." />
 
     {/* ================= HERO ================= */}
-    <section className="hm-hero" aria-labelledby="hm-hero-title">
+    <section className="hm-hero hm-hero-editorial" aria-labelledby="hm-hero-title">
       <div className="hm-hero-bg" aria-hidden="true" />
       <div className="hm-wrap hm-hero-grid">
         <div className="hm-hero-copy" data-reveal>
-          <span className="hm-pill hm-pill-glass"><i />Software · Web · Mobile · Digital</span>
-          <h1 id="hm-hero-title" className="hm-h1">
-            <span className="hm-l">improving  </span>
-            <span className="hm-l hm-grad">Your Business </span>
-            <span className="hm-l">Potential with</span>
-            <span className="hm-l hm-grad hm-grad-cyan">innovation & technology.</span>
+          <h1 id="hm-hero-title" className="hm-h1 hm-hero-editorial-title">
+            <span className="hm-l">Improving Your Business</span>
+            <span className="hm-l">Potential With</span>
+            <span className="hm-l hm-hero-blue">Innovation &amp; Technology</span>
           </h1>
           <p className="hm-lead">Best software development company In Palakkad</p>
-
-          <div className="hm-cta">
-            <Link to="/contact" className="hm-btn hm-btn-primary">Let's Discuss Your Project <ArrowUpRight size={18} aria-hidden="true" /></Link>
-            <Link to="/service" className="hm-btn hm-btn-ghost">Explore Our Services <ArrowRight size={18} aria-hidden="true" /></Link>
-          </div>
         </div>
-        <div className="hm-hero-art" data-reveal>
-          <HomeHeroScene />
+
+        <div className="hm-hero-art hm-hero-showcase" data-reveal aria-label="Website and software project previews">
+          <div className="hm-showcase-collage">
+            {HERO_SHOWCASE.map((item, i) => {
+              const href = item.project?.url || '/portfolio'
+              return (
+                <a
+                  key={item.title}
+                  className={i === 0 ? 'hm-showcase-main' : `hm-showcase-small hm-showcase-small-${i}`}
+                  href={href}
+                  target={href.startsWith('http') ? '_blank' : undefined}
+                  rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  aria-label={`Open ${item.title} project`}
+                >
+                  <div className="hm-showcase-browserbar"><span /><span /><span /><b>{item.project?.url ? hostOf(item.project.url) : item.title}</b></div>
+                  <div className="hm-showcase-image">
+                    <img
+                      src={item.image}
+                      alt={`${item.title} project preview`}
+                      loading={i === 0 ? 'eager' : 'lazy'}
+                      onError={(e) => { e.currentTarget.style.visibility = 'hidden' }}
+                    />
+                  </div>
+                </a>
+              )
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -533,7 +636,10 @@ export default function Home() {
           </section>
 
       </div>
+ {/* ================= FAQ ================= */}
+    <HomeFaq />
 
+    
 
     {/* ================= WHY CHOOSE ================= */}
     <section className="hm-sec hm-why" aria-labelledby="hm-why-title">
@@ -541,22 +647,21 @@ export default function Home() {
         <div data-reveal className="hm-head hm-head-c">
           <span className="hm-pill"><i />Our Strengths</span>
           <h2 id="hm-why-title">Why Choose CodeZyntax</h2>
-          <p>The principles behind every project we take on.</p>
+          <p>We combine the right strategy, technology and people to deliver reliable solutions that help your business grow.</p>
         </div>
-        <div data-reveal className="hm-why-shell">
-          <div className="hm-why-model"><WhyArt /></div>
-          <ol className="hm-why-list">
-            {WHY.map(([Icon, t, d], i) => (
-              <li key={t} className="hm-why-item">
-                <span className="hm-why-ico"><Icon size={24} strokeWidth={1.7} aria-hidden="true" /></span>
-                <div>
-                  <span className="hm-why-n" aria-hidden="true">0{i + 1}</span>
+        <div className="hm-why-layout">
+          <div data-reveal className="hm-why-visual"><WhyScene /></div>
+          <ul className="hm-why-cards">
+            {WHY.map(([Icon, t, d]) => (
+              <li key={t}>
+                <article data-reveal className="hm-why-card">
+                  <span className="hm-why-ico"><Icon size={24} strokeWidth={1.7} aria-hidden="true" /></span>
                   <h3>{t}</h3>
                   <p>{d}</p>
-                </div>
+                </article>
               </li>
             ))}
-          </ol>
+          </ul>
         </div>
       </div>
     </section>
@@ -580,8 +685,7 @@ export default function Home() {
         </ol>
       </div>
     </section>
-
-    {/* ================= FINAL CTA (id="contact" keeps the /#contact menu link working) ================= */}
+{/* ================= FINAL CTA (id="contact" keeps the /#contact menu link working) ================= */}
     <section id="contact" className="hm-final" aria-labelledby="hm-final-title">
       <CtaArt side="left" />
       <CtaArt side="right" />
@@ -595,5 +699,6 @@ export default function Home() {
         </div>
       </div>
     </section>
+   
   </div>)
 }
