@@ -5,6 +5,7 @@ import { Services, ServiceDetail } from './pages/Services'
 import Static from './pages/Static'
 import Contact from './pages/Contact'
 import About from './pages/About'
+import DigitalMarketing from './pages/Digitalmarketing'
 const STATIC = ['portfolio', 'industries', 'blog', 'privacy-policy', 'terms']
 export default function App() {
   return (<Routes><Route element={<Layout />}>
@@ -13,7 +14,7 @@ export default function App() {
     <Route path="service/:slug" element={<ServiceDetail />} />
     <Route path="services" element={<Navigate to="/service" replace />} />
     <Route path="services/:slug" element={<ServiceDetail />} />
-    <Route path="digital-marketing" element={<ServiceDetail slug="digital-marketing-seo" />} />
+    <Route path="digital-marketing" element={<DigitalMarketing />} />
     <Route path="vcards" element={<ServiceDetail slug="digital-business-cards" />} />
     <Route path="contact" element={<Contact />} />
     <Route path="about" element={<About />} />

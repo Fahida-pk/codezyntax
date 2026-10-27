@@ -34,7 +34,7 @@ export const PROJECTS = [
     title: '1Card',
     category: 'DIGITAL BUSINESS CARD',
     summary: 'A modern digital business card platform for professionals and businesses.',
-    url: 'https://www.1card.co.in/',
+    url: 'https://1card.co.in//',
     image: '/images/projects/1card-home.webp',
     tags: ['UI/UX Design', 'Responsive Build'],
   },

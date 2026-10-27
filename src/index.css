@@ -82,3 +82,35 @@
 .dark .btn-primary{background-image:none;background-color:rgb(var(--lime));color:#0b1208;box-shadow:0 10px 24px -10px rgb(var(--lime)/.55)}
 .dark .btn-primary:hover{background-color:#d9fa86;box-shadow:0 16px 30px -10px rgb(var(--lime)/.6)}
 .dark .btn-outline:hover{border-color:rgb(var(--lime));color:rgb(var(--lime))}
+
+/* Global paragraph alignment */
+p,
+li p,
+article p,
+section p {
+  text-align: justify;
+  text-justify: inter-word;
+  overflow-wrap: break-word;
+}
+
+/* Avoid stretched spacing on very short text */
+h1,
+h2,
+h3,
+h4,
+button,
+nav,
+.hm-pill {
+  text-align: initial;
+}
+
+@media (max-width: 767px) {
+  p,
+  li p,
+  article p,
+  section p {
+    text-align: justify;
+    line-height: 1.75;
+    hyphens: auto;
+  }
+}

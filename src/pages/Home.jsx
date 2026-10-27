@@ -1,4 +1,4 @@
-import { useState, useId } from 'react'
+import { useState, useEffect, useId } from 'react'
 import { Link } from 'react-router-dom'
 import * as Icons from 'lucide-react'
 import {
@@ -339,6 +339,115 @@ function HomeFaq() {
   )
 }
 
+
+/* Mobile services carousel: desktop keeps the original multi-column grid. */
+function ServicesCarousel() {
+  const [serviceIndex, setServiceIndex] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 639px)')
+    const updateScreen = () => setIsMobile(media.matches)
+
+    updateScreen()
+    media.addEventListener('change', updateScreen)
+    return () => media.removeEventListener('change', updateScreen)
+  }, [])
+
+  useEffect(() => {
+    if (!isMobile || paused || SERVICES.length < 2) return undefined
+
+    const timer = window.setInterval(() => {
+      setServiceIndex((current) => (current + 1) % SERVICES.length)
+    }, 3500)
+
+    return () => window.clearInterval(timer)
+  }, [isMobile, paused])
+
+  const moveSlide = (direction) => {
+    setServiceIndex((current) =>
+      (current + direction + SERVICES.length) % SERVICES.length
+    )
+  }
+
+  return (
+    <div
+      className="hm-service-carousel"
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="hm-service-viewport">
+        <ul
+          className="hm-grid-services hm-service-track"
+          style={{ '--service-index': serviceIndex }}
+        >
+          {SERVICES.map((s, index) => {
+            const Icon = Icons[s.icon] || Icons.Code2
+
+            return (
+              <li
+                key={s.slug || s.title || index}
+                className="hm-service-slide"
+              >
+                <Link
+                  to={`/service/${s.slug}`}
+                  data-reveal
+                  className="hm-card"
+                >
+                  <span className="hm-ico">
+                    <Icon size={26} strokeWidth={1.7} aria-hidden="true" />
+                  </span>
+                  <h3>{s.title}</h3>
+                  <p>{s.summary}</p>
+                  <span className="hm-more">
+                    Learn more <ArrowRight size={15} aria-hidden="true" />
+                  </span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+
+      <div className="hm-service-controls" aria-label="Service carousel controls">
+        <button
+          type="button"
+          className="hm-service-arrow"
+          onClick={() => moveSlide(-1)}
+          aria-label="Previous service"
+        >
+          ‹
+        </button>
+
+        <div className="hm-service-dots">
+          {SERVICES.map((service, index) => (
+            <button
+              key={service.slug || service.title || index}
+              type="button"
+              className={`hm-service-dot${serviceIndex === index ? ' active' : ''}`}
+              onClick={() => setServiceIndex(index)}
+              aria-label={`Show ${service.title}`}
+              aria-current={serviceIndex === index ? 'true' : undefined}
+            />
+          ))}
+        </div>
+
+        <button
+          type="button"
+          className="hm-service-arrow"
+          onClick={() => moveSlide(1)}
+          aria-label="Next service"
+        >
+          ›
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function Home() {
   return (<div className="hm">
     <Seo title="Software Development Company" description="CodeZyntax Softwares L.L.P. builds modern websites, custom software, web applications and digital solutions for businesses in India and the Gulf." />
@@ -456,21 +565,7 @@ export default function Home() {
           </div>
           <Link to="/service" data-reveal className="hm-btn hm-btn-outline hm-btn-sm">View All Services <ArrowRight size={16} aria-hidden="true" /></Link>
         </div>
-        <ul className="hm-grid-services">
-          {SERVICES.map(s => {
-            const Icon = Icons[s.icon] || Icons.Code2
-            return (
-              <li key={s.slug}>
-                <Link to={`/service/${s.slug}`} data-reveal className="hm-card">
-                  <span className="hm-ico"><Icon size={26} strokeWidth={1.7} aria-hidden="true" /></span>
-                  <h3>{s.title}</h3>
-                  <p>{s.summary}</p>
-                  <span className="hm-more">Learn more <ArrowRight size={15} aria-hidden="true" /></span>
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
+        <ServicesCarousel />
       </div>
     </section>
 
