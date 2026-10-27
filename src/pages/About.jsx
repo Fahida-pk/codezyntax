@@ -9,7 +9,6 @@ import {
 import Seo from '../components/Seo'
 import { SITE, SERVICES } from '../data/site'
 import TechScene from './Techscene.jsx'
-import { DoScene, StepsScene } from './AboutScenes'
 import './About.css'
 
 /* Copy reuses what the Home page already says about CodeZyntax. The figures are the ones
