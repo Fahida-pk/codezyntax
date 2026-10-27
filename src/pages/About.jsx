@@ -64,7 +64,7 @@ function Scene3D({ kind, className, ...rest }) {
   useEffect(() => {
     let disposed = false
     let cleanup = () => {}
-    import('./about3d.js')
+    import('./About3d.JS')
       .then((m) => {
         if (disposed || !host.current) return
         cleanup = m.mountScene(host.current, kind)
