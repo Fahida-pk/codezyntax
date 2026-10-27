@@ -29,15 +29,17 @@ export const PROCESS = [['Discover','We study your goals, users and constraints.
 // Add REAL projects only. Shape: { title, category, image: '/projects/x.webp', url: 'https://...', tags: ['Web', 'Design'], summary: '...' }
 export const PROJECTS = [
   // Screenshots: run `node scripts/capture-screenshots.mjs` (see that file). Until an image exists, a browser-window placeholder is shown.
-  {
-    slug: '1card',
-    title: '1Card',
-    category: 'DIGITAL BUSINESS CARD',
-    summary: 'A modern digital business card platform for professionals and businesses.',
-    url: 'https://1card.co.in//',
-    image: '/images/projects/1card-home.webp',
-    tags: ['UI/UX Design', 'Responsive Build'],
-  },
+  
+{
+  slug: '1card',
+  title: '1Card',
+  category: 'DIGITAL BUSINESS CARD',
+  summary: 'One tap. One scan. Endless possibilities. Share your professional identity effortlessly with 1Card.',
+  url: 'https://1card.co.in/',
+  image: '/images/projects/1card-home.webp',
+  tags: [],
+},
+
   {
   slug: 'zynta-crm',
   title: 'Zynta CRM',
@@ -51,12 +53,30 @@ export const PROJECTS = [
   slug: '1card-demo',
   title: 'Payroll',
   category: 'Live Demo',
-  url: 'https://payroll.zyntaweb.com/',
+  url: 'https://demo.payroll.zyntaweb.com/login.php',
   image: '/images/projects/payroll.webp',
-  summary: 'A reliable payroll management system for managing employee attendance, leave, and salary details in one place.',
-  tags: ['Digital Cards', 'Live Demo'],
-},
+  summary:
+    'A reliable payroll management system for managing employee attendance, leave, and salary details in one place.',
+  tags: ['Payroll', 'Employee Management', 'Live Demo'],
 
+  demoCredentials: [
+    {
+      role: 'Admin',
+      username: 'admin_123',
+      password: 'admin_123',
+    },
+    {
+      role: 'Staff 1',
+      username: 'staff1',
+      password: 'staff123',
+    },
+    {
+      role: 'Staff 2',
+      username: 'staff2',
+      password: 'staff123',
+    },
+  ],
+},
 {
   slug: 'zynta-erp',
   title: 'Zynta ERP',

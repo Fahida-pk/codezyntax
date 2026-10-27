@@ -88,32 +88,28 @@ const findProject = (pattern) =>
     )
   )
 
+
 const HERO_SHOWCASE = [
   {
     title: 'Zynta ERP',
     category: 'Business Software',
     image: '/images/projects/zynta%20erp.webp',
-    project: findProject(/zynta.*erp|erp.*zynta/i),
-  },
-  {
-    title: 'Zynta CRM',
-    category: 'CRM Software',
-    image: '/images/projects/zynta-crm.webp',
-    project: findProject(/zynta.*crm|crm.*zynta/i),
-  },
-  {
-    title: 'ZyntaWeb',
-    category: 'Website',
-    image: '/images/projects/zynta.webp',
-    project: findProject(/zyntaweb|zynta\.web|zynta web/i),
+    url: 'https://zyntaerp.com/',
   },
   {
     title: '1Card',
     category: 'Digital Business Card',
     image: '/images/projects/1card-home.webp',
-    project: findProject(/1card|1 card/i),
+    url: 'https://1card.co.in/',
+  },
+  {
+    title: 'ZyntaWeb',
+    category: 'Website & Software',
+    image: '/images/projects/zynta.webp',
+    url: 'https://demo.zyntaweb.com/',
   },
 ]
+
 
 /* Project preview: the real screenshot when it exists, otherwise a clean browser-window placeholder
    (shows the real address, never a fake screenshot), so a missing file never shows a broken image. */
@@ -466,31 +462,42 @@ export default function Home() {
         </div>
 
         <div className="hm-hero-art hm-hero-showcase" data-reveal aria-label="Website and software project previews">
-          <div className="hm-showcase-collage">
-            {HERO_SHOWCASE.map((item, i) => {
-              const href = item.project?.url || '/portfolio'
-              return (
-                <a
-                  key={item.title}
-                  className={i === 0 ? 'hm-showcase-main' : `hm-showcase-small hm-showcase-small-${i}`}
-                  href={href}
-                  target={href.startsWith('http') ? '_blank' : undefined}
-                  rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  aria-label={`Open ${item.title} project`}
-                >
-                  <div className="hm-showcase-browserbar"><span /><span /><span /><b>{item.project?.url ? hostOf(item.project.url) : item.title}</b></div>
-                  <div className="hm-showcase-image">
-                    <img
-                      src={item.image}
-                      alt={`${item.title} project preview`}
-                      loading={i === 0 ? 'eager' : 'lazy'}
-                      onError={(e) => { e.currentTarget.style.visibility = 'hidden' }}
-                    />
-                  </div>
-                </a>
-              )
-            })}
-          </div>
+       
+<div className="hm-showcase-collage">
+  {HERO_SHOWCASE.map((item, i) => (
+    <a
+      key={item.title}
+      className={
+        i === 0
+          ? 'hm-showcase-main'
+          : `hm-showcase-small hm-showcase-small-${i}`
+      }
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Visit ${item.title}`}
+    >
+      <div className="hm-showcase-browserbar">
+        <span />
+        <span />
+        <span />
+        <b>{new URL(item.url).hostname}</b>
+      </div>
+
+      <div className="hm-showcase-image">
+        <img
+          src={item.image}
+          alt={`${item.title} website preview`}
+          loading={i === 0 ? 'eager' : 'lazy'}
+          onError={(e) => {
+            e.currentTarget.style.display = 'none'
+          }}
+        />
+      </div>
+    </a>
+  ))}
+</div>
+
         </div>
       </div>
     </section>
@@ -583,25 +590,38 @@ export default function Home() {
         {PROJECTS.length ? (
           <>
             <ul className="hm-work-list">
-              {PROJECTS.map((p, i) => (
-                <li key={p.slug || p.title}>
-                  <a data-reveal href={p.url} target="_blank" rel="noopener noreferrer" className="hm-work">
-                    <div className="hm-work-media">
-                      <ProjectMedia p={p} />
-                      <span className="hm-work-count" aria-hidden="true">{String(i + 1).padStart(2, '0')} / {String(PROJECTS.length).padStart(2, '0')}</span>
-                    </div>
-                    <div className="hm-work-body">
-                      <p className="hm-work-cat">{p.category}</p>
-                      <h3>{p.title}<span className="hm-sr"> (opens in a new tab)</span></h3>
-                      {p.summary && <p className="hm-work-sum">{p.summary}</p>}
-                      <div className="hm-work-tags">
-                        {[...(p.tags || []), hostOf(p.url)].filter(Boolean).slice(0, 3).map(t => <span key={t}>{t}</span>)}
+              {PROJECTS.map((p, i) => {
+                const isOneCard = p.slug === '1card'
+                return (
+                  <li key={p.slug || p.title}>
+                    <article data-reveal className={`hm-work${isOneCard ? ' hm-work-1card' : ''}`}>
+                      <div className="hm-work-media">
+                        <ProjectMedia p={p} />
+                        <span className="hm-work-count" aria-hidden="true">{String(i + 1).padStart(2, '0')} / {String(PROJECTS.length).padStart(2, '0')}</span>
                       </div>
-                      <span className="hm-work-link" aria-hidden="true">View live website <ArrowUpRight size={20} strokeWidth={1.8} /></span>
-                    </div>
-                  </a>
-                </li>
-              ))}
+                      <div className="hm-work-body">
+                        <p className="hm-work-cat">{p.category}</p>
+                        <h3>{p.title}</h3>
+
+{p.summary && (
+  <p className={`hm-work-sum${isOneCard ? ' hm-1card-quote' : ''}`}>
+    {p.summary}
+  </p>
+)}
+                        {!isOneCard && (
+                          <div className="hm-work-tags">
+                            {[...(p.tags || []), hostOf(p.url)].filter(Boolean).slice(0, 3).map(t => <span key={t}>{t}</span>)}
+                          </div>
+                        )}
+                        <a className="hm-work-link" href={p.url} target="_blank" rel="noopener noreferrer">
+                          View live website <ArrowUpRight size={20} strokeWidth={1.8} />
+                          <span className="hm-sr"> (opens in a new tab)</span>
+                        </a>
+                      </div>
+                    </article>
+                  </li>
+                )
+              })}
             </ul>
             <div data-reveal className="hm-work-foot">
               <Link to="/contact" className="hm-btn hm-btn-outline hm-btn-sm">Start Your Project <ArrowUpRight size={16} aria-hidden="true" /></Link>

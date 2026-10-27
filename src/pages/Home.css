@@ -4169,3 +4169,66 @@ p {
     line-height: 1.75;
   }
 }
+
+/* 1Card selected work hover effect */
+.hm-work-1card .hm-work-link {
+  color: #111827;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.hm-work-1card .hm-work-link svg {
+  transition: transform 0.25s ease;
+}
+
+.hm-work-1card .hm-work-link:hover,
+.hm-work-1card .hm-work-link:focus-visible {
+  color: #2563eb;
+}
+
+.hm-work-1card .hm-work-link:hover svg,
+.hm-work-1card .hm-work-link:focus-visible svg {
+  transform: translate(3px, -3px);
+}
+
+.hm-work-1card .hm-work-link:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 4px;
+}
+
+/* Selected Work project number badge */
+.hm-work-count {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.hm-work:hover .hm-work-count {
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+}
+
+/* View live website - blue hover effect */
+.hm-work-link {
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.hm-work-link svg {
+  transition: transform 0.25s ease;
+}
+
+.hm-work:hover .hm-work-link,
+.hm-work:focus-visible .hm-work-link {
+  color: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+.hm-work:hover .hm-work-link svg,
+.hm-work:focus-visible .hm-work-link svg {
+  color: #2563eb !important;
+  transform: translate(3px, -3px);
+}

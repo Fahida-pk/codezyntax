@@ -1,14 +1,16 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ArrowUpRight, ArrowRight, Search, ClipboardList, Code2, Rocket, Globe, Mail, Phone, MessageCircle, MapPin,
+  ArrowUpRight, ArrowRight, Search, ClipboardList, Code2, Rocket, Mail, Phone, MessageCircle, MapPin,
   Target, Eye, ShieldCheck, Briefcase, Award, Headphones, SlidersHorizontal, Users, Wallet,
+  LayoutDashboard, Server, Smartphone, Cloud,
 } from 'lucide-react'
 import Seo from '../components/Seo'
-import { SITE, SERVICES, REGIONS } from '../data/site'
+import { SITE, SERVICES } from '../data/site'
 import './About.css'
 
-/* Copy reuses what the Home page already says about CodeZyntax. Nothing new is invented:
-   the figures are the ones CodeZyntax supplied for the Home "Why Choose Us" content. */
+/* Copy reuses what the Home page already says about CodeZyntax. The figures are the ones
+   CodeZyntax supplied for the Home "Why Choose Us" content. */
 const STATS = [
   [ShieldCheck, '100%', 'Quality'],
   [Briefcase, '500+', 'Projects'],
@@ -34,6 +36,15 @@ const POINTS = [
   [Wallet, 'Budget-friendly plans for small businesses'],
 ]
 
+/* Replaces "Our Global Reach": the capability areas a software company is judged on.
+   EDIT the tool names below so they match what your team actually uses. */
+const STACK = [
+  [LayoutDashboard, 'Frontend', ['React', 'Next.js', 'TypeScript', 'Tailwind CSS']],
+  [Server, 'Backend & APIs', ['Node.js', 'PHP / Laravel', 'REST', 'Python']],
+  [Smartphone, 'Mobile apps', ['Android', 'iOS', 'React Native', 'Flutter']],
+  [Cloud, 'Cloud & Data', ['AWS', 'MySQL', 'PostgreSQL', 'CI/CD']],
+]
+
 const Detail = ({ icon: Icon, label, href, external, children }) => {
   const inner = (<>
     <span className="ab-detail-ico"><Icon size={18} strokeWidth={1.8} aria-hidden="true" /></span>
@@ -44,9 +55,58 @@ const Detail = ({ icon: Icon, label, href, external, children }) => {
     : <div className="ab-detail">{inner}</div>
 }
 
-export default function About() {
+/* ==========================================================================
+   Premium 3D visuals — real-time WebGL (Three.js), loaded lazily and paused
+   when off-screen. Decorative only. See about3d.js.
+   ========================================================================== */
+function Scene3D({ kind, className, ...rest }) {
+  const host = useRef(null)
+  useEffect(() => {
+    let disposed = false
+    let cleanup = () => {}
+    import('./about3d.js')
+      .then((m) => {
+        if (disposed || !host.current) return
+        cleanup = m.mountScene(host.current, kind)
+      })
+      .catch(() => {})
+    return () => { disposed = true; cleanup() }
+  }, [kind])
   return (
-    <div className="ab">
+    <div className={className} aria-hidden="true" {...rest}>
+      <div className="ab-glow" />
+      <div className="ab-3d" ref={host} />
+    </div>
+  )
+}
+
+export default function About() {
+  const root = useRef(null)
+
+  /* Scroll-reveal. Content stays visible if JS / IntersectionObserver is unavailable. */
+  useEffect(() => {
+    const el = root.current
+    if (!el) return
+    const items = el.querySelectorAll('[data-ab]')
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce || !('IntersectionObserver' in window)) {
+      items.forEach(n => n.classList.add('is-in'))
+      return
+    }
+    el.classList.add('ab-js')
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target) }
+      })
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' })
+    items.forEach(n => io.observe(n))
+    return () => io.disconnect()
+  }, [])
+
+  const d = (i) => ({ '--d': `${i * 90}ms` })
+
+  return (
+    <div className="ab" ref={root}>
       <Seo
         title="About Us"
         description="CodeZyntax Softwares LLP is a software development company in Palakkad building custom software, websites, web and mobile applications and digital marketing for businesses in India and the Gulf."
@@ -54,19 +114,24 @@ export default function About() {
 
       {/* ================= INTRO ================= */}
       <section className="ab-hero" aria-labelledby="ab-title">
+        <span className="ab-bgorb ab-bgorb-1" aria-hidden="true" />
+        <span className="ab-bgorb ab-bgorb-2" aria-hidden="true" />
         <div className="ab-wrap">
           <nav className="ab-crumbs" aria-label="Breadcrumb">
             <Link to="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">About</span>
           </nav>
           <div className="ab-hero-grid">
-            <div data-reveal>
-              <p className="ab-kicker"><b aria-hidden="true">+</b> About the company</p>
-              <h1 id="ab-title">Smart software. Full responsibility.</h1>
+            <div className="ab-hero-copy">
+              <div data-ab>
+                <p className="ab-kicker"><b aria-hidden="true">+</b> About the company</p>
+                <h1 id="ab-title">Smart software. Full responsibility.</h1>
+              </div>
+              <div data-ab className="ab-hero-side" style={d(1)}>
+                <p>CodeZyntax Softwares LLP is a software development company in Palakkad. We connect planning, design, development, launch and support, so your business has one accountable technology partner.</p>
+                <Link to="/contact" className="ab-link">Start a conversation <ArrowUpRight size={20} strokeWidth={1.8} aria-hidden="true" /></Link>
+              </div>
             </div>
-            <div data-reveal className="ab-hero-side">
-              <p>CodeZyntax Softwares LLP is a software development company in Palakkad. We connect planning, design, development, launch and support, so your business has one accountable technology partner.</p>
-              <Link to="/contact" className="ab-link">Start a conversation <ArrowUpRight size={20} strokeWidth={1.8} aria-hidden="true" /></Link>
-            </div>
+            <Scene3D kind="stack" className="ab-stage" data-ab />
           </div>
         </div>
       </section>
@@ -74,18 +139,19 @@ export default function About() {
       {/* ================= WHAT WE DO ================= */}
       <section className="ab-sec" aria-labelledby="ab-do-title">
         <div className="ab-wrap ab-split">
-          <div data-reveal>
+          <div data-ab>
             <p className="ab-kicker"><b aria-hidden="true">+</b> What we do</p>
             <h2 id="ab-do-title">Digital products built around a real business goal.</h2>
+            <Scene3D kind="cube" className="ab-cube-scene" />
           </div>
-          <div data-reveal className="ab-prose">
+          <div data-ab className="ab-prose" style={d(1)}>
             <p>We provide <strong>custom software development</strong>, <strong>web and mobile applications</strong> and <strong>digital marketing</strong> created to improve your online presence and the way your business runs day to day.</p>
             <p>We believe technology should be user-friendly, reliable and suited to your goals. A skilled team of developers and digital experts focuses on tools that solve real challenges, with transparency and collaboration at every step.</p>
             <p>From startups to established enterprises, we adapt our approach to your market so every project has the most impact. Alongside development, we also work as a digital marketing agency in Pattambi.</p>
           </div>
         </div>
         <div className="ab-wrap">
-          <ul className="ab-chips" aria-label="Our services" data-reveal>
+          <ul className="ab-chips" aria-label="Our services" data-ab>
             {SERVICES.map(s => <li key={s.slug}><Link to={`/service/${s.slug}`}>{s.title}</Link></li>)}
           </ul>
         </div>
@@ -94,44 +160,81 @@ export default function About() {
       {/* ================= FIGURES + MISSION / VISION ================= */}
       <section className="ab-sec ab-tint" aria-labelledby="ab-mv-title">
         <div className="ab-wrap">
-          <div data-reveal className="ab-head">
+          <div data-ab className="ab-head">
             <p className="ab-kicker"><b aria-hidden="true">+</b> Why CodeZyntax</p>
             <h2 id="ab-mv-title">Clear purpose, dependable delivery.</h2>
           </div>
-          <ul className="ab-stats" data-reveal>
-            {STATS.map(([Icon, n, l]) => (
-              <li key={l}><Icon size={22} strokeWidth={1.7} aria-hidden="true" /><strong>{n}</strong><span>{l}</span></li>
+          <ul className="ab-stats">
+            {STATS.map(([Icon, n, l], i) => (
+              <li key={l} data-ab style={d(i)}><Icon size={22} strokeWidth={1.7} aria-hidden="true" /><strong>{n}</strong><span>{l}</span></li>
             ))}
           </ul>
           <div className="ab-mv">
-            {MV.map(([Icon, t, d]) => (
-              <article key={t} data-reveal className="ab-card">
+            {MV.map(([Icon, t, p], i) => (
+              <article key={t} data-ab className="ab-card" style={d(i)}>
                 <span className="ab-ico"><Icon size={22} strokeWidth={1.8} aria-hidden="true" /></span>
                 <h3>{t}</h3>
-                <p>{d}</p>
+                <p>{p}</p>
               </article>
             ))}
           </div>
-          <ul className="ab-points" data-reveal>
-            {POINTS.map(([Icon, t]) => (
-              <li key={t}><span className="ab-ico ab-ico-sm"><Icon size={18} strokeWidth={1.8} aria-hidden="true" /></span>{t}</li>
+          <ul className="ab-points">
+            {POINTS.map(([Icon, t], i) => (
+              <li key={t} data-ab style={d(i)}><span className="ab-ico ab-ico-sm"><Icon size={18} strokeWidth={1.8} aria-hidden="true" /></span>{t}</li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* ================= LOCAL PRESENCE + BUSINESS DETAILS ================= */}
-      <section className="ab-sec" aria-labelledby="ab-local-title">
-        <div className="ab-wrap ab-split">
-          <div data-reveal>
-            <p className="ab-kicker"><b aria-hidden="true">+</b> Where we work</p>
-            <h2 id="ab-local-title">Local presence, wider delivery.</h2>
-            <p className="ab-lead">Based in Palakkad, Kerala, we work with businesses across {REGIONS[0]} and the Gulf region: {REGIONS.slice(1).join(', ')}.</p>
-            <p className="ab-sub"><Globe size={16} aria-hidden="true" /> Serving India and the Gulf</p>
+      {/* ================= TECHNOLOGY (replaces "Our Global Reach") ================= */}
+      <section className="ab-sec" aria-labelledby="ab-stack-title">
+        <div className="ab-wrap">
+          <div data-ab className="ab-head">
+            <p className="ab-kicker"><b aria-hidden="true">+</b> Our technology</p>
+            <h2 id="ab-stack-title">Modern tools, chosen to fit your product.</h2>
+            <p className="ab-lead">We pick the right technology for your goals, budget and growth plans, then build it to be fast, secure and easy to maintain.</p>
           </div>
-          <div data-reveal className="ab-details" aria-label="Business details">
-            <h3>Business details</h3>
-            <p className="ab-company">CodeZyntax Softwares LLP</p>
+          <div className="ab-stack">
+            {STACK.map(([Icon, t, tools], i) => (
+              <article key={t} data-ab className="ab-tech" style={d(i)}>
+                <span className="ab-ico"><Icon size={22} strokeWidth={1.8} aria-hidden="true" /></span>
+                <h3>{t}</h3>
+                <ul>{tools.map(x => <li key={x}>{x}</li>)}</ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= WORKING PRINCIPLES ================= */}
+      <section className="ab-sec ab-tint" aria-labelledby="ab-pr-title">
+        <div className="ab-wrap">
+          <div data-ab className="ab-head">
+            <p className="ab-kicker"><b aria-hidden="true">+</b> Working principles</p>
+            <h2 id="ab-pr-title">Clear scope. Visible progress. Useful outcomes.</h2>
+            <p className="ab-lead">The process stays practical from the first conversation through launch and support.</p>
+          </div>
+          <ol className="ab-steps">
+            {PRINCIPLES.map(([Icon, t, p], i) => (
+              <li key={t} data-ab className="ab-step" style={d(i)}>
+                <span className="ab-step-n" aria-hidden="true">0{i + 1}</span>
+                <Icon size={24} strokeWidth={1.6} aria-hidden="true" />
+                <h3>{t}</h3>
+                <p>{p}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ================= BUSINESS DETAILS ================= */}
+      <section className="ab-sec" aria-labelledby="ab-biz-title">
+        <div className="ab-wrap">
+          <div data-ab className="ab-head">
+            <p className="ab-kicker"><b aria-hidden="true">+</b> Business details</p>
+            <h2 id="ab-biz-title">CodeZyntax Softwares LLP</h2>
+          </div>
+          <div data-ab className="ab-details" aria-label="Business details" style={d(1)}>
             {SITE.address && <Detail icon={MapPin} label="Address" href={SITE.mapUrl || undefined} external>{SITE.address}</Detail>}
             {SITE.phone && <Detail icon={Phone} label="Phone" href={`tel:${SITE.phone.replace(/[^\d+]/g, '')}`}>{SITE.phone}</Detail>}
             {SITE.whatsapp && <Detail icon={MessageCircle} label="WhatsApp" href={`https://wa.me/${SITE.whatsapp}`} external>Message us on WhatsApp</Detail>}
@@ -143,36 +246,16 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= WORKING PRINCIPLES ================= */}
-      <section className="ab-sec ab-tint" aria-labelledby="ab-pr-title">
-        <div className="ab-wrap">
-          <div data-reveal className="ab-head">
-            <p className="ab-kicker"><b aria-hidden="true">+</b> Working principles</p>
-            <h2 id="ab-pr-title">Clear scope. Visible progress. Useful outcomes.</h2>
-            <p className="ab-lead">The process stays practical from the first conversation through launch and support.</p>
-          </div>
-          <ol className="ab-steps">
-            {PRINCIPLES.map(([Icon, t, d], i) => (
-              <li key={t} data-reveal className="ab-step">
-                <span className="ab-step-n" aria-hidden="true">0{i + 1}</span>
-                <Icon size={24} strokeWidth={1.6} aria-hidden="true" />
-                <h3>{t}</h3>
-                <p>{d}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
       {/* ================= CLOSING CTA ================= */}
       <section className="ab-cta" aria-labelledby="ab-cta-title">
         <div className="ab-wrap">
-          <div data-reveal className="ab-cta-box">
-            <div>
+          <div data-ab className="ab-cta-box">
+            <div className="ab-cta-text">
               <p className="ab-kicker"><b aria-hidden="true">+</b> Work with CodeZyntax</p>
               <h2 id="ab-cta-title">Bring the rough idea.</h2>
               <p>We will help turn it into a clear project direction and an honest scope.</p>
             </div>
+            <Scene3D kind="orb" className="ab-orb-scene" />
             <div className="ab-cta-actions">
               <Link to="/contact" className="ab-btn ab-btn-primary">Discuss your project <ArrowUpRight size={18} aria-hidden="true" /></Link>
               <Link to="/service" className="ab-btn ab-btn-ghost">Explore our services <ArrowRight size={18} aria-hidden="true" /></Link>
