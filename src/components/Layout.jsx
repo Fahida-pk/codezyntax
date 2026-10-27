@@ -279,12 +279,11 @@ function Footer() {
     encodeURIComponent(address)
 
   const companyLinks = [
-    ['Home', '/'],
-    ['About', '/about'],
-    ['Portfolio', '/portfolio'],
-    ['Industries', '/industries'],
-    ['Insights', '/blog'],
-    ['Contact', '/contact'],
+    ['Services', '/service'],
+    ['Digital Marketing', '/digital-marketing'],
+    ['vCards', '/vcards'],
+    ['Contact', '/#contact'],
+    ['Blog', '/blog'],
   ]
 
   const socialLinks = [
@@ -384,12 +383,9 @@ function Footer() {
         {/* Company Links */}
 
         <div className="min-w-0">
-          <h3 className="ft-title font-display
-            text-base font-semibold"
-          >
-            Company
-          </h3>
-
+         <h3 className="ft-title font-display text-base font-semibold">
+  Quick Links
+</h3>
           <ul className="mt-5 space-y-3 text-sm">
             {companyLinks.map(([label, path]) => (
               <li key={path}>
