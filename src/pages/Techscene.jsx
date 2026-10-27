@@ -1,4 +1,4 @@
-import './TechScene.css'
+import './Techscene.css'
 
 /* =========================================================================
    TechScene: professional 3D-style technology illustration for the About page
