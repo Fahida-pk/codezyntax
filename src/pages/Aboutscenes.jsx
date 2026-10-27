@@ -1,4 +1,4 @@
-import './AboutScenes.css'
+import './Aboutscenes.css'
 
 /* =========================================================================
    AboutScenes: professional 3D-style illustrations for the About page.
