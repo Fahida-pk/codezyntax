@@ -1,0 +1,32 @@
+/* ==========================================================================
+   AboutScenes.css: styles for the "What we do" and "Working principles"
+   3D illustrations. Dark mode follows the site's `.dark` ancestor class.
+   ========================================================================== */
+
+/* wrapper used in About.jsx: <div className="as-wrap" data-ab> */
+.as-wrap { position: relative; width: 100%; max-width: 560px; margin-inline: auto; }
+@media (min-width: 900px) { .as-wrap { max-width: 600px; margin-inline: auto 0; } }
+@media (min-width: 1600px) { .as-wrap { max-width: 680px; } }
+
+.as-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* motion (About.css already switches animations off for reduced motion) */
+.as-f { animation: as-bob var(--d, 6s) ease-in-out var(--dl, 0s) infinite; }
+@keyframes as-bob { 50% { transform: translateY(-8px); } }
+.as-pipe { stroke-dasharray: 6 8; animation: as-dash 1.4s linear infinite; }
+@keyframes as-dash { to { stroke-dashoffset: -28; } }
+@media (prefers-reduced-motion: reduce) { .as-f, .as-pipe { animation: none; } }
+@media (max-width: 640px) { .as-f { animation-duration: 9s; } }
+
+/* light theme surfaces */
+.as-glass { fill: #ffffff; fill-opacity: .94; stroke: #d3e4f8; }
+.as-soft { fill: #cbdcf5; }
+.as-ring { stroke: #9fc3f7; }
+
+/* dark theme */
+.dark .as-plat-a { stop-color: #1f3560; }
+.dark .as-plat-b { stop-color: #12234a; }
+.dark .as-plat-rim { fill: #0c172e; }
+.dark .as-glass { fill: #16294a; fill-opacity: .96; stroke: #2c4a7a; }
+.dark .as-soft { fill: #2c4a7a; }
+.dark .as-ring { stroke: #3f78bd; }

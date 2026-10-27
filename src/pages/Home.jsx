@@ -608,11 +608,7 @@ export default function Home() {
     {p.summary}
   </p>
 )}
-                        {!isOneCard && (
-                          <div className="hm-work-tags">
-                            {[...(p.tags || []), hostOf(p.url)].filter(Boolean).slice(0, 3).map(t => <span key={t}>{t}</span>)}
-                          </div>
-                        )}
+                      <div className="hm-work-links"></div>
                         <a className="hm-work-link" href={p.url} target="_blank" rel="noopener noreferrer">
                           View live website <ArrowUpRight size={20} strokeWidth={1.8} />
                           <span className="hm-sr"> (opens in a new tab)</span>

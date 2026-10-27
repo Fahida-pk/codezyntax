@@ -40,15 +40,7 @@ export const PROJECTS = [
   tags: [],
 },
 
-  {
-  slug: 'zynta-crm',
-  title: 'Zynta CRM',
-  category: 'Software',
-  url: 'https://crm.1card.co.in/',
-  image: '/images/projects/hairship.webp',
-  summary: 'A powerful CRM platform built to simplify customer relationships and streamline business operations.',
-  tags: ['CRM', 'Business Software']
-},
+
 {
   slug: '1card-demo',
   title: 'Payroll',
@@ -57,7 +49,6 @@ export const PROJECTS = [
   image: '/images/projects/payroll.webp',
   summary:
     'A reliable payroll management system for managing employee attendance, leave, and salary details in one place.',
-  tags: ['Payroll', 'Employee Management', 'Live Demo'],
 
   demoCredentials: [
     {
@@ -84,7 +75,6 @@ export const PROJECTS = [
   url: 'https://zyntaerp.com/',
   image: '/images/projects/zynta erp.webp',
   summary: 'An all-in-one ERP solution to manage projects, accounting, HRM, CRM, sales, and inventory in one platform.',
-  tags: ['ERP', 'Live Website'],
 },
 
 {
@@ -94,7 +84,14 @@ export const PROJECTS = [
   url: 'https://zyntaweb.com/',
   image: '/images/projects/zynta.webp',
   summary: 'A comprehensive service management solution designed to streamline customer management, service operations, billing, and reporting.',
-  tags: ['Live Website'],
+},
+  {
+  slug: 'zynta-crm',
+  title: 'Zynta CRM',
+  category: 'Software',
+  url: 'https://crm.1card.co.in/',
+  image: '/images/projects/hairship.webp',
+  summary: 'A powerful CRM platform built to simplify customer relationships and streamline business operations.',
 },
 ]
 export const REGIONS = ['India', 'UAE', 'Saudi Arabia', 'Qatar', 'Oman', 'Kuwait', 'Bahrain']

@@ -1,0 +1,45 @@
+/* ==========================================================================
+   TechScene.css: styles for the "Our technology" 3D illustration.
+   Dark mode follows the site's existing `.dark` ancestor class.
+   ========================================================================== */
+
+/* wrapper used in About.jsx: <div className="ab-tech-scene" data-ab> */
+.ab-tech-scene {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  margin-inline: auto;
+}
+@media (min-width: 900px) {
+  .ab-tech-scene { max-width: 600px; margin-inline: auto 0; }
+}
+@media (min-width: 1600px) {
+  .ab-tech-scene { max-width: 680px; }
+}
+
+.ts-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* floating motion (disabled automatically by the About page's reduced-motion rule) */
+.ts-f { animation: ts-bob var(--d, 6s) ease-in-out var(--dl, 0s) infinite; }
+@keyframes ts-bob { 50% { transform: translateY(-8px); } }
+.ts-pipe { stroke-dasharray: 6 6; animation: ts-dash 1.2s linear infinite; }
+@keyframes ts-dash { to { stroke-dashoffset: -24; } }
+@media (prefers-reduced-motion: reduce) {
+  .ts-f, .ts-pipe { animation: none; }
+}
+@media (max-width: 640px) {
+  .ts-f { animation-duration: 9s; }
+}
+
+/* light theme surfaces */
+.ts-glass { fill: #ffffff; fill-opacity: .92; stroke: #d3e4f8; }
+.ts-txt { fill: #1f2937; }
+.ts-ring { stroke: #9fc3f7; }
+
+/* dark theme */
+.dark .ts-plat-a { stop-color: #1f3560; }
+.dark .ts-plat-b { stop-color: #12234a; }
+.dark .ts-plat-rim { fill: #0c172e; }
+.dark .ts-glass { fill: #16294a; fill-opacity: .95; stroke: #2c4a7a; }
+.dark .ts-txt { fill: #eaf3ff; }
+.dark .ts-ring { stroke: #3f78bd; }

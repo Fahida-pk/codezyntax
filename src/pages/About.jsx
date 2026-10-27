@@ -4,9 +4,12 @@ import {
   ArrowUpRight, ArrowRight, Search, ClipboardList, Code2, Rocket, Mail, Phone, MessageCircle, MapPin,
   Target, Eye, ShieldCheck, Briefcase, Award, Headphones, SlidersHorizontal, Users, Wallet,
   LayoutDashboard, Server, Smartphone, Cloud, Megaphone,
+  Database, Monitor, CodeXml, Globe, Terminal, HardDrive, PanelsTopLeft,
 } from 'lucide-react'
 import Seo from '../components/Seo'
 import { SITE, SERVICES } from '../data/site'
+import TechScene from './Techscene.jsx'
+import { DoScene, StepsScene } from './AboutScenes'
 import './About.css'
 
 /* Copy reuses what the Home page already says about CodeZyntax. The figures are the ones
@@ -39,10 +42,14 @@ const POINTS = [
 /* Replaces "Our Global Reach": the capability areas a software company is judged on.
    EDIT the tool names below so they match what your team actually uses. */
 const STACK = [
-  [LayoutDashboard, 'Frontend', ['React', 'Next.js', 'TypeScript', 'Tailwind CSS']],
-  [Server, 'Backend & APIs', ['Node.js', 'PHP / Laravel', 'REST', 'Python']],
-  [Smartphone, 'Mobile apps', ['Android', 'iOS', 'React Native', 'Flutter']],
-  [Cloud, 'Cloud & Data', ['AWS', 'MySQL', 'PostgreSQL', 'CI/CD']],
+  [LayoutDashboard, 'Frontend Development', ['HTML5', 'CSS3', 'JavaScript', 'React.js', 'Next.js', 'Bootstrap', 'Tailwind CSS', 'PostCSS']],
+  [Server, 'Backend Development', ['PHP', 'Laravel', 'Node.js', 'Express.js', 'REST APIs']],
+  [CodeXml, 'Programming Languages', ['C#', 'Python', 'JavaScript', 'C++']],
+  [PanelsTopLeft, 'CMS & Website Development', ['WordPress', 'Custom Websites', 'Responsive Web Design']],
+  [Database, 'Database Management', ['MySQL', 'MongoDB', 'PostgreSQL']],
+  [Monitor, 'Development Tools', ['Visual Studio', 'Visual Studio Code', 'Git', 'GitHub', 'Postman']],
+  [HardDrive, 'Web Hosting & Servers', ['cPanel', 'Plesk', 'DirectAdmin', 'VPS Hosting', 'Cloud Hosting']],
+  [Globe, 'Cloud & Deployment', ['Vercel', 'Netlify', 'CI/CD', 'Domain & DNS Management']],
 ]
 
 const DO = [
@@ -175,7 +182,8 @@ export default function About() {
               <p className="ab-lead">We provide <strong>custom software development</strong>, <strong>web and mobile applications</strong> and <strong>digital marketing</strong> created to improve your online presence and the way your business runs day to day.</p>
               <Link to="/service" className="ab-link">Explore our services <ArrowUpRight size={20} strokeWidth={1.8} aria-hidden="true" /></Link>
             </div>
-            <Scene3D kind="cube" className="ab-do-scene" data-ab />
+            {/* 3D illustration (SVG). See AboutScenes.jsx */}
+            <div className="as-wrap" data-ab><DoScene /></div>
           </div>
 
           <ul className="ab-pillars">
@@ -237,7 +245,8 @@ export default function About() {
               <h2 id="ab-stack-title">Modern tools, chosen to fit your product.</h2>
               <p className="ab-lead">We pick the right technology for your goals, budget and growth plans, then build it to be fast, secure and easy to maintain.</p>
             </div>
-            <Scene3D kind="nodes" className="ab-mini-scene" data-ab />
+            {/* Professional 3D technology illustration (SVG). See TechScene.jsx / TechScene.css */}
+            <div className="ab-tech-scene" data-ab><TechScene /></div>
           </div>
           <div className="ab-stack">
             {STACK.map(([Icon, t, tools], i) => (
@@ -260,7 +269,8 @@ export default function About() {
               <h2 id="ab-pr-title">Clear scope. Visible progress. Useful outcomes.</h2>
               <p className="ab-lead">The process stays practical from the first conversation through launch and support.</p>
             </div>
-            <Scene3D kind="steps" className="ab-mini-scene" data-ab />
+            {/* 3D illustration (SVG). See AboutScenes.jsx */}
+            <div className="as-wrap" data-ab><StepsScene /></div>
           </div>
           <ol className="ab-steps">
             {PRINCIPLES.map(([Icon, t, p], i) => (
@@ -275,24 +285,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ================= BUSINESS DETAILS ================= */}
-      <section className="ab-sec" aria-labelledby="ab-biz-title">
-        <div className="ab-wrap">
-          <div data-ab className="ab-head">
-            <p className="ab-kicker"><b aria-hidden="true">+</b> Business details</p>
-            <h2 id="ab-biz-title">CodeZyntax Softwares LLP</h2>
-          </div>
-          <div data-ab className="ab-details" aria-label="Business details" style={d(1)}>
-            {SITE.address && <Detail icon={MapPin} label="Address" href={SITE.mapUrl || undefined} external>{SITE.address}</Detail>}
-            {SITE.phone && <Detail icon={Phone} label="Phone" href={`tel:${SITE.phone.replace(/[^\d+]/g, '')}`}>{SITE.phone}</Detail>}
-            {SITE.whatsapp && <Detail icon={MessageCircle} label="WhatsApp" href={`https://wa.me/${SITE.whatsapp}`} external>Message us on WhatsApp</Detail>}
-            {SITE.email && <Detail icon={Mail} label="Email" href={`mailto:${SITE.email}`}>{SITE.email}</Detail>}
-            {!SITE.address && !SITE.phone && !SITE.whatsapp && !SITE.email && (
-              <p className="ab-muted">Reach us through the <Link to="/contact">contact page</Link>.</p>
-            )}
-          </div>
-        </div>
-      </section>
+     
 
       {/* ================= CLOSING CTA ================= */}
       <section className="ab-cta" aria-labelledby="ab-cta-title">

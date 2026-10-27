@@ -168,7 +168,6 @@
 @media (min-width: 1024px) {
   .ct-grid { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(40px, 5vw, 72px); }
   .ct-formcol { order: 0; }
-  .ct-side { position: sticky; top: 108px; }
 }
 .ct-side-head h2 { font-size: clamp(1.5rem, 1.15rem + 1.2vw, 1.95rem); font-weight: 800; }
 .ct-side-head p { margin-top: 10px; max-width: 34rem; }
@@ -267,12 +266,99 @@
 /* ==================== CTA ==================== */
 .ct-cta-sec { padding: 0 0 clamp(64px, 9vw, 112px); }
 .ct-cta {
+  position: relative; overflow: hidden;
   padding: clamp(44px, 7vw, 84px) clamp(22px, 6vw, 64px); border-radius: 32px; text-align: center; border: 1px solid var(--ct-line);
   background: radial-gradient(60% 90% at 100% 0%, rgba(96, 165, 250, .28), transparent 62%), linear-gradient(135deg, #eaf3ff, #f6f9ff);
   box-shadow: var(--ct-shadow-lg);
 }
 .ct-cta h2 { max-width: 40rem; margin-inline: auto; font-size: clamp(1.8rem, 1.2rem + 2.6vw, 3rem); font-weight: 800; line-height: 1.12; letter-spacing: -.03em; text-wrap: balance; }
 .ct-cta p { max-width: 34rem; margin: 16px auto 0; font-size: clamp(1rem, .95rem + .3vw, 1.1rem); line-height: 1.75; }
+
+/* ==========================================================================
+   EXTRA 3D SCENES: globe (contact info), map pin (location), cubes (CTA)
+   ========================================================================== */
+@keyframes ct-spinz { to { transform: rotateZ(360deg); } }
+@keyframes ct-ripple { from { transform: scale(.4); opacity: .7; } to { transform: scale(1.6); opacity: 0; } }
+@keyframes ct-tumble { from { transform: rotateX(-24deg) rotateY(0deg); } to { transform: rotateX(-24deg) rotateY(360deg); } }
+
+.ct-tile {
+  display: grid; place-items: center; width: 100%; height: 100%; border-radius: 30%; color: #fff;
+  background: linear-gradient(150deg, #7db4ff 0%, #2563eb 60%, #1d4ed8 100%);
+  box-shadow: 0 12px 20px -10px rgba(37, 99, 235, .75), inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 -3px 0 rgba(0, 0, 0, .12);
+}
+.ct-tile svg { width: 46%; height: 46%; }
+
+/* ----- globe ----- */
+.ct-side-art { margin-top: 20px; }
+.ct-gwrap { container-type: inline-size; width: 100%; max-width: 380px; }
+.ct-gstage { position: relative; aspect-ratio: 1 / .82; perspective: 1200px; font-size: clamp(8px, 2.6cqw, 13px); }
+.ct-gscene { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(14deg) rotateY(-14deg); }
+.ct-gplate {
+  position: absolute; left: 6%; right: 6%; bottom: 4%; height: 36%; border-radius: 3em; transform: rotateX(68deg);
+  background:
+    linear-gradient(rgba(37, 99, 235, .1) 1px, transparent 1px) 0 0 / 2.4em 2.4em,
+    linear-gradient(90deg, rgba(37, 99, 235, .1) 1px, transparent 1px) 0 0 / 2.4em 2.4em,
+    linear-gradient(145deg, #fff, #cfe3ff);
+  box-shadow: 0 1px 0 #fff inset, 0 .6em 0 #bcd6fb, 0 1.2em 0 #9fc3f7, 0 3em 4em -1.4em rgba(29, 78, 216, .45);
+}
+.ct-gglobe { position: absolute; left: 50%; top: 4%; width: 46%; aspect-ratio: 1; margin-left: -23%; transform-style: preserve-3d; transform: translateZ(40px); }
+.ct-gring { position: absolute; inset: -16%; transform-style: preserve-3d; }
+.ct-gring span { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(37, 99, 235, .35); animation: ct-spinz var(--sp, 16s) linear infinite; }
+.ct-gring span::after { content: ""; position: absolute; top: -.6em; left: 50%; width: 1.2em; height: 1.2em; margin-left: -.6em; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, #60a5fa 50%, #2563eb); box-shadow: 0 .5em .8em -.3em rgba(29, 78, 216, .6); }
+.ct-gring.g1 { transform: rotateX(72deg); }
+.ct-gring.g2 { transform: rotateY(72deg); --sp: 22s; }
+.ct-gring.g3 { inset: -4%; transform: rotateX(-48deg) rotateY(32deg); --sp: 12s; }
+.ct-gsphere {
+  position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; color: #fff;
+  background: radial-gradient(circle at 32% 26%, #fff 0, #93c5fd 20%, #2563eb 62%, #1e3a8a 100%); box-shadow: 0 2em 3em -1.2em rgba(29, 78, 216, .65);
+}
+.ct-gsphere svg { width: 46%; height: 46%; }
+.ct-gtile { position: absolute; width: 4.4em; height: 4.4em; transform: translateZ(90px); }
+.ct-gt-a { left: 4%; top: 30%; }
+.ct-gt-b { right: 4%; top: 18%; }
+.ct-gt-c { right: 12%; bottom: 20%; }
+
+/* ----- map pin ----- */
+.ct-map-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: center; margin-bottom: 24px; }
+.ct-map-top .ct-map-head { margin-bottom: 0; }
+.ct-pwrap { container-type: inline-size; width: 100%; max-width: 260px; }
+.ct-pstage { position: relative; aspect-ratio: 1 / .85; perspective: 1000px; font-size: clamp(8px, 3cqw, 13px); }
+.ct-pscene { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(16deg) rotateY(-14deg); }
+.ct-ptile {
+  position: absolute; left: 8%; right: 8%; bottom: 6%; height: 52%; border-radius: 2.4em; transform: rotateX(68deg);
+  background:
+    linear-gradient(rgba(37, 99, 235, .12) 1px, transparent 1px) 0 0 / 2em 2em,
+    linear-gradient(90deg, rgba(37, 99, 235, .12) 1px, transparent 1px) 0 0 / 2em 2em,
+    linear-gradient(145deg, #fff, #cfe3ff);
+  box-shadow: 0 1px 0 #fff inset, 0 .6em 0 #bcd6fb, 0 1.2em 0 #9fc3f7, 0 2.4em 3em -1.2em rgba(29, 78, 216, .45);
+}
+.ct-pripple { position: absolute; left: 50%; bottom: 20%; width: 9em; height: 9em; margin-left: -4.5em; border-radius: 50%; border: 2px solid rgba(37, 99, 235, .5); transform: rotateX(68deg) translateZ(2px); animation: ct-ripple 3.6s ease-out infinite; }
+.ct-pripple.is-2 { animation-delay: -1.8s; }
+.ct-ppin { position: absolute; left: 50%; bottom: 24%; width: 6em; height: 6em; margin-left: -3em; transform-style: preserve-3d; transform: translateZ(30px); }
+.ct-pinbody {
+  position: relative; width: 100%; height: 100%; border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+  background: radial-gradient(circle at 30% 26%, #bfdbfe 0, #3b82f6 45%, #1d4ed8 100%);
+  box-shadow: inset 0 .3em .5em rgba(255, 255, 255, .5), 0 1.4em 1.6em -.6em rgba(29, 78, 216, .6);
+}
+.ct-pinbody i { position: absolute; left: 50%; top: 50%; width: 2.4em; height: 2.4em; margin: -1.2em 0 0 -1.2em; border-radius: 50%; background: #fff; box-shadow: inset 0 .2em .4em rgba(29, 78, 216, .35); }
+.ct-pshadow { position: absolute; left: 50%; bottom: 22%; width: 5em; height: 1.4em; margin-left: -2.5em; border-radius: 50%; background: radial-gradient(closest-side, rgba(29, 78, 216, .45), transparent); transform: rotateX(68deg); }
+@media (min-width: 768px) { .ct-map-top { grid-template-columns: minmax(0, 1fr) 260px; } }
+
+/* ----- CTA cubes ----- */
+.ct-cubewrap { position: absolute; width: var(--s); height: var(--s); perspective: 700px; pointer-events: none; }
+.ct-cube { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: ct-tumble 18s linear infinite; }
+.ct-cube i { position: absolute; inset: 0; border: 1px solid rgba(37, 99, 235, .3); background: linear-gradient(145deg, rgba(255, 255, 255, .95), rgba(147, 197, 253, .72)); }
+.ct-cube i:nth-child(1) { transform: translateZ(calc(var(--s) / 2)); }
+.ct-cube i:nth-child(2) { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }
+.ct-cube i:nth-child(3) { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
+.ct-cube i:nth-child(4) { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); }
+.ct-cube i:nth-child(5) { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); }
+.ct-cube i:nth-child(6) { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); }
+.ct-cube-a { top: 12%; right: 7%; }
+.ct-cube-b { bottom: 14%; left: 8%; }
+.ct-cube-b .ct-cube { animation-duration: 24s; animation-direction: reverse; }
+.ct-cta-orb { position: absolute; left: 15%; top: 18%; width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #fff, #93c5fd 45%, #2563eb); box-shadow: 0 14px 18px -8px rgba(29, 78, 216, .55); animation: ct-bob 6s ease-in-out infinite; }
+@media (max-width: 767px) { .ct-cube-a, .ct-cube-b, .ct-cta-orb { display: none; } .ct-gring.g2 { display: none; } }
 
 @media (max-width: 359px) {
   .ct-wrap { padding-inline: 16px; }
@@ -350,3 +436,60 @@
 :is(.dark, [data-theme="dark"]) .ct .ct-done-card .is-short { background: #1d3157; }
 :is(.dark, [data-theme="dark"]) .ct .ct-bubble { background: #12264a; }
 :is(.dark, [data-theme="dark"]) .ct .ct-orb span { box-shadow: 0 1.4em 1.6em -.8em rgba(0, 0, 0, .7), 0 0 2em -.4em rgba(96, 165, 250, .5); }
+
+/* Dark variants for the extra 3D scenes */
+:is(.dark, [data-theme="dark"]) .ct .ct-gplate,
+:is(.dark, [data-theme="dark"]) .ct .ct-ptile {
+  background:
+    linear-gradient(rgba(96, 165, 250, .1) 1px, transparent 1px) 0 0 / 2.4em 2.4em,
+    linear-gradient(90deg, rgba(96, 165, 250, .1) 1px, transparent 1px) 0 0 / 2.4em 2.4em,
+    linear-gradient(145deg, #13264b, #0b1730);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 .6em 0 #0f2a57, 0 1.2em 0 #0c2146, 0 3em 4em -1.4em rgba(0, 0, 0, .8);
+}
+:is(.dark, [data-theme="dark"]) .ct .ct-gring span,
+:is(.dark, [data-theme="dark"]) .ct .ct-pripple { border-color: rgba(138, 184, 255, .5); }
+:is(.dark, [data-theme="dark"]) .ct .ct-pshadow { background: radial-gradient(closest-side, rgba(0, 0, 0, .6), transparent); }
+:is(.dark, [data-theme="dark"]) .ct .ct-cube i {
+  border-color: rgba(138, 184, 255, .4);
+  background: linear-gradient(145deg, rgba(59, 130, 246, .5), rgba(29, 78, 216, .25));
+}
+
+/* ==========================================================================
+   CTA: centred content wrapper + extra floating 3D elements
+   ========================================================================== */
+.ct .ct-cta-body { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; width: 100%; text-align: center; }
+.ct .ct-cta-body .ct-cta-title { width: 100%; max-width: 40rem; margin: 0; text-align: center; }
+.ct .ct-cta-body .ct-cta-text { width: 100%; max-width: 34rem; margin: 16px 0 0; text-align: center; }
+.ct .ct-cta-body .ct-actions { justify-content: center; width: 100%; }
+
+.ct-tile.is-thick { box-shadow: 0 .45em 0 #1e40af, 0 1.6em 1.6em -.6em rgba(29, 78, 216, .7), inset 0 1px 0 rgba(255, 255, 255, .55); }
+.ct-ftile { position: absolute; width: 76px; height: 76px; pointer-events: none; transform: perspective(600px) rotateX(16deg) rotateY(-26deg); }
+.ct-ftile .ct-tile { border-radius: 24px; }
+.ct-ftile svg { width: 42%; height: 42%; }
+.ct-ftile.ft-a { left: 5%; top: 40%; }
+.ct-ftile.ft-b { right: 6%; bottom: 14%; width: 64px; height: 64px; transform: perspective(600px) rotateX(14deg) rotateY(24deg); }
+.ct-ftile.ft-c { right: 20%; top: 12%; width: 52px; height: 52px; transform: perspective(600px) rotateX(18deg) rotateY(-20deg); }
+.ct-ftile.ft-b .ct-lf { --delay: -2s; }
+.ct-ftile.ft-c .ct-lf { --delay: -4s; }
+
+.ct-ringwrap { position: absolute; width: var(--s); height: var(--s); perspective: 700px; pointer-events: none; }
+.ct-ring3d {
+  display: block; width: 100%; height: 100%; border-radius: 50%; transform-style: preserve-3d;
+  background: conic-gradient(from 30deg, #bfdbfe, #3b82f6, #1d4ed8, #60a5fa, #eff6ff, #bfdbfe);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 11px), #000 calc(100% - 10px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 11px), #000 calc(100% - 10px));
+  filter: drop-shadow(0 10px 10px rgba(29, 78, 216, .35));
+  animation: ct-ringflip 12s linear infinite;
+}
+@keyframes ct-ringflip { from { transform: rotateX(62deg) rotateY(0deg); } to { transform: rotateX(62deg) rotateY(360deg); } }
+.ct-ringwrap.rg-a { left: 21%; bottom: 8%; }
+.ct-ringwrap.rg-b { right: 14%; top: 46%; --s: 56px; }
+.ct-ringwrap.rg-b .ct-ring3d { animation-duration: 16s; animation-direction: reverse; }
+.ct-cta-orb-b { left: auto; right: 30%; top: auto; bottom: 12%; width: 22px; height: 22px; animation-delay: -3s; }
+
+@media (max-width: 1023px) { .ct-ftile.ft-c, .ct-ringwrap.rg-b { display: none; } }
+@media (max-width: 767px) { .ct-ftile, .ct-ringwrap, .ct-cta-orb-b { display: none; } }
+@media (prefers-reduced-motion: reduce) { .ct-ring3d { animation: none; transform: rotateX(62deg) rotateY(20deg); } }
+
+:is(.dark, [data-theme="dark"]) .ct .ct-tile.is-thick { box-shadow: 0 .45em 0 #172554, 0 1.6em 1.6em -.6em rgba(0, 0, 0, .8), inset 0 1px 0 rgba(255, 255, 255, .4); }
+:is(.dark, [data-theme="dark"]) .ct .ct-ring3d { filter: drop-shadow(0 10px 10px rgba(0, 0, 0, .6)); }

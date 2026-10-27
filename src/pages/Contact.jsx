@@ -140,6 +140,74 @@ function ContactStage() {
   )
 }
 
+/* ---------------------------- 3D: connected globe (contact info) ---------------------------- */
+function GlobeScene() {
+  const wrap = useRef(null)
+  useLive(wrap)
+  return (
+    <div className="ct-gwrap ct-3d" ref={wrap}>
+      <div className="ct-gstage" role="img" aria-label="Animated 3D globe with orbit rings and floating email, phone and chat icons, showing the ways to reach us">
+        <div className="ct-gscene">
+          <div className="ct-gplate" />
+          <div className="ct-gglobe">
+            <div className="ct-gring g1"><span /></div>
+            <div className="ct-gring g2"><span /></div>
+            <div className="ct-gring g3"><span /></div>
+            <div className="ct-gsphere ct-lf" style={{ '--d': '6s' }}><Globe aria-hidden="true" /></div>
+          </div>
+          <div className="ct-gtile ct-gt-a"><span className="ct-lf ct-tile" style={{ '--d': '5.2s' }}><Mail aria-hidden="true" /></span></div>
+          <div className="ct-gtile ct-gt-b"><span className="ct-lf ct-tile" style={{ '--d': '6.4s', '--delay': '-2s' }}><Phone aria-hidden="true" /></span></div>
+          <div className="ct-gtile ct-gt-c"><span className="ct-lf ct-tile" style={{ '--d': '5.8s', '--delay': '-4s' }}><MessageCircle aria-hidden="true" /></span></div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ---------------------------- 3D: location pin (map section) ---------------------------- */
+function PinScene() {
+  const wrap = useRef(null)
+  useLive(wrap)
+  return (
+    <div className="ct-pwrap ct-3d" ref={wrap}>
+      <div className="ct-pstage" role="img" aria-label="Animated 3D map pin standing on a glowing map tile">
+        <div className="ct-pscene">
+          <div className="ct-ptile" />
+          <span className="ct-pripple" />
+          <span className="ct-pripple is-2" />
+          <div className="ct-ppin">
+            <div className="ct-lf ct-pinbody" style={{ '--d': '4.8s' }}><i /></div>
+          </div>
+          <span className="ct-pshadow" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ---------------------------- 3D: tumbling cube (CTA) ---------------------------- */
+function Cube({ size = 64, className = '' }) {
+  return (
+    <div className={`ct-cubewrap ${className}`} style={{ '--s': `${size}px` }} aria-hidden="true">
+      <div className="ct-cube"><i /><i /><i /><i /><i /><i /></div>
+    </div>
+  )
+}
+
+/* ---------------------------- 3D: glossy tile + ring (CTA) ---------------------------- */
+function FloatTile({ icon: Icon, className = '' }) {
+  return (
+    <span className={`ct-ftile ${className}`} aria-hidden="true">
+      <span className="ct-lf ct-tile is-thick" style={{ '--d': '6s' }}><Icon /></span>
+    </span>
+  )
+}
+function Ring3D({ size = 72, className = '' }) {
+  return (
+    <span className={`ct-ringwrap ${className}`} style={{ '--s': `${size}px` }} aria-hidden="true"><span className="ct-ring3d" /></span>
+  )
+}
+
 /* ---------------------------- small pieces ---------------------------- */
 const Info = ({ icon: Icon, label, children, href, external }) => {
   const body = (<>
@@ -228,6 +296,7 @@ export default function Contact() {
             <h2>Contact information</h2>
             <p>{hasDirect ? 'Reach us directly, or use the enquiry form.' : 'Use the enquiry form and we will get back to you.'}</p>
           </div>
+          <div data-reveal className="ct-side-art"><GlobeScene /></div>
           <div className="ct-infos" data-reveal>
             {SITE.email && <Info icon={Mail} label="Email" href={`mailto:${SITE.email}`}>{SITE.email}</Info>}
             {SITE.phone && <Info icon={Phone} label="Phone" href={`tel:${SITE.phone.replace(/[^\d+]/g, '')}`}>{SITE.phone}</Info>}
@@ -311,7 +380,10 @@ export default function Contact() {
     {(SITE.mapEmbed || SITE.mapUrl) && (
       <section className="ct-map">
         <div className="ct-wrap">
-          <div data-reveal className="ct-map-head"><span className="ct-pill"><i />Our location</span><h2>Visit our office</h2>{SITE.address && <p>{SITE.address}</p>}</div>
+          <div data-reveal className="ct-map-top">
+            <div className="ct-map-head"><span className="ct-pill"><i />Our location</span><h2>Visit our office</h2>{SITE.address && <p>{SITE.address}</p>}</div>
+            <PinScene />
+          </div>
           <div data-reveal className="ct-map-frame">
             {SITE.mapEmbed
               ? <iframe title="CodeZyntax office location map" src={SITE.mapEmbed} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
@@ -325,11 +397,23 @@ export default function Contact() {
     <section className="ct-cta-sec" aria-labelledby="ct-cta-title">
       <div className="ct-wrap">
         <div data-reveal className="ct-cta">
-          <h2 id="ct-cta-title">Ready to discuss your project?</h2>
-          <p>Share your goal or challenge and request a consultation. We will respond with a clear direction.</p>
-          <div className="ct-actions ct-actions-c">
-            <a href="#enquiry" className="ct-btn ct-btn-primary">Request a consultation <ArrowUpRight size={18} aria-hidden="true" /></a>
-            {SITE.email && <a href={`mailto:${SITE.email}`} className="ct-btn ct-btn-ghost"><Mail size={18} aria-hidden="true" />Email us</a>}
+          {/* extra 3D elements: cubes, glossy tiles, rings and spheres */}
+          <Cube size={64} className="ct-cube-a" />
+          <Cube size={40} className="ct-cube-b" />
+          <span className="ct-cta-orb" aria-hidden="true" />
+          <span className="ct-cta-orb ct-cta-orb-b" aria-hidden="true" />
+          <FloatTile icon={Send} className="ft-a" />
+          <FloatTile icon={Mail} className="ft-b" />
+          <FloatTile icon={MessageCircle} className="ft-c" />
+          <Ring3D size={84} className="rg-a" />
+          <Ring3D size={56} className="rg-b" />
+          <div className="ct-cta-body">
+            <h2 id="ct-cta-title" className="ct-cta-title">Ready to discuss your project?</h2>
+            <p className="ct-cta-text">Share your goal or challenge and request a consultation. We will respond with a clear direction.</p>
+            <div className="ct-actions ct-actions-c">
+              <a href="#enquiry" className="ct-btn ct-btn-primary">Request a consultation <ArrowUpRight size={18} aria-hidden="true" /></a>
+              {SITE.email && <a href={`mailto:${SITE.email}`} className="ct-btn ct-btn-ghost"><Mail size={18} aria-hidden="true" />Email us</a>}
+            </div>
           </div>
         </div>
       </div>
