@@ -9,6 +9,8 @@ import './VCardsAlt.css'
 /*
   ALT DESIGN – same content as https://www.codezyntax.com/vcards/ (lightly proofread).
   Layout: glass bento tiles + isometric 3D blocks (CSS only, no images).
+  Each section has its own background (vx-bg--*); the final CTA uses a light background.
+  Responsive: desktop (>1024), tablet (681-1024), mobile (<=680), small phones (<=400).
   "900+ V-Cards Delivered" is on the live page; please confirm it is still accurate.
 */
 
@@ -277,7 +279,7 @@ export default function VCardsAlt() {
   return (
     <main className="vx">
       {/* Hero */}
-      <section className="vx-hero">
+      <section className="vx-hero vx-bg--hero">
         <div className="vx-aurora" aria-hidden="true" />
         <div className="vx-wrap vx-hero__grid">
           <div>
@@ -305,7 +307,7 @@ export default function VCardsAlt() {
       </div>
 
       {/* Products – bento */}
-      <section className="vx-sec">
+      <section className="vx-sec vx-bg--products">
         <div className="vx-wrap">
           <div className="vx-bento">
             <article className="vx-tile vx-s7 vx-reveal">
@@ -338,7 +340,7 @@ export default function VCardsAlt() {
       </section>
 
       {/* What we offer */}
-      <section className="vx-sec">
+      <section className="vx-sec vx-bg--offer">
         <div className="vx-wrap">
           <div className="vx-reveal" style={{ maxWidth: 780 }}>
             <h2 className="vx-h2">Connect Smarter with CodeZyntax V-Cards</h2>
@@ -362,7 +364,7 @@ export default function VCardsAlt() {
       </section>
 
       {/* Templates */}
-      <section className="vx-sec">
+      <section className="vx-sec vx-bg--templates">
         <div className="vx-wrap">
           <div className="vx-reveal" style={{ maxWidth: 780 }}>
             <h2 className="vx-h2">Explore Our V-Card Templates</h2>
@@ -376,7 +378,7 @@ export default function VCardsAlt() {
       </section>
 
       {/* Why choose us */}
-      <section className="vx-sec">
+      <section className="vx-sec vx-bg--why">
         <div className="vx-wrap vx-split vx-split--rev">
           <div className="vx-reveal">
             <h2 className="vx-h2">Why Choose Us?</h2>
@@ -389,7 +391,7 @@ export default function VCardsAlt() {
       </section>
 
       {/* FAQ */}
-      <section className="vx-sec">
+      <section className="vx-sec vx-bg--faq">
         <div className="vx-wrap vx-faqgrid">
           <div className="vx-reveal">
             <h2 className="vx-h2">Frequently Asked Questions</h2>
@@ -403,16 +405,16 @@ export default function VCardsAlt() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="vx-sec">
+      {/* CTA – light background */}
+      <section className="vx-sec vx-bg--cta">
         <div className="vx-wrap">
           <div className="vx-cta vx-reveal">
             <div>
               <h2>Smart Networking Starts Here</h2>
               <p>Create your personalized Smart vCard and share your details instantly with just a tap or scan. No apps, no paper, just smooth, eco-friendly connections that work anytime, anywhere, perfectly paired with our premium all in one NFC Stand in India for enhanced digital engagement.</p>
               <div className="vx-row">
-                <Ext href={LINKS.card} className="vx-btn vx-btn--white">Get Your vCard Now <ArrowRight size={18} /></Ext>
-                <Ext href={LINKS.whatsapp} className="vx-btn vx-btn--ghostw"><MessageCircle size={18} /> WhatsApp us</Ext>
+                <Ext href={LINKS.card} className="vx-btn vx-btn--main">Get Your vCard Now <ArrowRight size={18} /></Ext>
+                <Ext href={LINKS.whatsapp} className="vx-btn vx-btn--line"><MessageCircle size={18} /> WhatsApp us</Ext>
               </div>
             </div>
             <CtaScene />
