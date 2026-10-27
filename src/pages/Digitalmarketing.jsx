@@ -6,8 +6,7 @@ import {
 } from 'lucide-react'
 import Seo from '../components/Seo'
 import { SITE } from '../data/site'
-import './DigitalMarketing.css'
-
+import './Digitalmarketing.css'
 /* 3D illustrations: copy the four SVG files into public/images/.
    If one is missing the page still works (the image simply hides; the hero shows a CSS dashboard). */
 const IMG = {
