@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import {
   Link,
@@ -278,13 +277,39 @@ function Footer() {
     'https://www.google.com/maps/search/?api=1&query=' +
     encodeURIComponent(address)
 
+  const { pathname, hash } = useLocation()
+
   const companyLinks = [
+    ['Home', '/'],
+    ['About', '/about'],
     ['Services', '/service'],
     ['Digital Marketing', '/digital-marketing'],
     ['vCards', '/vcards'],
     ['Contact', '/#contact'],
     ['Blog', '/blog'],
   ]
+
+  const currentPath = pathname.replace(/\/+$/, '') || '/'
+
+  const filteredCompanyLinks = companyLinks.filter(([label, path]) => {
+    if (path === '/') {
+      return currentPath !== '/'
+    }
+
+    if (path === '/#contact') {
+      return !(currentPath === '/contact' || (currentPath === '/' && hash === '#contact'))
+    }
+
+    if (path === '/service') {
+      return !currentPath.startsWith('/service')
+    }
+
+    if (path === '/blog') {
+      return !currentPath.startsWith('/blog')
+    }
+
+    return currentPath !== path
+  })
 
   const socialLinks = [
     {
@@ -387,7 +412,7 @@ function Footer() {
   Quick Links
 </h3>
           <ul className="mt-5 space-y-3 text-sm">
-            {companyLinks.map(([label, path]) => (
+            {filteredCompanyLinks.map(([label, path]) => (
               <li key={path}>
                 <Link
                   className="text-body transition-colors

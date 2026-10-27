@@ -1,9 +1,18 @@
-import { useState, useRef, useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Loader2, Mail, MessageCircle, Phone, MapPin, Clock, Globe, Headphones, ArrowUpRight, ArrowRight, CheckCircle2, AlertCircle, Send, ShieldCheck } from 'lucide-react'
+import {
+  Loader2, Mail, MessageCircle, Phone, MapPin, Clock, Globe, Headphones, ArrowUpRight, ArrowRight,
+  CheckCircle2, AlertCircle, Send, ShieldCheck, Check, Code,
+} from 'lucide-react'
 import Seo from '../components/Seo'
 import { SITE, SERVICES, REGIONS } from '../data/site'
 import './Contact.css'
+
+/* =========================================================================
+   Contact page. The 3D hero is built in code (CSS 3D transforms + SVG),
+   so there are no image files to copy and nothing can 404.
+   Form logic, validation, honeypot and SITE data usage are unchanged.
+   ========================================================================= */
 
 // Services shown first in the selector (the rest of SERVICES follow, so nothing from the data is lost).
 const FEATURED = ['website-design-development', 'custom-software-development', 'web-application-development', 'mobile-application-development', 'digital-marketing-seo']
@@ -15,6 +24,7 @@ const BUDGETS = [
   'Ongoing support or retainer',
 ]
 const EMPTY = { name: '', email: '', phone: '', companyName: '', budget: '', message: '' }
+const POINTS = ['Direct line to our team', 'Clear next steps', 'Your details stay private']
 
 function validate(v) {
   const er = {}
@@ -26,9 +36,114 @@ function validate(v) {
   return er
 }
 
+/* ---------------------------- hooks ---------------------------- */
+/* Pause the 3D animation while the scene is off screen. */
+function useLive(ref) {
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return undefined
+    if (!('IntersectionObserver' in window)) { el.classList.add('is-live'); return undefined }
+    const io = new IntersectionObserver(([e]) => el.classList.toggle('is-live', e.isIntersecting), { rootMargin: '80px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [ref])
+}
+
+/* Gentle mouse parallax through CSS variables. Off for touch and reduced motion. */
+function useParallax(ref) {
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !window.matchMedia) return undefined
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)')
+    if (reduce.matches || !fine.matches) return undefined
+    let raf = 0
+    const onMove = e => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        el.style.setProperty('--mx', ((e.clientX / window.innerWidth - 0.5) * 2).toFixed(3))
+        el.style.setProperty('--my', ((e.clientY / window.innerHeight - 0.5) * 2).toFixed(3))
+      })
+    }
+    window.addEventListener('pointermove', onMove, { passive: true })
+    return () => { window.removeEventListener('pointermove', onMove); cancelAnimationFrame(raf) }
+  }, [ref])
+}
+
+/* ---------------------------- 3D hero scene ---------------------------- */
+function ContactStage() {
+  const wrap = useRef(null)
+  const stage = useRef(null)
+  useLive(wrap)
+  useParallax(stage)
+  return (
+    <div className="ct-stagewrap ct-3d" ref={wrap}>
+      <div
+        className="ct-stage" ref={stage} role="img"
+        aria-label="Animated 3D illustration of an envelope with floating chat, code and confirmation cards, representing a project enquiry"
+      >
+        <div className="ct-scene">
+          <div className="ct-sway">
+            <div className="ct-l ct-ground" />
+            <div className="ct-l ct-plate" style={{ '--z': '0px' }} />
+
+            <div className="ct-l ct-env" style={{ '--z': '56px' }}>
+              <div className="ct-lf ct-envcard" style={{ '--d': '8s' }}>
+                <svg viewBox="0 0 240 160" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="ctEnvBody" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stopColor="#7db4ff" />
+                      <stop offset="1" stopColor="#1d4ed8" />
+                    </linearGradient>
+                    <linearGradient id="ctEnvFlap" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stopColor="#ffffff" stopOpacity=".95" />
+                      <stop offset="1" stopColor="#dbeafe" stopOpacity=".9" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="4" y="4" width="232" height="152" rx="22" fill="url(#ctEnvBody)" />
+                  <path d="M4 26 120 98 236 26 V20 a16 16 0 0 0 -16 -16 H20 A16 16 0 0 0 4 20 Z" fill="url(#ctEnvFlap)" />
+                  <path d="M4 26 120 98 236 26" fill="none" stroke="#2563eb" strokeOpacity=".35" strokeWidth="2" strokeLinejoin="round" />
+                  <rect x="30" y="116" width="84" height="8" rx="4" fill="#fff" opacity=".7" />
+                  <rect x="30" y="132" width="52" height="8" rx="4" fill="#fff" opacity=".4" />
+                </svg>
+              </div>
+            </div>
+
+            <div className="ct-l ct-chat" style={{ '--z': '120px' }}>
+              <div className="ct-lf ct-card3d" style={{ '--d': '6.2s', '--delay': '-1s' }}>
+                <div className="ct-chat-head"><MessageCircle aria-hidden="true" /><span /></div>
+                <div className="ct-bubble"><i /><i /><i /></div>
+                <div className="ct-line" /><div className="ct-line is-short" />
+              </div>
+            </div>
+
+            <div className="ct-l ct-code" style={{ '--z': '96px' }}>
+              <div className="ct-lf ct-card3d ct-code-card" style={{ '--d': '7.4s', '--delay': '-3s' }}>
+                <Code aria-hidden="true" />
+                <div><span /><span className="is-short" /></div>
+              </div>
+            </div>
+
+            <div className="ct-l ct-done" style={{ '--z': '138px' }}>
+              <div className="ct-lf ct-card3d ct-done-card" style={{ '--d': '6.8s', '--delay': '-2s' }}>
+                <span className="ct-done-ico"><Check aria-hidden="true" /></span>
+                <div><span /><span className="is-short" /></div>
+              </div>
+            </div>
+
+            <div className="ct-l ct-orb ct-orb-a" style={{ '--z': '150px' }}><span className="ct-lf" style={{ '--d': '5s' }} /></div>
+            <div className="ct-l ct-orb ct-orb-b" style={{ '--z': '84px' }}><span className="ct-lf" style={{ '--d': '6s', '--delay': '-2s' }} /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ---------------------------- small pieces ---------------------------- */
 const Info = ({ icon: Icon, label, children, href, external }) => {
   const body = (<>
-    <span className="ct-ico"><Icon size={22} strokeWidth={1.7} aria-hidden="true" /></span>
+    <span className="ct-ico"><Icon size={20} strokeWidth={1.8} aria-hidden="true" /></span>
     <span className="ct-info-text"><span className="ct-info-label">{label}</span><span className="ct-info-value">{children}</span></span>
     {href && <ArrowUpRight className="ct-info-go" size={18} aria-hidden="true" />}
   </>)
@@ -37,6 +152,7 @@ const Info = ({ icon: Icon, label, children, href, external }) => {
     : <div className="ct-info">{body}</div>
 }
 
+/* ============================== PAGE ============================== */
 export default function Contact() {
   const [params] = useSearchParams()
   const services = useMemo(() => [...SERVICES].sort((a, b) => (FEATURED.indexOf(a.slug) + 1 || 99) - (FEATURED.indexOf(b.slug) + 1 || 99)), [])
@@ -85,49 +201,22 @@ export default function Contact() {
     <Seo title="Contact Us" description="Send a project enquiry to CodeZyntax Softwares LLP for custom software, websites, web and mobile applications and digital marketing." />
 
     {/* ================= HERO ================= */}
-    <section className="ct-hero">
+    <section className="ct-hero" aria-labelledby="ct-hero-title">
       <div className="ct-hero-bg" aria-hidden="true" />
       <div className="ct-wrap ct-hero-grid">
-        <div data-reveal>
-          <span className="ct-pill"><i />Contact Us</span>
-          <h1 className="ct-h1">Let's Build Something <span className="ct-grad">Great Together.</span></h1>
+        <div className="ct-hero-copy" data-reveal>
+          <span className="ct-pill"><i />Contact us</span>
+          <h1 id="ct-hero-title" className="ct-h1">Let&rsquo;s build something great together</h1>
           <p className="ct-lead">Tell us about your project and we will respond. Whether you need a new website, custom software, a web or mobile application, or digital marketing, share a few details and our team will suggest a clear way forward.</p>
           <div className="ct-actions">
-            <a href="#enquiry" className="ct-btn ct-btn-primary">Send an Enquiry <ArrowRight size={18} aria-hidden="true" /></a>
+            <a href="#enquiry" className="ct-btn ct-btn-primary">Send an enquiry <ArrowRight size={18} aria-hidden="true" /></a>
             {SITE.whatsapp && <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener noreferrer" className="ct-btn ct-btn-ghost"><MessageCircle size={18} aria-hidden="true" />Chat on WhatsApp</a>}
           </div>
+          <ul className="ct-points">
+            {POINTS.map(p => <li key={p}><Check size={16} aria-hidden="true" />{p}</li>)}
+          </ul>
         </div>
-        <div className="ct-art" aria-hidden="true" data-reveal>
-          <svg viewBox="0 0 420 320" className="ct-art-svg">
-            <defs>
-              <linearGradient id="ct-g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#5aa2ff" /><stop offset="1" stopColor="#6a4cf0" /></linearGradient>
-              <linearGradient id="ct-g2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#22d3ee" /><stop offset="1" stopColor="#8b5cf6" /></linearGradient>
-              <radialGradient id="ct-glow" cx=".5" cy=".5" r=".5"><stop offset="0" stopColor="#3b82ff" stopOpacity=".55" /><stop offset="1" stopColor="#3b82ff" stopOpacity="0" /></radialGradient>
-            </defs>
-            <circle cx="210" cy="160" r="150" fill="url(#ct-glow)" />
-            <circle cx="210" cy="160" r="120" fill="none" stroke="url(#ct-g2)" strokeOpacity=".35" strokeWidth="1.2" strokeDasharray="3 7" />
-            <circle cx="210" cy="160" r="86" fill="none" stroke="#7aa8ff" strokeOpacity=".3" strokeWidth="1" />
-            {/* envelope card */}
-            <g transform="translate(110 100)">
-              <rect width="200" height="130" rx="22" fill="url(#ct-g1)" opacity=".95" />
-              <rect width="200" height="130" rx="22" fill="none" stroke="#fff" strokeOpacity=".5" />
-              <path d="M16 28 100 82 184 28" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-              <rect x="30" y="98" width="70" height="7" rx="3.5" fill="#fff" opacity=".55" />
-              <rect x="30" y="111" width="46" height="7" rx="3.5" fill="#fff" opacity=".35" />
-            </g>
-            {/* chat bubble */}
-            <g className="ct-float" transform="translate(284 56)">
-              <path d="M18 0h74a18 18 0 0 1 18 18v34a18 18 0 0 1-18 18H58L36 90V70H18A18 18 0 0 1 0 52V18A18 18 0 0 1 18 0Z" fill="#0b1a5c" stroke="url(#ct-g2)" strokeWidth="1.5" />
-              <circle cx="32" cy="35" r="5" fill="#22d3ee" /><circle cx="55" cy="35" r="5" fill="#5aa2ff" /><circle cx="78" cy="35" r="5" fill="#a78bfa" />
-            </g>
-            {/* code chip */}
-            <g className="ct-float ct-float-b" transform="translate(30 210)">
-              <rect width="92" height="56" rx="16" fill="#0b1a5c" stroke="#7aa8ff" strokeOpacity=".5" />
-              <path d="M30 20 20 28l10 8M62 20l10 8-10 8M52 17 40 39" fill="none" stroke="#7df3ff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            </g>
-            <circle cx="64" cy="82" r="16" fill="url(#ct-g1)" /><circle cx="370" cy="250" r="11" fill="url(#ct-g2)" />
-          </svg>
-        </div>
+        <div data-reveal><ContactStage /></div>
       </div>
     </section>
 
@@ -201,7 +290,7 @@ export default function Contact() {
 
                 <div className="ct-submit">
                   <button className="ct-btn ct-btn-primary" disabled={state === 'loading'}>
-                    {state === 'loading' ? <><Loader2 className="ct-spin" size={18} aria-hidden="true" />Sending…</> : <>Send Enquiry <Send size={17} aria-hidden="true" /></>}
+                    {state === 'loading' ? <><Loader2 className="ct-spin" size={18} aria-hidden="true" />Sending…</> : <>Send enquiry <Send size={17} aria-hidden="true" /></>}
                   </button>
                   <p className="ct-privacy"><ShieldCheck size={16} aria-hidden="true" />Your details are used only to respond to your enquiry.</p>
                 </div>
@@ -209,7 +298,7 @@ export default function Contact() {
                 <div aria-live="assertive">
                   {Object.values(errors).some(Boolean) && <p className="ct-alert" role="alert"><AlertCircle size={18} aria-hidden="true" />Please correct the highlighted fields and try again.</p>}
                   {state === 'error' && (
-                    <p className="ct-alert" role="alert"><AlertCircle size={18} aria-hidden="true" /><span>{problem || 'We could not send your enquiry.'} Please try again later{SITE.email ? <> or email <a href={`mailto:${SITE.email}`}>{SITE.email}</a></> : ''}{SITE.whatsapp ? <>{SITE.email ? ' or ' : ' or '}<a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener noreferrer">message us on WhatsApp</a></> : ''}.</span></p>)}
+                    <p className="ct-alert" role="alert"><AlertCircle size={18} aria-hidden="true" /><span>{problem || 'We could not send your enquiry.'} Please try again later{SITE.email ? <> or email <a href={`mailto:${SITE.email}`}>{SITE.email}</a></> : ''}{SITE.whatsapp ? <>{' or '}<a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener noreferrer">message us on WhatsApp</a></> : ''}.</span></p>)}
                 </div>
               </form>
             )}
@@ -233,14 +322,14 @@ export default function Contact() {
       </section>)}
 
     {/* ================= CTA ================= */}
-    <section className="ct-cta-sec">
+    <section className="ct-cta-sec" aria-labelledby="ct-cta-title">
       <div className="ct-wrap">
         <div data-reveal className="ct-cta">
-          <h2>Ready to discuss your project?</h2>
+          <h2 id="ct-cta-title">Ready to discuss your project?</h2>
           <p>Share your goal or challenge and request a consultation. We will respond with a clear direction.</p>
           <div className="ct-actions ct-actions-c">
-            <a href="#enquiry" className="ct-btn ct-btn-primary">Request a Consultation <ArrowUpRight size={18} aria-hidden="true" /></a>
-            {SITE.email && <a href={`mailto:${SITE.email}`} className="ct-btn ct-btn-ghost"><Mail size={18} aria-hidden="true" />Email Us</a>}
+            <a href="#enquiry" className="ct-btn ct-btn-primary">Request a consultation <ArrowUpRight size={18} aria-hidden="true" /></a>
+            {SITE.email && <a href={`mailto:${SITE.email}`} className="ct-btn ct-btn-ghost"><Mail size={18} aria-hidden="true" />Email us</a>}
           </div>
         </div>
       </div>
