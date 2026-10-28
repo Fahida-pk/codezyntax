@@ -73,7 +73,7 @@ const MARQUEE = ['NFC Stand in India', 'QR Technology', 'Google Review Cards', '
 const TEMPLATES = [
   [Stethoscope, 'Doctor', 'cyan', '/images/projects/vcard13.png'],
   [Scale, 'MakeUp Artist ', 'dark', '/images/projects/vcard19.png'],
-  [BedDouble, 'Hotel', 'amber', '/images/projects/vcard40.webp'],
+  [BedDouble, 'Hotel', 'amber', '/images/projects/hotel.png'],
   [Home, 'Real Estate', 'blue', '/images/projects/vcard35.png'],
   [Camera, 'Photographer', 'violet', '/images/projects/vcard34.png'],
   [Dumbbell, 'Gym Trainer', 'dark', '/images/projects/vcard12.png'],
@@ -470,8 +470,15 @@ export default function VCardsAlt() {
         <div className="vx-aurora" aria-hidden="true" />
         <div className="vx-wrap vx-hero__grid">
           <div className="vx-hero__copy">
-            <h1 className="vx-in">V-Cards: The Future of <span className="vx-grad">Business Networking</span></h1>
-            <p className="vx-in vx-hero__sub">Premium QR &amp; NFC Stand in India</p>
+
+<h1 className="vx-in vx-hero__title">
+  <span>V-Cards: The</span>
+  <span>
+    Future of <span className="vx-grad">Business</span>
+  </span>
+  <span className="vx-grad">Networking</span>
+</h1>
+         <p className="vx-in vx-hero__sub">Premium QR &amp; NFC Stand in India</p>
             <p className="vx-in vx-lead">Share your contact info, website and social profiles with a single tap or scan. No apps, no paper – just smooth, eco-friendly connections that work anytime, anywhere.</p>
             <div className="vx-in vx-row">
               <Ext href={LINKS.card} className="vx-btn vx-btn--main">Get Your vCard Now <ArrowRight size={18} /></Ext>

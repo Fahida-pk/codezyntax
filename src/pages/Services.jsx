@@ -330,14 +330,19 @@ export function Services() {
       {/* Hero: text on the left, 3D illustration on the right */}
       <ServicesHero />
 
-      {/* Services cards */}
-      <section id="services-list" className="section">
-        <div className="container-x grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((service) => (
-            <ServiceCard key={service.slug} s={service} />
-          ))}
-        </div>
-      </section>
+      {/* Services cards: compact design, full descriptions */}
+      
+<section id="services-list" className="section svc-page-section">
+  <div className="container-x">
+    <ul className="svc-grid">
+      {SERVICES.map((service, index) => (
+        <li key={service.slug}>
+          <ServiceCard s={service} n={index + 1} full />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
 
       {/* WHY CHOOSE US */}
       <WhyChooseUs />

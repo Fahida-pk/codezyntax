@@ -114,3 +114,50 @@ nav,
     hyphens: auto;
   }
 }
+/* Paragraph alignment */
+p, li p, article p, section p {
+  text-align: justify;
+  text-justify: inter-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+h1, h2, h3, h4, button, nav, .hm-pill {
+  text-align: initial;
+}
+
+@media (max-width: 767px) {
+  p, li p, article p, section p {
+    text-align: left;
+    line-height: 1.75;
+  }
+}
+
+/* Scroll reveal — mobile and desktop */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition: opacity .7s ease, transform .7s ease;
+}
+
+[data-reveal].in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-reveal].in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .animate-marquee {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}

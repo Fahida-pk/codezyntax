@@ -160,7 +160,11 @@ export default function About() {
             <div className="ab-hero-copy">
               <div data-ab>
                 <p className="ab-kicker"><b aria-hidden="true">+</b> About the company</p>
-                <h1 id="ab-title">Smart software. Full responsibility.</h1>
+
+<h1 id="ab-title" className="ab-animated-title">
+  <span className="ab-title-base">Smart software.</span>
+  <span className="ab-title-gradient">Full responsibility.</span>
+</h1>
               </div>
               <div data-ab className="ab-hero-side" style={d(1)}>
                 <p>CodeZyntax Softwares LLP is a software development company in Palakkad. We connect planning, design, development, launch and support, so your business has one accountable technology partner.</p>

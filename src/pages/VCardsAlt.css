@@ -729,3 +729,105 @@ html.dark .vx-tc__image,
     line-height: 1.2;
   }
 }
+
+/* Premium responsive hero heading */
+.vx-hero__title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(2rem, 4.2vw, 4.25rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.vx-hero__title > span {
+  display: block;
+}
+
+/* Templates heading */
+.vx-tpl__title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+}
+
+.vx-tpl__title > span {
+  display: block;
+}
+
+.vx-tpl__title .vx-grad {
+  white-space: nowrap;
+}
+
+/* Mobile */
+@media (max-width: 680px) {
+  .vx-hero__title {
+    font-size: clamp(1.85rem, 7.5vw, 2.5rem);
+    line-height: 1.12;
+  }
+
+  .vx-tpl__title {
+    font-size: clamp(1.65rem, 6.2vw, 2rem);
+    line-height: 1.2;
+  }
+
+  .vx-tpl__title .vx-grad {
+    white-space: nowrap;
+    font-size: 0.96em;
+  }
+}
+
+/* Hero typography */
+.vx .vx-hero__title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(2.2rem, 4.2vw, 4.25rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  max-width: 720px;
+}
+
+.vx .vx-hero__title > span {
+  display: block;
+}
+
+.vx .vx-hero__title .vx-grad {
+  display: inline;
+}
+
+/* Templates typography */
+.vx .vx-tpl__title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+}
+
+.vx .vx-tpl__title > span {
+  display: block;
+}
+
+.vx .vx-tpl__title .vx-grad {
+  white-space: nowrap;
+}
+
+/* Mobile responsive */
+@media (max-width: 680px) {
+  .vx .vx-hero__title {
+    font-size: clamp(1.9rem, 7.2vw, 2.5rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+
+  .vx .vx-tpl__title {
+    font-size: clamp(1.55rem, 6vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+  }
+
+  .vx .vx-tpl__title .vx-grad {
+    white-space: nowrap;
+  }
+}

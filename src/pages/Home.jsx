@@ -1,4 +1,4 @@
-import { useState, useEffect, useId } from 'react'
+import { useState, useId, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import * as Icons from 'lucide-react'
 import {
@@ -6,6 +6,7 @@ import {
   Target, Eye, Zap, Briefcase, Award, ShieldCheck, Layers, Headphones, Search, ClipboardList, Code2, Rocket,
 } from 'lucide-react'
 import Seo from '../components/Seo'
+import { ServiceCard } from '../components/ui'
 import { SERVICES, PROJECTS, REGIONS } from '../data/site'
 import './Home.css'
 
@@ -336,86 +337,54 @@ function HomeFaq() {
 }
 
 
-/* Mobile services carousel: desktop keeps the original multi-column grid. */
-function ServicesCarousel() {
-  const [serviceIndex, setServiceIndex] = useState(0)
-  const [isMobile, setIsMobile] = useState(false)
-  const [paused, setPaused] = useState(false)
+/* Services grid: 3 columns desktop, 2 tablet, 1 mobile. Uses the shared compact ServiceCard
+   (src/components/ServiceCard.jsx), the same card as the Services page. */
 
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 639px)')
-    const updateScreen = () => setIsMobile(media.matches)
+function ServicesGrid() {
+  const [activeIndex, setActiveIndex] = useState(0)
 
-    updateScreen()
-    media.addEventListener('change', updateScreen)
-    return () => media.removeEventListener('change', updateScreen)
-  }, [])
+  const previous = () => {
+    setActiveIndex((current) =>
+      current === 0 ? SERVICES.length - 1 : current - 1
+    )
+  }
+useEffect(() => {
+  const media = window.matchMedia('(max-width: 639px)')
+  if (!media.matches || SERVICES.length < 2) return
 
-  useEffect(() => {
-    if (!isMobile || paused || SERVICES.length < 2) return undefined
+  const timer = window.setInterval(() => {
+    setActiveIndex((current) => (current + 1) % SERVICES.length)
+  }, 3000)
 
-    const timer = window.setInterval(() => {
-      setServiceIndex((current) => (current + 1) % SERVICES.length)
-    }, 3500)
-
-    return () => window.clearInterval(timer)
-  }, [isMobile, paused])
-
-  const moveSlide = (direction) => {
-    setServiceIndex((current) =>
-      (current + direction + SERVICES.length) % SERVICES.length
+  return () => window.clearInterval(timer)
+}, [])
+  const next = () => {
+    setActiveIndex((current) =>
+      current >= SERVICES.length - 1 ? 0 : current + 1
     )
   }
 
   return (
-    <div
-      className="hm-service-carousel"
-      onTouchStart={() => setPaused(true)}
-      onTouchEnd={() => setPaused(false)}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      <div className="hm-service-viewport">
-        <ul
-          className="hm-grid-services hm-service-track"
-          style={{ '--service-index': serviceIndex }}
-        >
-          {SERVICES.map((s, index) => {
-            const Icon = Icons[s.icon] || Icons.Code2
-
-            return (
-              <li
-                key={s.slug || s.title || index}
-                className="hm-service-slide"
-              >
-                <Link
-                  to={`/service/${s.slug}`}
-                  data-reveal
-                  className="hm-card"
-                >
-                  <span className="hm-ico">
-                    <Icon size={26} strokeWidth={1.7} aria-hidden="true" />
-                  </span>
-                  <h3>{s.title}</h3>
-                  <p>{s.summary}</p>
-                  <span className="hm-more">
-                    Learn more <ArrowRight size={15} aria-hidden="true" />
-                  </span>
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
+    <div className="hm-service-carousel">
+      <ul
+        className="svc-grid hm-service-track"
+        style={{ '--service-index': activeIndex }}
+      >
+        {SERVICES.map((s, index) => (
+          <li key={s.slug || s.title || index}>
+            <ServiceCard s={s} full />
+          </li>
+        ))}
+      </ul>
 
       <div className="hm-service-controls" aria-label="Service carousel controls">
         <button
           type="button"
           className="hm-service-arrow"
-          onClick={() => moveSlide(-1)}
+          onClick={previous}
           aria-label="Previous service"
         >
-          ‹
+          &#8592;
         </button>
 
         <div className="hm-service-dots">
@@ -423,10 +392,10 @@ function ServicesCarousel() {
             <button
               key={service.slug || service.title || index}
               type="button"
-              className={`hm-service-dot${serviceIndex === index ? ' active' : ''}`}
-              onClick={() => setServiceIndex(index)}
+              className={`hm-service-dot${activeIndex === index ? ' active' : ''}`}
+              onClick={() => setActiveIndex(index)}
               aria-label={`Show ${service.title}`}
-              aria-current={serviceIndex === index ? 'true' : undefined}
+              aria-current={activeIndex === index ? 'true' : undefined}
             />
           ))}
         </div>
@@ -434,10 +403,10 @@ function ServicesCarousel() {
         <button
           type="button"
           className="hm-service-arrow"
-          onClick={() => moveSlide(1)}
+          onClick={next}
           aria-label="Next service"
         >
-          ›
+          &#8594;
         </button>
       </div>
     </div>
@@ -445,6 +414,47 @@ function ServicesCarousel() {
 }
 
 export default function Home() {
+   
+useEffect(() => {
+  const selector = '.hm [data-reveal]';
+  let frameId = null;
+
+  const revealOnScroll = () => {
+    if (frameId) return;
+
+    frameId = window.requestAnimationFrame(() => {
+      document.querySelectorAll(selector).forEach((element) => {
+        const rect = element.getBoundingClientRect();
+
+        if (
+          rect.top < window.innerHeight * 0.92 &&
+          rect.bottom > 0
+        ) {
+          element.classList.add('in');
+        }
+      });
+
+      frameId = null;
+    });
+  };
+
+  revealOnScroll();
+
+  window.addEventListener('scroll', revealOnScroll, {
+    passive: true,
+  });
+  window.addEventListener('resize', revealOnScroll);
+
+  return () => {
+    window.removeEventListener('scroll', revealOnScroll);
+    window.removeEventListener('resize', revealOnScroll);
+
+    if (frameId) {
+      window.cancelAnimationFrame(frameId);
+    }
+  };
+}, []);
+
   return (<div className="hm">
     <Seo title="Software Development Company" description="CodeZyntax Softwares L.L.P. builds modern websites, custom software, web applications and digital solutions for businesses in India and the Gulf." />
 
@@ -572,7 +582,7 @@ export default function Home() {
           </div>
           <Link to="/service" data-reveal className="hm-btn hm-btn-outline hm-btn-sm">View All Services <ArrowRight size={16} aria-hidden="true" /></Link>
         </div>
-        <ServicesCarousel />
+        <ServicesGrid />
       </div>
     </section>
 
