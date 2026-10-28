@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  ArrowRight, BarChart3, Building2, ChevronDown, Contact, ExternalLink, Layers, LifeBuoy,
-  Link2, Leaf, Mail, MapPin, MessageCircle, Palette, Pencil, Phone, QrCode, RefreshCw,
-  ShieldCheck, Smartphone, Star, UserRound, Users, Wifi, Wrench, Zap,
+  ArrowRight, BarChart3, BedDouble, Briefcase, Building2, Calendar, Camera, Check, ChevronDown, Code, Contact, Dumbbell, ExternalLink, Gem, GraduationCap, Home, Layers, LifeBuoy,
+  Link2, Leaf, Mail, MapPin, MessageCircle, Palette, Pencil, Phone, Plane, QrCode, RefreshCw, Scale,
+  ShieldCheck, Smartphone, Star, Stethoscope, UserRound, Users, Wifi, Wrench, Zap,
 } from 'lucide-react'
 import './VCardsAlt.css'
 
 /*
-  ALT DESIGN – same content as https://www.codezyntax.com/vcards/ (lightly proofread).
-  Layout: glass bento tiles + isometric 3D blocks (CSS only, no images).
-  Each section has its own background (vx-bg--*); the final CTA uses a light background.
-  Responsive: desktop (>1024), tablet (681-1024), mobile (<=680), small phones (<=400).
-  "900+ V-Cards Delivered" is on the live page; please confirm it is still accurate.
+  CodeZyntax V-Cards – premium responsive redesign (CSS-only isometric 3D, no images).
+  Fixes: mobile hero overflow (grid min-content + fixed-width 3D world).
+  Typography system + unique podium scene. 3D illustration beside "Connect Smarter with CodeZyntax V-Cards", "How it works" strip.
+  Breakpoints: desktop >1024 | tablet 681-1024 | mobile <=680 | small <=400
+  Please confirm "900+ V-Cards Delivered" is still accurate before publishing.
 */
 
 const LINKS = {
@@ -48,6 +48,11 @@ const OFFER = [
   [BarChart3, 'cyan', 'Analytics Ready', 'Get insights on how many times your card is viewed.'],
   [Leaf, 'violet', 'Eco-Friendly & Cost-Effective', 'One card for life, zero paper waste.'],
 ]
+const STEPS = [
+  [Smartphone, 'Tap or scan', 'Hold any smartphone near your card or stand, or scan the QR code.'],
+  [Contact, 'Profile opens', 'Your complete digital card appears instantly. No app to install.'],
+  [Users, 'Save & connect', 'Visitors save your contact, visit your website and follow your socials.'],
+]
 const WHY = [
   [Palette, 'Professional Design', 'Clean, customizable templates that fit your brand.', 'blue'],
   [Wrench, 'End-to-End Setup', 'We handle everything from linking to activation.', 'violet'],
@@ -64,7 +69,25 @@ const FAQ = [
   ['Why should I purchase an NFC Stand in India from CodeZyntax Softwares LLP?', 'CodeZyntax Softwares LLP provides a feature-rich, premium-quality NFC Stand in India backed by marketing technology and software development expertise. We are known as a digital marketing agency in Pattambi and Palakkad, for WordPress web design in Palakkad, website design, and reliable SEO services in Pattambi, and we continue as a trusted software development company in Palakkad.'],
 ]
 const MARQUEE = ['NFC Stand in India', 'QR Technology', 'Google Review Cards', 'Custom Branding', 'Editable Anytime', 'Eco-Friendly', 'Analytics Ready', 'Corporate Solutions']
-const PHONES = ['blue', 'violet', 'dark', 'cyan', 'amber']
+/* Template categories follow the industry model of 1card.co.in/vcard-templates */
+const TEMPLATES = [
+  [Stethoscope, 'Doctor', 'cyan', '/images/projects/vcard13.png'],
+  [Scale, 'MakeUp Artist ', 'dark', '/images/projects/vcard19.png'],
+  [BedDouble, 'Hotel', 'amber', '/images/projects/vcard40.webp'],
+  [Home, 'Real Estate', 'blue', '/images/projects/vcard35.png'],
+  [Camera, 'Photographer', 'violet', '/images/projects/vcard34.png'],
+  [Dumbbell, 'Gym Trainer', 'dark', '/images/projects/vcard12.png'],
+  [Code, 'Developer', 'blue', '/images/projects/vcard17.png'],
+  [Briefcase, 'Corporate CEO', 'cyan', '/images/projects/vcard18.png'],
+  [Gem, 'Jewellery', 'amber', '/images/projects/vcard1.png'],
+  [Plane, 'Travel Agency', 'violet', '/images/projects/vcard36.png'],
+  [GraduationCap, 'Teacher', 'blue', '/images/projects/vcard24.png'],
+  [Calendar, 'Event Planner', 'cyan', '/images/projects/vcard14.png'],
+  [Scale, 'Lawyer', 'dark', '/images/projects/lawyer.png'],
+]
+const TPL_ROW_A = TEMPLATES.slice(0, 6)
+const TPL_ROW_B = TEMPLATES.slice(6)
+const TPL_NOTES = ['Industry-ready layouts', 'Mobile-first design', 'Fully customizable']
 
 /* ---------- helpers ---------- */
 function useReveal() {
@@ -73,13 +96,13 @@ function useReveal() {
     if (!('IntersectionObserver' in window)) { els.forEach((el) => el.classList.add('is-in')); return }
     const io = new IntersectionObserver((entries) => entries.forEach((e) => {
       if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target) }
-    }), { threshold: 0.12 })
+    }), { threshold: 0.1 })
     els.forEach((el) => io.observe(el))
     return () => io.disconnect()
   }, [])
 }
 
-function Scene({ children, small = false, rx = -20, ry = -32 }) {
+function Scene({ children, small = false, xl = false, rx = -20, ry = -32 }) {
   const w = useRef(null)
   const move = (e) => {
     const el = w.current; if (!el) return
@@ -89,18 +112,16 @@ function Scene({ children, small = false, rx = -20, ry = -32 }) {
   }
   const leave = () => { w.current?.style.setProperty('--ry', `${ry}deg`); w.current?.style.setProperty('--rx', `${rx}deg`) }
   return (
-    <div className={`vx-3d ${small ? 'vx-3d--sm' : ''}`} onMouseMove={move} onMouseLeave={leave} aria-hidden="true">
+    <div className={`vx-3d ${small ? 'vx-3d--sm' : ''} ${xl ? 'vx-3d--xl' : ''}`} onMouseMove={move} onMouseLeave={leave} aria-hidden="true">
       <div className="vx-world" ref={w} style={{ '--rx': `${rx}deg`, '--ry': `${ry}deg` }}>{children}</div>
     </div>
   )
 }
 
-/* positioned 3D object */
 const O = ({ x = 0, y = 0, z = 0, className = '', style, children }) => (
   <div className={`vx-o ${className}`} style={{ '--x': `${x}px`, '--y': `${y}px`, '--z': `${z}px`, ...style }}>{children}</div>
 )
 
-/* cuboid: 5 real faces */
 const Cub = ({ w, h, d, color = 'blue', front, back, top, className = '', style }) => (
   <div className={`vx-cub vx-c--${color} ${className}`} style={{ '--w': `${w}px`, '--h': `${h}px`, '--d': `${d}px`, ...style }}>
     <i className="vx-f vx-f--front">{front}</i>
@@ -115,15 +136,11 @@ const Tap = () => (
   <div className="vx-tap"><i /><i /><i /><div className="vx-tap__core"><Wifi size={26} /></div></div>
 )
 
-const Stars = ({ size = 18 }) => (
-  <div className="vx-stars">{[0, 1, 2, 3, 4].map((i) => <Star key={i} size={size} fill="currentColor" strokeWidth={0} />)}</div>
-)
-
-function Ph({ v = 'blue' }) {
+function Ph({ v = 'blue', Icon = UserRound }) {
   return (
     <div className={`vx-ph vx-ph--${v}`}>
       <div className="vx-ph__s">
-        <div className="vx-av"><UserRound size={20} strokeWidth={1.8} /></div>
+        <div className="vx-av"><Icon size={20} strokeWidth={1.8} /></div>
         <i className="vx-ln vx-ln--n" /><i className="vx-ln vx-ln--s" /><i className="vx-bt" />
         <i className="vx-ln" /><i className="vx-ln vx-ln--s" />
         <div className="vx-ph__a">
@@ -148,12 +165,8 @@ const CardArt = ({ dark = false, title = 'Your Name', sub = 'Tap to share contac
 const HeroScene = () => (
   <Scene>
     <O y={150}><Cub w={330} h={28} d={330} color="navy" top={<Tap />} /></O>
-    <O x={-125} y={30} z={-80}>
-      <Cub w={108} h={212} d={12} color="ink" front={<Ph v="dark" />} back={null} />
-    </O>
-    <O y={10} z={50} className="vx-bob">
-      <Cub w={230} h={8} d={144} color="white" top={<CardArt dark />} />
-    </O>
+    <O x={-125} y={30} z={-80}><Cub w={108} h={212} d={12} color="ink" front={<Ph v="dark" />} /></O>
+    <O y={10} z={50} className="vx-bob"><Cub w={230} h={8} d={144} color="white" top={<CardArt dark />} /></O>
     <O x={150} y={-95} z={60} className="vx-bob" style={{ animationDelay: '-1.5s' }}>
       <Cub w={50} h={50} d={50} color="blue" front={<QrCode size={26} color="#fff" />} top={<QrCode size={22} color="#fff" />} />
     </O>
@@ -166,6 +179,145 @@ const HeroScene = () => (
   </Scene>
 )
 
+/* Connect Smarter – premium product visualisation:
+   layered illuminated podium, titanium phone with digital profile, NFC business card,
+   acrylic NFC/QR display stand, floating glass tiles. Scales to its container (never cropped). */
+const PROFILE_ROWS = [[Contact, 'Save Contact'], [Link2, 'Website'], [Camera, 'Instagram'], [MessageCircle, 'WhatsApp'], [MapPin, 'Directions']]
+const CONNECT_TAGS = ['NFC Enabled', 'Instant Sharing', 'Custom Branding', 'Smart & Professional']
+
+const ProfileUI = () => (
+  <div className="vx-pbez">
+    <i className="vx-pisl" />
+    <div className="vx-pf">
+      <small>Digital Profile</small>
+      <div className="vx-pf__av"><UserRound size={28} strokeWidth={1.7} /></div>
+      <b>Your Name</b>
+      <span>Your Designation</span>
+      <ul>
+        {PROFILE_ROWS.map(([I, t]) => <li key={t}><em><I size={11} /></em>{t}</li>)}
+      </ul>
+    </div>
+    <i className="vx-pgloss" />
+  </div>
+)
+
+const PhoneBack = () => (
+  <div className="vx-pback"><span /><span /><span /></div>
+)
+
+const NfcCardFront = () => (
+  <div className="vx-nc">
+    <div className="vx-nc__top"><i className="vx-chip" /><Wifi size={22} style={{ transform: 'rotate(90deg)' }} /></div>
+    <div><b>CodeZyntax</b><small>Tap to share your digital profile</small></div>
+    <i className="vx-nc__sheen" />
+  </div>
+)
+const NfcCardBack = () => (
+  <div className="vx-nc vx-nc--back"><QrCode size={52} strokeWidth={1.5} /><small>Scan to connect</small></div>
+)
+
+const StandUI = () => (
+  <div className="vx-sf">
+    <Wifi size={16} className="vx-sf__nfc" />
+    <b>CodeZyntax</b>
+    <small>Softwares L.L.P</small>
+    <div className="vx-qr vx-qr--lg"><QrCode size={62} strokeWidth={1.5} /></div>
+    <small>Tap or Scan</small>
+    <i className="vx-sf__gloss" />
+  </div>
+)
+
+const ConnectScene = () => {
+  const box = useRef(null)
+  const [fit, setFit] = useState(1)
+  useEffect(() => {
+    const el = box.current
+    if (!el) return undefined
+    const calc = () => setFit(Math.min(1, el.clientWidth / 560))
+    calc()
+    if (!('ResizeObserver' in window)) { window.addEventListener('resize', calc); return () => window.removeEventListener('resize', calc) }
+    const ro = new ResizeObserver(calc)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  return (
+    <div className="vx-conn" ref={box} style={{ '--sc': fit }}>
+      <Scene xl rx={-14} ry={-22}>
+        {/* glow + soft ground shadow */}
+        <O y={238}><div className="vx-glow" /></O>
+        <O y={234}><div className="vx-ground" /></O>
+
+        {/* layered podium (stacked discs = real cylinders) */}
+        {Array.from({ length: 7 }, (_, k) => (
+          <O key={`a${k}`} y={226 - k * 3}><div className={`vx-disc vx-disc--a ${k === 6 ? 'vx-disc--atop' : ''}`} style={{ '--k': k }} /></O>
+        ))}
+        <O y={206.6}><div className="vx-rim vx-rim--a" /></O>
+        {Array.from({ length: 5 }, (_, k) => (
+          <O key={`b${k}`} y={205 - k * 3}><div className="vx-disc vx-disc--b" style={{ '--k': k }} /></O>
+        ))}
+        <O y={192.6}><div className="vx-rim vx-rim--b" /></O>
+        {Array.from({ length: 3 }, (_, k) => (
+          <O key={`c${k}`} y={190 - k * 3}><div className="vx-disc vx-disc--c" style={{ '--k': k }} /></O>
+        ))}
+        <O y={183.2}><div className="vx-rim vx-rim--c" /></O>
+        <O y={183}><div style={{ transform: 'rotateX(90deg)' }}><Tap /></div></O>
+
+        {/* contact shadows on the podium */}
+        <O x={-105} y={183.4} z={24}><div className="vx-blob" style={{ width: 230, height: 90 }} /></O>
+        <O x={150} y={183.4} z={-50}><div className="vx-blob" style={{ width: 180, height: 64 }} /></O>
+        <O x={34} y={183.4} z={122}><div className="vx-blob vx-blob--soft" style={{ width: 230, height: 70 }} /></O>
+
+        {/* orbit ring */}
+        <O y={30} z={-30}><div className="vx-ringz vx-ringz--orbit" /></O>
+
+        {/* smartphone – titanium frame, glass back */}
+        <O x={-120} y={14} z={10}>
+          <div className="vx-t3d" style={{ transform: 'rotateY(14deg)' }}>
+            <Cub w={178} h={330} d={14} color="metal" style={{ '--r': '26px' }} front={<ProfileUI />} back={<PhoneBack />} />
+          </div>
+        </O>
+
+        {/* acrylic NFC + QR display stand */}
+        <O x={150} y={180}><Cub w={150} h={8} d={58} color="navy" style={{ '--r': '4px' }} /></O>
+        <O x={150} y={81} z={-50}>
+          <div className="vx-t3d" style={{ transform: 'rotateY(6deg)' }}>
+            <Cub w={132} h={190} d={10} color="glass" style={{ '--r': '10px' }} front={<StandUI />} />
+          </div>
+        </O>
+
+        {/* NFC business card */}
+        <O x={34} y={82} z={122} className="vx-bob">
+          <div className="vx-t3d" style={{ transform: 'rotateY(12deg) rotateZ(-4deg)' }}>
+            <Cub w={210} h={132} d={5} color="white" style={{ '--r': '13px' }} front={<NfcCardFront />} back={<NfcCardBack />} />
+          </div>
+        </O>
+
+        {/* floating glass tiles */}
+        <O x={-236} y={-208} z={50} className="vx-bob">
+          <Cub w={58} h={58} d={10} color="white" style={{ '--r': '15px' }} front={<Wifi size={26} color="#2f5bff" style={{ transform: 'rotate(90deg)' }} />} />
+        </O>
+        <O x={-40} y={-236} z={-20} className="vx-bob" style={{ animationDelay: '-1.6s' }}>
+          <Cub w={54} h={54} d={10} color="white" style={{ '--r': '14px' }} front={<QrCode size={26} color="#14235e" />} />
+        </O>
+        <O x={214} y={-196} z={40} className="vx-bob" style={{ animationDelay: '-3s' }}>
+          <Cub w={56} h={56} d={10} color="white" style={{ '--r': '14px' }} front={<Contact size={26} color="#7a4dff" />} />
+        </O>
+        <O x={252} y={-40} z={20} className="vx-bob" style={{ animationDelay: '-2.2s' }}>
+          <Cub w={50} h={50} d={10} color="white" style={{ '--r': '13px' }} front={<Link2 size={24} color="#0fb1d6" />} />
+        </O>
+
+        {/* glossy orbs (billboarded so they stay round) */}
+        <O x={-258} y={56} z={20} className="vx-bob" style={{ animationDelay: '-1s' }}><div className="vx-orb vx-orb--b" /></O>
+        <O x={96} y={-150} z={-10} className="vx-bob" style={{ animationDelay: '-2.8s' }}><div className="vx-orb vx-orb--v" /></O>
+      </Scene>
+      <ul className="vx-conn__tags">
+        {CONNECT_TAGS.map((t, i) => <li key={t} style={{ animationDelay: `${-i * 0.9}s` }}>{t}</li>)}
+      </ul>
+    </div>
+  )
+}
+
 const StandScene = () => (
   <Scene small rx={-14} ry={-24}>
     <O style={{ animation: 'vx-sway 9s ease-in-out infinite' }}>
@@ -173,8 +325,7 @@ const StandScene = () => (
       <O y={-6}>
         <Cub w={180} h={232} d={16} color="blue" front={
           <div className="vx-art vx-art--c">
-            <Tap />
-            <b>Tap or Scan</b><small>Connect • Follow • Review</small>
+            <Tap /><b>Tap or Scan</b><small>Connect • Follow • Review</small>
             <div className="vx-qr"><QrCode size={40} strokeWidth={1.6} /></div>
           </div>
         } back={<div className="vx-art vx-art--c"><b>CodeZyntax</b><small>NFC + QR Stand</small></div>} />
@@ -196,7 +347,7 @@ const FlipScene = () => (
         </div>
       </div>
     </O>
-    <O y={130} z={0}><div style={{ transform: 'rotateX(90deg)' }}><Tap /></div></O>
+    <O y={130}><div style={{ transform: 'rotateX(90deg)' }}><Tap /></div></O>
     <O x={140} y={-110} z={50} className="vx-bob">
       <Cub w={44} h={44} d={44} color="violet" front={<Link2 size={22} color="#fff" />} />
     </O>
@@ -255,14 +406,50 @@ const CtaScene = () => (
 /* ---------- blocks ---------- */
 const Mini = ({ items }) => (
   <ul className="vx-mini">
-    {items.map(([Icon, t, d]) => (
-      <li key={t}><b><Icon size={16} />{t}</b>{d}</li>
-    ))}
+    {items.map(([Icon, t, d]) => (<li key={t}><b><Icon size={16} />{t}</b>{d}</li>))}
   </ul>
 )
 const Ext = ({ href, children, className = 'vx-btn vx-btn--line' }) => (
   <a href={href} target="_blank" rel="noreferrer" className={className}>{children}</a>
 )
+function TplRow({ items, reverse = false }) {
+  // Duplicate the items so the existing CSS marquee can loop continuously.
+  const list = [...items, ...items]
+
+  return (
+    <div className={`vx-tpl__row ${reverse ? 'is-rev' : ''}`}>
+      <div className="vx-tpl__track">
+        {list.map(([Icon, name, v, image], i) => (
+          <figure
+            className="vx-tc"
+            key={`${name}-${i}`}
+            aria-hidden={i >= items.length ? 'true' : undefined}
+          >
+            <div className="vx-tc__ph vx-tc__image">
+              <img
+                src={image}
+                alt={`${name} V-Card template`}
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+              <div className="vx-tc__fallback" aria-hidden="true">
+                <Ph v={v} Icon={Icon} />
+              </div>
+            </div>
+            <figcaption>
+              <b>{name}</b>
+              <span>V-Card</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  )
+}
+const Eyebrow = ({ children }) => <span className="vx-eyebrow">{children}</span>
+
 function Faq({ q, a, open, onToggle, id }) {
   return (
     <div className="vx-q" data-open={open}>
@@ -282,7 +469,7 @@ export default function VCardsAlt() {
       <section className="vx-hero vx-bg--hero">
         <div className="vx-aurora" aria-hidden="true" />
         <div className="vx-wrap vx-hero__grid">
-          <div>
+          <div className="vx-hero__copy">
             <h1 className="vx-in">V-Cards: The Future of <span className="vx-grad">Business Networking</span></h1>
             <p className="vx-in vx-hero__sub">Premium QR &amp; NFC Stand in India</p>
             <p className="vx-in vx-lead">Share your contact info, website and social profiles with a single tap or scan. No apps, no paper – just smooth, eco-friendly connections that work anytime, anywhere.</p>
@@ -339,16 +526,21 @@ export default function VCardsAlt() {
         </div>
       </section>
 
-      {/* What we offer */}
+      {/* Connect Smarter – heading + 3D illustration */}
       <section className="vx-sec vx-bg--offer">
         <div className="vx-wrap">
-          <div className="vx-reveal" style={{ maxWidth: 780 }}>
-            <h2 className="vx-h2">Connect Smarter with CodeZyntax V-Cards</h2>
-            <p className="vx-lead">Share your contact info and business details instantly with a single tap. Our digital products like Smart V-Cards, trusted by businesses that also use our NFC Stand in India, use NFC and QR technology for easy, eco-friendly and professional brand networking, anytime, anywhere.</p>
-            <p style={{ marginTop: '1.4rem', font: '700 1.25rem var(--head)' }}>Sustainable. Smart. Seamless.</p>
-            <p className="vx-lead" style={{ marginTop: '0.5rem' }}>Transform how you connect with a single tap. CodeZyntax provides Smart vCards that combine NFC and QR technology to instantly share your contact details, social profile links and portfolio, anytime, anywhere and on any device. Built for professionals, creators and businesses who value innovation, effective branding and eco-friendly digital networking.</p>
-            <div className="vx-row"><Ext href="/">Explore More Services <ArrowRight size={16} /></Ext></div>
+          <div className="vx-split vx-offerhead">
+            <div className="vx-reveal">
+              <Eyebrow>Smart V-Cards</Eyebrow>
+              <h2 className="vx-h2">Connect Smarter with <span className="vx-grad">CodeZyntax V-Cards</span></h2>
+              <p className="vx-lead">Share your contact info and business details instantly with a single tap. Our digital products like Smart V-Cards, trusted by businesses that also use our NFC Stand in India, use NFC and QR technology for easy, eco-friendly and professional brand networking, anytime, anywhere.</p>
+              <p className="vx-tag"><span className="vx-grad">Sustainable. Smart. Seamless.</span></p>
+              <p className="vx-lead vx-lead--sm">Transform how you connect with a single tap. CodeZyntax provides Smart vCards that combine NFC and QR technology to instantly share your contact details, social profile links and portfolio, anytime, anywhere and on any device. Built for professionals, creators and businesses who value innovation, effective branding and eco-friendly digital networking.</p>
+              <div className="vx-row"><Ext href="/">Explore More Services <ArrowRight size={16} /></Ext></div>
+            </div>
+            <div className="vx-reveal vx-offerhead__art"><ConnectScene /></div>
           </div>
+
           <div className="vx-offer">
             {OFFER.map(([Icon, color, title, text]) => (
               <article className="vx-of vx-reveal" key={title}>
@@ -360,20 +552,41 @@ export default function VCardsAlt() {
               </article>
             ))}
           </div>
+
+          <div className="vx-steps vx-reveal">
+            <h3 className="vx-steps__h">How it works</h3>
+            <ol>
+              {STEPS.map(([Icon, t, d], i) => (
+<li key={t}>
+  <div className="vx-steps__icon">
+    <Icon size={22} strokeWidth={1.8} />
+  </div>
+  <b>{t}</b>
+  <p>{d}</p>
+</li>             ))}
+            </ol>
+          </div>
         </div>
       </section>
 
-      {/* Templates */}
+      {/* Templates – heading + moving carousel */}
       <section className="vx-sec vx-bg--templates">
-        <div className="vx-wrap">
-          <div className="vx-reveal" style={{ maxWidth: 780 }}>
-            <h2 className="vx-h2">Explore Our V-Card Templates</h2>
-            <p className="vx-lead">Choose from our variety of premium, modern and fully customizable designs tailored to match your professional image. Every NFC profile layout is crafted to complement our NFC Stand in India, and is optimized for clarity, speed and visual appeal, giving your clients a seamless digital experience every time they scan your card.</p>
+        <div className="vx-wrap vx-tpl">
+          <div className="vx-reveal vx-tpl__copy">
+            <Eyebrow>Templates</Eyebrow>
+<h2 className="vx-h2 vx-tpl__title">
+  Explore Our{" "}
+  <span className="vx-grad">V-Card Templates</span>
+</h2>            <p className="vx-lead">Choose from our variety of premium, modern and fully customizable designs tailored to match your professional image. Every NFC profile layout is crafted to complement our NFC Stand in India, and is optimized for clarity, speed and visual appeal, giving your clients a seamless digital experience every time they scan your card.</p>
+            <ul className="vx-tpl__chips">
+              {TPL_NOTES.map((n) => <li key={n}><Check size={15} strokeWidth={2.6} />{n}</li>)}
+            </ul>
+            <div className="vx-row"><Ext href={LINKS.templates} className="vx-btn vx-btn--main">Explore More <ArrowRight size={18} /></Ext></div>
           </div>
-          <div className="vx-rail" aria-hidden="true">
-            {PHONES.map((v) => <div className="vx-rail__i" key={v}><Ph v={v} /></div>)}
+          <div className="vx-tpl__stage vx-reveal" role="group" aria-label="Sample V-Card templates">
+            <TplRow items={TPL_ROW_A} />
+            <TplRow items={TPL_ROW_B} reverse />
           </div>
-          <div className="vx-row" style={{ marginTop: 0 }}><Ext href={LINKS.templates} className="vx-btn vx-btn--main">Explore More <ArrowRight size={18} /></Ext></div>
         </div>
       </section>
 
@@ -381,7 +594,8 @@ export default function VCardsAlt() {
       <section className="vx-sec vx-bg--why">
         <div className="vx-wrap vx-split vx-split--rev">
           <div className="vx-reveal">
-            <h2 className="vx-h2">Why Choose Us?</h2>
+            <Eyebrow>Why CodeZyntax</Eyebrow>
+            <h2 className="vx-h2">Why <span className="vx-grad">Choose Us?</span></h2>
             <p className="vx-lead">At CodeZyntax Softwares LLP, we are redefining how professionals and businesses network. Our smart NFC and QR vCards are trusted by customers who also choose our premium All in One NFC Stand in India and Google Review Scanner in Palakkad, built for those who value innovation, branding and effortless communication. With a simple tap or scan, you can share your complete profile details, including contact info, website and social profile links, instantly and securely.</p>
             <Mini items={WHY.map(([I, t, d]) => [I, t, d])} />
             <div className="vx-stat"><b className="vx-grad">900+</b><span>V-Cards Delivered</span></div>
@@ -394,7 +608,8 @@ export default function VCardsAlt() {
       <section className="vx-sec vx-bg--faq">
         <div className="vx-wrap vx-faqgrid">
           <div className="vx-reveal">
-            <h2 className="vx-h2">Frequently Asked Questions</h2>
+            <Eyebrow>FAQ</Eyebrow>
+            <h2 className="vx-h2">Frequently Asked <span className="vx-grad">Questions</span></h2>
             <div className="vx-row"><Ext href={LINKS.instagram}>Follow Us on Instagram <ExternalLink size={16} /></Ext></div>
           </div>
           <div className="vx-faq vx-reveal">
@@ -409,8 +624,8 @@ export default function VCardsAlt() {
       <section className="vx-sec vx-bg--cta">
         <div className="vx-wrap">
           <div className="vx-cta vx-reveal">
-            <div>
-              <h2>Smart Networking Starts Here</h2>
+            <div className="vx-cta__copy">
+              <h2>Smart Networking <span className="vx-grad">Starts Here</span></h2>
               <p>Create your personalized Smart vCard and share your details instantly with just a tap or scan. No apps, no paper, just smooth, eco-friendly connections that work anytime, anywhere, perfectly paired with our premium all in one NFC Stand in India for enhanced digital engagement.</p>
               <div className="vx-row">
                 <Ext href={LINKS.card} className="vx-btn vx-btn--main">Get Your vCard Now <ArrowRight size={18} /></Ext>
