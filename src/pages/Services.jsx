@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import {
   CheckCircle2,
+  Sparkles,
+  MessageCircleMore,
+  SearchCheck,
+  Settings2,
   ArrowUpRight,
   ArrowRight,
   Code2,
@@ -15,11 +19,11 @@ import {
 import './ServiceDetail.css'
 import '../components/ServiceCard'
 import Seo from '../components/Seo'
-import { PageHero, ServiceCard } from '../components/ui'
+import { ServiceCard } from '../components/ui'
 import ServicesHero from '../components/ServicesHero'
 import ServiceIllustration from '../components/ServiceIllustration'
 import { SERVICES } from '../data/site'
-import { SERVICE_CONTENT, getServiceKind } from '../data/serviceContent'
+import { SERVICE_CONTENT, ADVANTAGES_HEADING, getServiceKind } from '../data/serviceContent'
 import './Home.css'
 
 // ================= WHY CHOOSE US DATA =================
@@ -124,12 +128,18 @@ function WhyChooseUs() {
 
 // ================= CTA 3D ARTWORK =================
 
-function CtaArt({ side }) {
+function CtaArt({ side, scoped = false }) {
   const flip = side === 'right'
+  const cls = scoped
+    ? `service-detail-cta-art service-detail-cta-art-${side}`
+    : `hm-cta-art hm-cta-art-${side}`
+  const flA = scoped ? 'service-detail-fl' : 'hm-fl-a'
+  const flB = scoped ? 'service-detail-fl service-detail-fl-b' : 'hm-fl-b'
+  const flC = scoped ? 'service-detail-fl service-detail-fl-c' : 'hm-fl-c'
 
   return (
     <svg
-      className={`hm-cta-art hm-cta-art-${side}`}
+      className={cls}
       viewBox="0 0 360 420"
       aria-hidden="true"
       focusable="false"
@@ -190,7 +200,7 @@ function CtaArt({ side }) {
         />
 
         {/* Large 3D cube */}
-        <g className="hm-fl-a">
+        <g className={flA}>
           <path
             d="M140 150 220 195 140 240 60 195Z"
             fill={`url(#cta-top-${side})`}
@@ -206,7 +216,7 @@ function CtaArt({ side }) {
         </g>
 
         {/* Small cube */}
-        <g className="hm-fl-b">
+        <g className={flB}>
           <path
             d="M268 90 312 114 268 138 224 114Z"
             fill="#e6eeff"
@@ -222,7 +232,7 @@ function CtaArt({ side }) {
         </g>
 
         {/* Cyan 3D slab */}
-        <g className="hm-fl-c">
+        <g className={flC}>
           <path
             d="M60 78 112 104 60 130 8 104Z"
             fill="#d9fbff"
@@ -249,7 +259,7 @@ function CtaArt({ side }) {
         />
 
         <circle
-          className="hm-fl-b"
+          className={flB}
           cx="196"
           cy="86"
           r="14"
@@ -257,7 +267,7 @@ function CtaArt({ side }) {
         />
 
         <circle
-          className="hm-fl-c"
+          className={flC}
           cx="30"
           cy="250"
           r="9"
@@ -265,7 +275,7 @@ function CtaArt({ side }) {
         />
 
         <circle
-          className="hm-fl-a"
+          className={flA}
           cx="330"
           cy="352"
           r="7"
@@ -440,13 +450,91 @@ function Reveal({ as: Tag = 'div', className = '', delay = 0, children }) {
   )
 }
 
-function SectionHeading({ label, title, text }) {
+// Render normal section headings as before. In the hero only, animate
+// the service keyword wherever it appears (e.g. Mobile App, Websites).
+const HERO_SERVICE_KEYWORDS =
+  /(custom software|websites?|web applications?|mobile apps?|mobile applications?)/gi
+
+function renderHeroKeywords(text) {
+  if (!text) return text
+
+  return text.split(HERO_SERVICE_KEYWORDS).map((word, index) => {
+    if (/^(custom software|websites?|web applications?|mobile apps?|mobile applications?)$/i.test(word)) {
+      return (
+        <span className="service-detail-hero-grad" key={`${word}-${index}`}>
+          {word}
+        </span>
+      )
+    }
+    return word
+  })
+}
+
+function Hl({ parts, hero = false }) {
+  const [plain, highlight] = parts || ['', '']
+
+  if (hero) {
+    return (
+      <>
+        {renderHeroKeywords(plain)}
+        {plain && highlight && ' '}
+        {renderHeroKeywords(highlight)}
+      </>
+    )
+  }
+
+  // Section headings retain their existing highlighted second phrase.
+  return (
+    <>
+      {plain}{plain && ' '}
+      {highlight && <span className="service-detail-grad">{highlight}</span>}
+    </>
+  )
+}
+
+function SectionHeading({ label, parts, text }) {
   return (
     <Reveal className="service-detail-heading">
       <span>{label}</span>
-      <h2 className="service-detail-grad">{title}</h2>
+      <h2><Hl parts={parts || ['', '']} /></h2>
       {text && <p>{text}</p>}
     </Reveal>
+  )
+}
+
+// A subtle pointer-follow tilt for desktop; touch devices remain unaffected.
+function IllustrationStage({ kind }) {
+  const ref = useRef(null)
+
+  const onMove = (e) => {
+    const el = ref.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    const px = ((e.clientX - r.left) / r.width - 0.5) * 2
+    const py = ((e.clientY - r.top) / r.height - 0.5) * 2
+    el.style.setProperty('--px', px.toFixed(3))
+    el.style.setProperty('--py', py.toFixed(3))
+  }
+
+  const onLeave = () => {
+    const el = ref.current
+    if (!el) return
+    el.style.setProperty('--px', '0')
+    el.style.setProperty('--py', '0')
+  }
+
+  return (
+    <div
+      className="service-detail-visual sd-in"
+      style={{ '--i': 2 }}
+      ref={ref}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+    >
+      <div className="service-detail-stage">
+        <ServiceIllustration kind={kind} />
+      </div>
+    </div>
   )
 }
 
@@ -478,23 +566,26 @@ export function ServiceDetail({ slug: fixed }) {
         <section className="service-detail-hero">
           <div className="service-detail-container">
             <div className="service-detail-copy">
-              <span className="service-detail-eyebrow">
-                <span />
-                {c.kicker}
-              </span>
+              <h1 className="service-detail-title sd-in" style={{ '--i': 0 }}>
+                <Hl parts={c.h.hero} hero />
+              </h1>
 
-              <h1 className="service-detail-title">{service.title}</h1>
+              <p className="service-detail-description sd-in" style={{ '--i': 1 }}>
+                {c.lead}
+              </p>
 
-              <p className="service-detail-description">{c.lead}</p>
-
-              <div className="service-detail-actions">
+              <div className="service-detail-actions sd-in" style={{ '--i': 2 }}>
                 <Link to={enquiryUrl} className="service-detail-primary">
                   Enquire About This Service
                   <ArrowUpRight size={18} aria-hidden="true" />
                 </Link>
+                <Link to="/service" className="service-detail-secondary">
+                  All Services
+                  <ArrowRight size={18} aria-hidden="true" />
+                </Link>
               </div>
 
-              <ul className="service-detail-points">
+              <ul className="service-detail-points sd-in" style={{ '--i': 3 }}>
                 {c.points.map((point) => (
                   <li key={point}>
                     <CheckCircle2 size={17} aria-hidden="true" />
@@ -504,9 +595,7 @@ export function ServiceDetail({ slug: fixed }) {
               </ul>
             </div>
 
-            <div className="service-detail-visual">
-              <ServiceIllustration kind={kind} />
-            </div>
+            <IllustrationStage kind={kind} />
           </div>
         </section>
 
@@ -515,7 +604,7 @@ export function ServiceDetail({ slug: fixed }) {
           <div className="service-detail-container">
             <SectionHeading
               label="WHAT'S INCLUDED"
-              title={`Key features of ${service.title}`}
+              parts={c.h.features}
               text="Everything you need to go from idea to a reliable, professional result."
             />
 
@@ -543,60 +632,67 @@ export function ServiceDetail({ slug: fixed }) {
           <div className="service-detail-container">
             <SectionHeading
               label="BUSINESS VALUE"
-              title={`Benefits of ${service.title}`}
+              parts={c.h.benefits}
               text={c.value}
             />
 
             <div className="service-detail-benefit-grid">
-              {c.benefits.map(([title, text], i) => (
-                <Reveal
-                  as="article"
-                  key={title}
-                  delay={(i % 2) * 80}
-                  className="service-detail-benefit-card"
-                >
-                  <span className="service-detail-check">
-                    <CheckCircle2 size={22} aria-hidden="true" />
-                  </span>
-                  <div>
-                    <h3>{title}</h3>
-                    <p>{text}</p>
-                  </div>
-                </Reveal>
-              ))}
+              {c.benefits.map(([title, text], i) => {
+                // Use varied, professional icons instead of repeating the tick icon.
+                const benefitIcons = [
+                  Sparkles,
+                  MessageCircleMore,
+                  SearchCheck,
+                  Settings2,
+                ]
+                const BenefitIcon = benefitIcons[i % benefitIcons.length]
+
+                return (
+                  <Reveal
+                    as="article"
+                    key={title}
+                    delay={(i % 2) * 80}
+                    className="service-detail-benefit-card"
+                  >
+                    <span className="service-detail-check">
+                      <BenefitIcon size={22} strokeWidth={1.8} aria-hidden="true" />
+                    </span>
+                    <div>
+                      <h3>{title}</h3>
+                      <p>{text}</p>
+                    </div>
+                  </Reveal>
+                )
+              })}
             </div>
           </div>
         </section>
 
-        {/* ---------------- TECHNOLOGIES + USE CASES ---------------- */}
-        <section className="service-detail-section service-detail-stack">
+        {/* ---------------- BUILT TO WORK WITH YOUR BUSINESS ---------------- */}
+        <section className="service-detail-section service-detail-adv">
           <div className="service-detail-container">
-            <Reveal className="service-detail-board">
-              <div className="service-detail-board-col">
-                <h2>Technologies &amp; tools</h2>
-                <p>The tools we rely on to deliver this service.</p>
-                <ul className="service-detail-chips">
-                  {c.tech.map((t) => (
-                    <li key={t}>{t}</li>
-                  ))}
-                </ul>
-              </div>
+            <SectionHeading
+              label={ADVANTAGES_HEADING.label}
+              parts={[ADVANTAGES_HEADING.title, '']}
+              text={c.advText}
+            />
 
-              <div className="service-detail-board-col">
-                <h2>Who it&rsquo;s for</h2>
-                <p>Common situations where this service fits best.</p>
-                <ul className="service-detail-ideal">
-                  {c.idealFor.map((item) => (
-                    <li key={item}>
-                      <span className="service-detail-dot">
-                        <CheckCircle2 size={15} aria-hidden="true" />
-                      </span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
+            <div className="service-detail-adv-grid" data-count={c.advantages.length}>
+              {c.advantages.map(([Icon, title, text], i) => (
+                <Reveal
+                  as="article"
+                  key={title}
+                  delay={i * 70}
+                  className="service-detail-adv-card"
+                >
+                  <span className="service-detail-adv-icon">
+                    <Icon size={22} strokeWidth={1.8} aria-hidden="true" />
+                  </span>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -605,7 +701,7 @@ export function ServiceDetail({ slug: fixed }) {
           <div className="service-detail-container">
             <SectionHeading
               label="OUR PROCESS"
-              title="How we work with you"
+              parts={c.h.process}
               text="A clear, collaborative process with no surprises."
             />
 
@@ -623,10 +719,12 @@ export function ServiceDetail({ slug: fixed }) {
 
         {/* ---------------- LET'S WORK TOGETHER ---------------- */}
         <section className="service-detail-enquiry" id="enquiry">
+          <CtaArt side="left" scoped />
+          <CtaArt side="right" scoped />
           <div className="service-detail-container">
             <Reveal className="service-detail-enquiry-inner">
               <span className="service-detail-enquiry-label">LET&rsquo;S WORK TOGETHER</span>
-              <h2 className="service-detail-grad">{c.ctaTitle}</h2>
+              <h2><Hl parts={c.cta} /></h2>
               <p>{c.ctaText}</p>
 
               <Link to={enquiryUrl} className="service-detail-primary service-detail-primary-lg">

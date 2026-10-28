@@ -13,7 +13,16 @@ export const SITE = {
   mapUrl: import.meta.env.VITE_MAP_URL || '',         // link that opens the location in Google Maps etc.
   mapEmbed: import.meta.env.VITE_MAP_EMBED_URL || '', // the "Embed a map" src URL (https://www.google.com/maps/embed?...)
 }
-export const NAV = [['Home','/'],['About','/about'],['Services','/service'],['Digital Marketing','/digital-marketing'],['vCards','/vcards'],['Contact','/#contact'],['Blog','/blog']]
+
+export const NAV = [
+  ['Home', '/'],
+  ['About', '/about'],
+  ['Services', '/service'],
+  ['Digital Marketing', '/digital-marketing'],
+  ['vCards', '/vcards'],
+  ['Contact', '/contact'],
+  ['Blog', '/blog'],
+]
 // `summary` = full description (Home page cards and service detail pages), taken from codezyntax.com/service.
 // `short`   = concise text, used only where a card is rendered without the `full` prop (Services page).
 

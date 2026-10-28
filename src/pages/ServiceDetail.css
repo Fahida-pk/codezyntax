@@ -2,6 +2,8 @@
 
 /* =========================================================
    Service Detail: blue / violet / cyan design system
+   Everything is scoped to .service-detail-page. Theme colours are
+   tokens, redefined once under `.dark` (set by the cz-theme toggle).
    ========================================================= */
 .service-detail-page {
   --sd-blue: #2f6bff;
@@ -9,32 +11,115 @@
   --sd-cyan: #1fb6ff;
   --sd-grad: linear-gradient(110deg, #2f6bff 0%, #6d4bff 100%);
   --sd-grad-wide: linear-gradient(110deg, #1fb6ff 0%, #2f6bff 45%, #6d4bff 100%);
+  /* first and last stop match so the loop is seamless */
+  --sd-gt: linear-gradient(90deg, #2f6bff 0%, #6d4bff 25%, #1fb6ff 50%, #2f6bff 75%, #6d4bff 100%);
+
+  --sd-heading: #0a1128;
   --sd-text: #101a33;
   --sd-muted: #55658a;
-  --sd-border: #e0e7fb;
+  --sd-accent: #5a3cf2;
   --sd-surface: #ffffff;
-  --sd-soft: #f4f7ff;
-  --sd-chip: #eef2ff;
-  --sd-title-grad: linear-gradient(100deg, #1b3bbd 0%, #5a3cf2 52%, #1796d6 100%);
+  --sd-card: #ffffff;
+  --sd-border: #dfe6fa;
+  --sd-border-hi: #b3bdfb;
+  --sd-chip-bg: #eef2ff;
+  --sd-chip-text: #2b3a8f;
+  --sd-chip-border: #d6defb;
+  --sd-icon-bg: #eef2ff;
+  --sd-shadow: 0 18px 40px -34px #3f3fb8aa;
+  --sd-shadow-hi: 0 24px 46px -30px #5a3cf2;
+  --sd-focus: #a9b8ff;
+
+  --sd-hero-bg:
+    radial-gradient(ellipse at 8% 8%, #dbe6ff 0%, transparent 40%),
+    radial-gradient(ellipse at 96% 22%, #e7defe 0%, transparent 38%),
+    radial-gradient(ellipse at 60% 105%, #d8f3ff 0%, transparent 40%),
+    linear-gradient(125deg, #f8faff, #f1f5ff);
+  --sd-benefits-bg: linear-gradient(180deg, #f6f8ff, #eef1ff);
+  --sd-board-bg:
+    radial-gradient(ellipse at 0% 0%, #e8eeff 0%, transparent 45%),
+    radial-gradient(ellipse at 100% 100%, #ece5ff 0%, transparent 45%),
+    #ffffff;
+  --sd-enq-bg:
+    radial-gradient(ellipse at 18% 100%, #d9f2ff 0%, transparent 46%),
+    radial-gradient(ellipse at 84% 0%, #e6dcff 0%, transparent 46%),
+    linear-gradient(180deg, #ffffff 0%, #f1f5ff 100%);
+  --sd-halo:
+    radial-gradient(circle at 35% 40%, #c9dbff 0%, transparent 60%),
+    radial-gradient(circle at 70% 65%, #dccffd 0%, transparent 58%);
+  --sd-line: linear-gradient(90deg, #a9e4ff, #8aa4ff, #c1aefc);
+
+  /* illustration surfaces */
+  --sd-art-s: #ffffff;
+  --sd-art-s2: #eaf0ff;
+  --sd-art-bar: #cdd8fb;
+  --sd-art-ln: #d3dcfb;
+  --sd-art-plat: #e4ecff;
+  --sd-art-floor: #c3d3ff;
+
   --sd-head: "Plus Jakarta Sans", Inter, system-ui, sans-serif;
+
   color: var(--sd-text);
   background: var(--sd-surface);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   overflow: clip;
 }
 
+.dark .service-detail-page {
+  --sd-heading: #f3f6ff;
+  --sd-text: #e6ebff;
+  --sd-muted: #a9b6d9;
+  --sd-accent: #b7a6ff;
+  --sd-surface: #0a1226;
+  --sd-card: #0f1936;
+  --sd-border: #28365f;
+  --sd-border-hi: #4a55b8;
+  --sd-chip-bg: #152247;
+  --sd-chip-text: #d4dcff;
+  --sd-chip-border: #2f3f73;
+  --sd-icon-bg: #1d2a58;
+  --sd-shadow: 0 18px 40px -34px #000;
+  --sd-shadow-hi: 0 24px 46px -28px #4a46e8;
+  --sd-focus: #6f80e8;
+  --sd-gt: linear-gradient(90deg, #6f9cff 0%, #a48bff 25%, #4fd0ff 50%, #6f9cff 75%, #a48bff 100%);
+
+  --sd-hero-bg:
+    radial-gradient(ellipse at 8% 8%, #1a2f6a80, transparent 42%),
+    radial-gradient(ellipse at 96% 22%, #3a2a8070, transparent 40%),
+    radial-gradient(ellipse at 60% 105%, #0e4a7a55, transparent 42%),
+    linear-gradient(125deg, #080f22, #0d1630);
+  --sd-benefits-bg: linear-gradient(180deg, #0b1430, #0d1736);
+  --sd-board-bg:
+    radial-gradient(ellipse at 0% 0%, #1a2f6a66 0%, transparent 45%),
+    radial-gradient(ellipse at 100% 100%, #3a2a8066 0%, transparent 45%),
+    #0e1832;
+  --sd-enq-bg:
+    radial-gradient(ellipse at 18% 100%, #0e4a7a55 0%, transparent 46%),
+    radial-gradient(ellipse at 84% 0%, #3a2a8066 0%, transparent 46%),
+    linear-gradient(180deg, #0a1226 0%, #0d1634 100%);
+  --sd-halo:
+    radial-gradient(circle at 35% 40%, #1f3a8a99 0%, transparent 60%),
+    radial-gradient(circle at 70% 65%, #4a2fa088 0%, transparent 58%);
+  --sd-line: linear-gradient(90deg, #1f5a86, #34459a, #4b3a96);
+
+  --sd-art-s: #1a2650;
+  --sd-art-s2: #243368;
+  --sd-art-bar: #3b4c8f;
+  --sd-art-ln: #3a4a8a;
+  --sd-art-plat: #1c2858;
+  --sd-art-floor: #0b1230;
+
+  background: var(--sd-surface);
+}
+
+/* ---------- Typography: Plus Jakarta Sans headings, Inter body ---------- */
 .service-detail-page h1,
 .service-detail-page h2,
 .service-detail-page h3 {
+  margin: 0;
+  color: var(--sd-heading);
   font-family: var(--sd-head);
   text-wrap: balance;
-}
-
-.service-detail-page p,
-.service-detail-page li,
-.service-detail-page a,
-.service-detail-page span {
-  font-family: Inter, system-ui, sans-serif;
 }
 
 .service-detail-container {
@@ -42,28 +127,34 @@
   margin-inline: auto;
 }
 
-/* Gradient headline text */
-.service-detail-title,
-.service-detail-grad {
-  padding-bottom: .1em;
-  background: var(--sd-title-grad);
-  background-size: 200% auto;
+/* Highlighted keywords: smooth, seamless gradient flow (background-position only) */
+.service-detail-page .service-detail-grad {
+  font: inherit;
+  letter-spacing: inherit;
+  padding-bottom: .08em;
+  background-image: var(--sd-gt);
+  background-size: 200% 100%;
+  background-repeat: repeat;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: sd-sheen 9s ease-in-out infinite alternate;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  animation: sd-flow 8s linear infinite;
+}
+
+/* ============ Entrance (page load / refresh) ============ */
+.sd-in {
+  animation: sd-fade-up .7s cubic-bezier(.2, .7, .2, 1) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
 }
 
 /* ============ Hero ============ */
 .service-detail-hero {
   position: relative;
   padding: 84px 0 92px;
-  background:
-    radial-gradient(ellipse at 8% 8%, #dbe6ff 0%, transparent 40%),
-    radial-gradient(ellipse at 96% 22%, #e7defe 0%, transparent 38%),
-    radial-gradient(ellipse at 60% 105%, #d8f3ff 0%, transparent 40%),
-    linear-gradient(125deg, #f8faff, #f1f5ff);
+  background: var(--sd-hero-bg);
 }
 
 .service-detail-hero .service-detail-container {
@@ -75,7 +166,6 @@
 
 .service-detail-copy {
   min-width: 0;
-  animation: sd-fade-up .7s ease both;
 }
 
 .service-detail-eyebrow {
@@ -83,13 +173,14 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-  color: var(--sd-violet);
+  color: var(--sd-accent);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: .04em;
 }
 
 .service-detail-eyebrow span {
+  flex: none;
   width: 26px;
   height: 3px;
   border-radius: 5px;
@@ -97,12 +188,11 @@
 }
 
 .service-detail-copy h1 {
-  max-width: 680px;
-  margin: 0;
-  font-size: clamp(36px, 4.4vw, 62px);
+  max-width: 660px;
+  font-size: clamp(34px, 4.4vw, 58px);
   font-weight: 800;
-  letter-spacing: -.045em;
-  line-height: 1.1;
+  letter-spacing: -.04em;
+  line-height: 1.12;
   overflow-wrap: break-word;
 }
 
@@ -121,7 +211,8 @@
   margin-top: 30px;
 }
 
-.service-detail-primary {
+.service-detail-primary,
+.service-detail-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -129,13 +220,17 @@
   min-height: 52px;
   padding: 0 26px;
   border-radius: 999px;
-  color: #fff;
-  background: var(--sd-grad);
-  box-shadow: 0 14px 30px -14px #5a3cf2;
   font-size: 14.5px;
   font-weight: 700;
   text-decoration: none;
-  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease,
+    background-color .25s ease, border-color .25s ease;
+}
+
+.service-detail-primary {
+  color: #fff;
+  background: var(--sd-grad);
+  box-shadow: 0 14px 30px -14px #5a3cf2;
 }
 
 .service-detail-primary:hover {
@@ -144,17 +239,36 @@
   filter: brightness(1.06);
 }
 
-.service-detail-primary:focus-visible {
-  outline: 3px solid #a9b8ff;
+.service-detail-secondary {
+  color: var(--sd-heading);
+  border: 1.5px solid var(--sd-border);
+  background: var(--sd-card);
+}
+
+.service-detail-secondary:hover {
+  transform: translateY(-3px);
+  border-color: var(--sd-border-hi);
+  box-shadow: var(--sd-shadow-hi);
+}
+
+.service-detail-primary:focus-visible,
+.service-detail-secondary:focus-visible {
+  outline: 3px solid var(--sd-focus);
   outline-offset: 3px;
 }
 
-.service-detail-primary svg {
+.service-detail-primary svg,
+.service-detail-secondary svg {
+  flex: none;
   transition: transform .25s ease;
 }
 
 .service-detail-primary:hover svg {
   transform: translate(2px, -2px);
+}
+
+.service-detail-secondary:hover svg {
+  transform: translateX(3px);
 }
 
 .service-detail-points {
@@ -177,7 +291,7 @@
 
 .service-detail-points svg {
   flex: none;
-  color: var(--sd-violet);
+  color: var(--sd-accent);
 }
 
 /* ============ Illustration ============ */
@@ -187,7 +301,6 @@
   place-items: center;
   min-width: 0;
   perspective: 1200px;
-  animation: sd-fade-up .8s .1s ease both;
 }
 
 .service-detail-visual::before {
@@ -195,17 +308,31 @@
   position: absolute;
   inset: 6% 4%;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 40%, #c9dbff 0%, transparent 60%),
-    radial-gradient(circle at 70% 65%, #dccffd 0%, transparent 58%);
+  background: var(--sd-halo);
   opacity: .85;
+  transition: opacity .4s ease, transform .6s ease;
+}
+
+.service-detail-visual:hover::before {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+/* pointer-follow tilt (values set from ServiceDetail.jsx) */
+.service-detail-stage {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  transform: rotateY(calc(var(--px, 0) * 7deg)) rotateX(calc(var(--py, 0) * -5deg));
+  transition: transform .35s ease-out;
+  will-change: transform;
 }
 
 .service-detail-art {
   position: relative;
   display: block;
   width: 100%;
-  max-width: 600px;
+  max-width: 100%;
   height: auto;
   aspect-ratio: 520 / 440;
   overflow: visible;
@@ -226,30 +353,38 @@
   animation-delay: -4s;
 }
 
+/* theme-aware illustration surfaces (see ServiceIllustration.jsx) */
+.service-detail-art .sd-s { fill: var(--sd-art-s); }
+.service-detail-art .sd-s2 { fill: var(--sd-art-s2); }
+.service-detail-art .sd-bar { fill: var(--sd-art-bar); }
+.service-detail-art .sd-plat { fill: var(--sd-art-plat); }
+.service-detail-art .sd-floor { fill: var(--sd-art-floor); opacity: .7; }
+.service-detail-art .sd-st { stroke: var(--sd-art-ln); stroke-width: 1.2; }
+
 /* ============ Shared section frame ============ */
 .service-detail-section {
   padding: 84px 0;
 }
 
 .service-detail-heading {
-  max-width: 680px;
+  max-width: 700px;
   margin: 0 auto 44px;
   text-align: center;
 }
 
 .service-detail-heading > span,
 .service-detail-enquiry-label {
-  color: var(--sd-violet);
+  color: var(--sd-accent);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: .12em;
 }
 
 .service-detail-heading h2 {
-  margin: 12px 0 0;
-  font-size: clamp(27px, 3.2vw, 40px);
+  margin-top: 12px;
+  font-size: clamp(26px, 3.2vw, 40px);
   font-weight: 800;
-  letter-spacing: -.04em;
+  letter-spacing: -.035em;
   line-height: 1.2;
 }
 
@@ -261,16 +396,17 @@
   line-height: 1.75;
 }
 
-/* Scroll reveal (plays once) */
+/*
+ * Scroll reveal (plays once). Uses an animation with `backwards` fill instead of
+ * a transition, so hover transforms on the same element are not delayed.
+ */
 .service-detail-reveal {
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity .6s ease var(--d, 0ms), transform .6s ease var(--d, 0ms);
 }
 
 .service-detail-reveal.is-in {
   opacity: 1;
-  transform: none;
+  animation: sd-fade-up .6s cubic-bezier(.2, .7, .2, 1) var(--d, 0ms) backwards;
 }
 
 /* ============ Features ============ */
@@ -285,15 +421,15 @@
   padding: 28px;
   border: 1px solid var(--sd-border);
   border-radius: 20px;
-  background: var(--sd-surface);
-  box-shadow: 0 18px 40px -34px #3f3fb8aa;
+  background: var(--sd-card);
+  box-shadow: var(--sd-shadow);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
 
-.service-detail-feature.is-in:hover {
+.service-detail-feature:hover {
   transform: translateY(-4px);
-  border-color: #b3bdfb;
-  box-shadow: 0 22px 44px -30px #5a3cf2;
-  transition-delay: 0ms;
+  border-color: var(--sd-border-hi);
+  box-shadow: var(--sd-shadow-hi);
 }
 
 .service-detail-icon {
@@ -305,10 +441,15 @@
   color: #fff;
   background: linear-gradient(140deg, #1fb6ff 0%, #2f6bff 50%, #6d4bff 100%);
   box-shadow: 0 12px 22px -10px #4a46e8;
+  transition: transform .3s ease;
+}
+
+.service-detail-feature:hover .service-detail-icon {
+  transform: scale(1.08) rotate(-4deg);
 }
 
 .service-detail-feature h3 {
-  margin: 20px 0 0;
+  margin-top: 20px;
   font-size: 18px;
   font-weight: 700;
   line-height: 1.4;
@@ -323,7 +464,7 @@
 
 /* ============ Benefits ============ */
 .service-detail-benefits {
-  background: linear-gradient(180deg, #f6f8ff, #eef1ff);
+  background: var(--sd-benefits-bg);
 }
 
 .service-detail-benefit-grid {
@@ -340,7 +481,14 @@
   padding: 24px 26px;
   border: 1px solid var(--sd-border);
   border-radius: 18px;
-  background: var(--sd-surface);
+  background: var(--sd-card);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.service-detail-benefit-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--sd-border-hi);
+  box-shadow: var(--sd-shadow-hi);
 }
 
 .service-detail-check {
@@ -350,12 +498,11 @@
   width: 44px;
   height: 44px;
   border-radius: 13px;
-  color: var(--sd-violet);
-  background: var(--sd-chip);
+  color: var(--sd-accent);
+  background: var(--sd-icon-bg);
 }
 
 .service-detail-benefit-card h3 {
-  margin: 0;
   font-size: 17.5px;
   font-weight: 700;
   line-height: 1.4;
@@ -368,17 +515,14 @@
   line-height: 1.75;
 }
 
-/* ============ Technologies + Who it's for ============ */
+/* ============ Technology Stack & Integrations + Who it's for ============ */
 .service-detail-board {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   align-items: start;
   border: 1px solid var(--sd-border);
   border-radius: 26px;
-  background:
-    radial-gradient(ellipse at 0% 0%, #e8eeff 0%, transparent 45%),
-    radial-gradient(ellipse at 100% 100%, #ece5ff 0%, transparent 45%),
-    var(--sd-surface);
+  background: var(--sd-board-bg);
   box-shadow: 0 30px 60px -46px #3f3fb8;
 }
 
@@ -391,11 +535,11 @@
   border-left: 1px solid var(--sd-border);
 }
 
-.service-detail-board-col h2 {
-  margin: 0;
-  font-size: 22px;
+.service-detail-col-title {
+  font-size: clamp(21px, 2vw, 25px);
   font-weight: 800;
   letter-spacing: -.03em;
+  line-height: 1.25;
 }
 
 .service-detail-board-col > p {
@@ -403,6 +547,20 @@
   color: var(--sd-muted);
   font-size: 14.5px;
   line-height: 1.65;
+}
+
+.service-detail-minor {
+  margin: 22px 0 12px;
+  color: var(--sd-muted);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.service-detail-board-col > p + .service-detail-minor {
+  margin-top: 0;
 }
 
 .service-detail-chips,
@@ -420,13 +578,18 @@
 
 .service-detail-chips li {
   padding: 9px 16px;
-  border: 1px solid #d6defb;
+  border: 1px solid var(--sd-chip-border);
   border-radius: 999px;
-  color: #2b3a8f;
-  background: #ffffffd9;
+  color: var(--sd-chip-text);
+  background: var(--sd-chip-bg);
   font-size: 13.5px;
   font-weight: 600;
   transition: color .25s ease, background .25s ease, border-color .25s ease, transform .25s ease;
+}
+
+.service-detail-chips-alt li {
+  background: transparent;
+  border-style: dashed;
 }
 
 .service-detail-chips li:hover {
@@ -461,6 +624,63 @@
   background: var(--sd-grad);
 }
 
+
+
+/* ============ Service advantages ============ */
+.service-detail-adv {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 8% 12%, color-mix(in srgb, var(--sd-blue) 7%, transparent), transparent 38%),
+    var(--sd-surface);
+}
+
+.service-detail-adv-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.service-detail-adv-card {
+  min-width: 0;
+  padding: 24px 20px;
+  border: 1px solid var(--sd-border);
+  border-radius: 20px;
+  background: var(--sd-card);
+  box-shadow: var(--sd-shadow);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.service-detail-adv-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--sd-border-hi);
+  box-shadow: var(--sd-shadow-hi);
+}
+
+.service-detail-adv-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 18px;
+  border-radius: 15px;
+  color: #fff;
+  background: var(--sd-grad-wide);
+  box-shadow: 0 12px 22px -10px #4a46e8;
+}
+
+.service-detail-adv-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.service-detail-adv-card p {
+  margin: 9px 0 0;
+  color: var(--sd-muted);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
 /* ============ Process ============ */
 .service-detail-process {
   padding-top: 20px;
@@ -483,7 +703,7 @@
   left: 6%;
   right: 6%;
   height: 2px;
-  background: linear-gradient(90deg, #a9e4ff, #8aa4ff, #c1aefc);
+  background: var(--sd-line);
 }
 
 .service-detail-step {
@@ -507,7 +727,7 @@
 }
 
 .service-detail-step h3 {
-  margin: 20px 0 0;
+  margin-top: 20px;
   font-size: 18px;
   font-weight: 700;
 }
@@ -522,13 +742,34 @@
 /* ============ Let's Work Together ============ */
 .service-detail-enquiry {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding: 92px 0 100px;
   text-align: center;
-  background:
-    radial-gradient(ellipse at 18% 100%, #d9f2ff 0%, transparent 46%),
-    radial-gradient(ellipse at 84% 0%, #e6dcff 0%, transparent 46%),
-    linear-gradient(180deg, #ffffff 0%, #f1f5ff 100%);
+  background: var(--sd-enq-bg);
   border-top: 1px solid var(--sd-border);
+}
+
+.service-detail-enquiry .service-detail-container {
+  position: relative;
+  z-index: 1;
+}
+
+.service-detail-cta-art {
+  position: absolute;
+  top: 50%;
+  z-index: 0;
+  width: clamp(150px, 19vw, 290px);
+  height: auto;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.service-detail-cta-art-left { left: -2%; }
+.service-detail-cta-art-right { right: -2%; }
+
+.dark .service-detail-cta-art {
+  filter: brightness(.92) saturate(1.05);
 }
 
 .service-detail-enquiry-inner {
@@ -537,10 +778,10 @@
 }
 
 .service-detail-enquiry-inner h2 {
-  margin: 14px 0 0;
+  margin-top: 14px;
   font-size: clamp(30px, 3.8vw, 46px);
   font-weight: 800;
-  letter-spacing: -.045em;
+  letter-spacing: -.04em;
   line-height: 1.15;
 }
 
@@ -578,7 +819,7 @@
 }
 
 .service-detail-enquiry-notes svg {
-  color: var(--sd-violet);
+  color: var(--sd-accent);
 }
 
 /* ============ Motion ============ */
@@ -593,101 +834,14 @@
 }
 
 @keyframes sd-tilt {
-  0%, 100% { transform: rotateY(-4deg) rotateX(1.5deg); }
-  50%      { transform: rotateY(4deg) rotateX(-1.5deg); }
+  0%, 100% { transform: rotateY(-3deg) rotateX(1deg); }
+  50%      { transform: rotateY(3deg) rotateX(-1deg); }
 }
 
-@keyframes sd-sheen {
+/* background-size is 200%, so moving by 200% is exactly one seamless tile */
+@keyframes sd-flow {
   from { background-position: 0% 50%; }
-  to   { background-position: 100% 50%; }
-}
-
-/* ============ Dark mode ============ */
-.dark .service-detail-page {
-  --sd-text: #eef2ff;
-  --sd-muted: #a9b6d9;
-  --sd-border: #28365f;
-  --sd-surface: #0a1226;
-  --sd-soft: #101a36;
-  --sd-chip: #1d2a58;
-  --sd-title-grad: linear-gradient(100deg, #8fb4ff 0%, #b29bff 52%, #5fd3ff 100%);
-  background: #0a1226;
-}
-
-.dark .service-detail-hero {
-  background:
-    radial-gradient(ellipse at 8% 8%, #1a2f6a80, transparent 42%),
-    radial-gradient(ellipse at 96% 22%, #3a2a8070, transparent 40%),
-    radial-gradient(ellipse at 60% 105%, #0e4a7a55, transparent 42%),
-    linear-gradient(125deg, #080f22, #0d1630);
-}
-
-.dark .service-detail-eyebrow,
-.dark .service-detail-heading > span,
-.dark .service-detail-enquiry-label {
-  color: #b7a6ff;
-}
-
-.dark .service-detail-points svg,
-.dark .service-detail-enquiry-notes svg {
-  color: #a994ff;
-}
-
-.dark .service-detail-visual::before {
-  background:
-    radial-gradient(circle at 35% 40%, #1f3a8a99 0%, transparent 60%),
-    radial-gradient(circle at 70% 65%, #4a2fa088 0%, transparent 58%);
-}
-
-.dark .service-detail-art {
-  filter: brightness(.95) saturate(1.05);
-}
-
-.dark .service-detail-feature,
-.dark .service-detail-benefit-card {
-  background: #0f1936;
-}
-
-.dark .service-detail-feature:hover {
-  border-color: #4a55b8;
-}
-
-.dark .service-detail-benefits {
-  background: linear-gradient(180deg, #0b1430, #0d1736);
-}
-
-.dark .service-detail-check {
-  color: #b7a6ff;
-}
-
-.dark .service-detail-board {
-  background:
-    radial-gradient(ellipse at 0% 0%, #1a2f6a66 0%, transparent 45%),
-    radial-gradient(ellipse at 100% 100%, #3a2a8066 0%, transparent 45%),
-    #0e1832;
-  box-shadow: 0 30px 60px -46px #000;
-}
-
-.dark .service-detail-chips li {
-  color: #d4dcff;
-  background: #152247;
-  border-color: #2f3f73;
-}
-
-.dark .service-detail-step-no {
-  box-shadow: 0 0 0 6px #0a1226, 0 12px 22px -10px #4a46e8;
-}
-
-.dark .service-detail-steps::before {
-  background: linear-gradient(90deg, #1f5a86, #34459a, #4b3a96);
-}
-
-.dark .service-detail-enquiry {
-  border-color: #28365f;
-  background:
-    radial-gradient(ellipse at 18% 100%, #0e4a7a55 0%, transparent 46%),
-    radial-gradient(ellipse at 84% 0%, #3a2a8066 0%, transparent 46%),
-    linear-gradient(180deg, #0a1226 0%, #0d1634 100%);
+  to   { background-position: 200% 50%; }
 }
 
 /* ============ Tablet ============ */
@@ -701,8 +855,9 @@
     gap: 24px;
   }
 
-  .service-detail-art {
+  .service-detail-stage {
     max-width: 500px;
+    margin-inline: auto;
   }
 
   .service-detail-section {
@@ -736,6 +891,12 @@
   }
 }
 
+@media (max-width: 900px) {
+  .service-detail-cta-art {
+    display: none;
+  }
+}
+
 /* ============ Mobile ============ */
 @media (max-width: 650px) {
   .service-detail-container {
@@ -747,8 +908,8 @@
   }
 
   .service-detail-copy h1 {
-    font-size: clamp(33px, 9vw, 42px);
-    line-height: 1.14;
+    font-size: clamp(31px, 8.6vw, 40px);
+    line-height: 1.15;
   }
 
   .service-detail-description {
@@ -761,7 +922,8 @@
     margin-top: 24px;
   }
 
-  .service-detail-primary {
+  .service-detail-primary,
+  .service-detail-secondary {
     width: 100%;
     min-height: 50px;
   }
@@ -773,6 +935,10 @@
   .service-detail-points {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .service-detail-stage {
+    max-width: 100%;
   }
 
   .service-detail-section {
@@ -841,6 +1007,386 @@
 
   .service-detail-reveal {
     opacity: 1;
+  }
+
+  .service-detail-stage {
     transform: none;
+  }
+}
+
+/* ============ Service detail responsive refinements ============ */
+@media (max-width: 1050px) {
+  .service-detail-adv-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .service-detail-container {
+    width: min(100% - 32px, 1240px);
+  }
+
+  .service-detail-hero {
+    padding: 58px 0 64px;
+  }
+
+  .service-detail-hero .service-detail-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .service-detail-copy h1 {
+    font-size: clamp(32px, 9vw, 46px);
+  }
+
+  .service-detail-visual {
+    width: 100%;
+  }
+
+  .service-detail-stage {
+    max-width: 480px;
+    margin-inline: auto;
+  }
+
+  .service-detail-section {
+    padding: 62px 0;
+  }
+
+  .service-detail-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .service-detail-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .service-detail-steps::before {
+    display: none;
+  }
+
+  .service-detail-cta-art {
+    width: 130px;
+    opacity: .28;
+  }
+
+  .service-detail-enquiry {
+    padding: 68px 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .service-detail-feature-grid,
+  .service-detail-benefit-grid,
+  .service-detail-adv-grid,
+  .service-detail-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .service-detail-feature,
+  .service-detail-benefit-card,
+  .service-detail-adv-card {
+    padding: 22px;
+  }
+
+  .service-detail-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .service-detail-actions .service-detail-primary,
+  .service-detail-actions .service-detail-secondary {
+    width: 100%;
+  }
+
+  .service-detail-points {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .service-detail-cta-art {
+    width: 100px;
+    opacity: .18;
+  }
+
+  .service-detail-enquiry-inner h2 {
+    font-size: clamp(28px, 8vw, 36px);
+  }
+}
+
+/* ============ Heading color rules ============ */
+/* Only the hero service name and highlighted hero phrase use animated gradients. */
+
+/* Service name label above the hero title, e.g. Web Development / Custom Software Development. */
+.service-detail-page .service-detail-eyebrow {
+  background-image: var(--sd-gt);
+  background-size: 200% 100%;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: sd-flow 8s linear infinite;
+}
+
+/* The decorative line beside the service name keeps its own gradient. */
+.service-detail-page .service-detail-eyebrow span {
+  background: var(--sd-grad-wide);
+  -webkit-text-fill-color: initial;
+}
+
+/* All other section headings and card subheadings stay solid theme text. */
+.service-detail-page .service-detail-heading h2,
+.service-detail-page h3,
+.service-detail-page .service-detail-col-title,
+.service-detail-page .service-detail-minor {
+  background-image: none !important;
+  color: var(--sd-heading) !important;
+  -webkit-text-fill-color: currentColor !important;
+  animation: none !important;
+}
+
+/* The highlighted phrase inside the hero H1 is the only other animated heading text. */
+.service-detail-page .service-detail-copy h1 .service-detail-grad {
+  background-image: var(--sd-gt);
+  background-size: 200% 100%;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: sd-flow 8s linear infinite;
+}
+
+.service-detail-page .service-detail-minor {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-detail-page .service-detail-eyebrow,
+  .service-detail-page .service-detail-copy h1 .service-detail-grad {
+    animation: none !important;
+  }
+}
+
+
+/* ============ Heading Color Rules ============ */
+
+/* Service label above hero: normal black */
+.service-detail-page .service-detail-eyebrow {
+  color: #111111;
+  background-image: none;
+  -webkit-text-fill-color: currentColor;
+  animation: none;
+}
+
+/* Keep only the small decorative line blue/violet */
+.service-detail-page .service-detail-eyebrow span {
+  background: var(--sd-grad-wide);
+}
+
+/* Hero heading: animated blue/violet gradient */
+.service-detail-page .service-detail-copy h1 .service-detail-grad {
+  background-image: var(--sd-gt);
+  background-size: 200% 100%;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: sd-flow 8s linear infinite;
+}
+
+/* All other section headings: normal black */
+.service-detail-page .service-detail-heading h2,
+.service-detail-page .service-detail-heading h2 .service-detail-grad,
+.service-detail-page h3,
+.service-detail-page .service-detail-col-title,
+.service-detail-page .service-detail-minor {
+  background-image: none !important;
+  color: #111111 !important;
+  -webkit-text-fill-color: #111111 !important;
+  animation: none !important;
+}
+
+/* Dark mode: readable headings */
+.dark .service-detail-page .service-detail-eyebrow {
+  color: #e6ebff;
+}
+
+.dark .service-detail-page .service-detail-heading h2,
+.dark .service-detail-page .service-detail-heading h2 .service-detail-grad,
+.dark .service-detail-page h3,
+.dark .service-detail-page .service-detail-col-title,
+.dark .service-detail-page .service-detail-minor {
+  color: #f3f6ff !important;
+  -webkit-text-fill-color: #f3f6ff !important;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .service-detail-page .service-detail-copy h1 .service-detail-grad {
+    animation: none !important;
+  }
+}
+
+/* Center all section headings */
+.service-detail-page .service-detail-heading {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto 44px;
+  text-align: center;
+}
+
+.service-detail-page .service-detail-heading h2 {
+  width: 100%;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.service-detail-page .service-detail-heading p {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Keep headings centered on mobile */
+@media (max-width: 768px) {
+  .service-detail-page .service-detail-heading {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .service-detail-page .service-detail-heading h2 {
+    text-align: center;
+  }
+
+  .service-detail-page .service-detail-heading p {
+    text-align: center;
+  }
+}
+
+/* Keep the CTA hero heading on one line */
+.service-detail-page .service-detail-cta h2,
+.service-detail-page .service-detail-cta-title {
+  white-space: nowrap;
+  font-size: clamp(24px, 3vw, 44px);
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+
+@media (max-width: 768px) {
+  .service-detail-page .service-detail-cta h2,
+  .service-detail-page .service-detail-cta-title {
+    white-space: normal;
+    font-size: clamp(24px, 6vw, 34px);
+  }
+}
+
+.service-detail-enquiry-inner {
+  max-width: 1100px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.service-detail-enquiry-inner h2 {
+  margin-top: 14px;
+  font-size: clamp(28px, 3.2vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Mobile: allow wrapping to prevent overflow */
+@media (max-width: 768px) {
+  .service-detail-enquiry-inner {
+    max-width: 100%;
+  }
+
+  .service-detail-enquiry-inner h2 {
+    white-space: normal;
+    font-size: clamp(25px, 6vw, 34px);
+  }
+}
+
+/* Hide the small service label above the hero heading */
+.service-detail-page .service-detail-eyebrow {
+  display: none;
+}
+
+/* Keep animated gradient only on the hero heading */
+.service-detail-page .service-detail-copy h1 .service-detail-grad {
+  background-image: var(--sd-gt);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: sd-flow 8s linear infinite;
+}
+
+/* Animated gradient only for the hero heading */
+.service-detail-page .service-detail-copy h1 .service-detail-grad {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    #2f6bff 0%,
+    #6d4bff 25%,
+    #1fb6ff 50%,
+    #2f6bff 75%,
+    #6d4bff 100%
+  );
+  background-size: 300% 100%;
+  background-position: 0% 50%;
+  background-repeat: repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: hero-gradient-flow 4s linear infinite;
+}
+
+@keyframes hero-gradient-flow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+/* Animated colour only for service keywords in the hero */
+.service-detail-page .service-detail-hero-grad {
+  background: linear-gradient(
+    90deg,
+    #2f6bff 0%,
+    #7048ff 25%,
+    #19baff 50%,
+    #7048ff 75%,
+    #2f6bff 100%
+  );
+  background-size: 300% 100%;
+  background-position: 0% 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: service-keyword-flow 4s linear infinite;
+}
+
+@keyframes service-keyword-flow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-detail-page .service-detail-hero-grad {
+    animation: none;
   }
 }

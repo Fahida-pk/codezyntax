@@ -285,7 +285,7 @@ function Footer() {
     ['Services', '/service'],
     ['Digital Marketing', '/digital-marketing'],
     ['vCards', '/vcards'],
-    ['Contact', '/#contact'],
+    ['Contact', '/contact'],
     ['Blog', '/blog'],
   ]
 

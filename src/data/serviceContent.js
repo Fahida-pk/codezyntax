@@ -1,19 +1,27 @@
 import {
   Layers, Plug, Lock, BarChart3, Wrench, Workflow, Smartphone, Bell, Cloud,
-  Gauge, RefreshCw, Monitor, HardDrive, Printer, Settings, Megaphone, Search,
-  TrendingUp, Target, Mail, Share2, QrCode, Link2, Globe, Palette,
+  Gauge, RefreshCw, Monitor, HardDrive, Printer, Settings, Search,
+  Target, Mail, Share2, QrCode, Link2, Palette,
   LayoutTemplate, MousePointerClick, PenTool, Database, ShieldCheck, Zap,
-  FileText, Users, Boxes,
+  FileText, Users, Wifi, Leaf, UserPlus, Contact,
 } from 'lucide-react'
 
 /**
  * Rich, service-specific content.
- * Each SERVICES entry is matched to one of these profiles by its slug/title,
- * so the page works even if slugs are renamed later.
+ * Each SERVICES entry is matched to one of these profiles by its slug/title
+ * (see getServiceKind below), so the pages keep working if slugs are renamed.
+ *
+ * Headings are [plain, highlighted] pairs. The highlighted part is rendered
+ * with the animated blue / violet / cyan gradient.
  */
 export const SERVICE_CONTENT = {
   software: {
-    kicker: 'Software Engineering',
+    h: {
+      hero: ['Custom Software Built Around', 'Your Business'],
+      features: ['Features that automate', 'how you work'],
+      benefits: ['Benefits of', 'Custom Software'],
+      process: ['How we', 'build with you'],
+    },
     lead:
       'We design and build software around the way your business actually works, from internal tools and automation to complete platforms, so your team stops bending processes to fit off-the-shelf products.',
     points: ['Built around your workflow', 'Secure, scalable architecture', 'Support after launch'],
@@ -31,22 +39,32 @@ export const SERVICE_CONTENT = {
       ['Full ownership and control', 'You decide the roadmap, the data rules and when to add new capabilities.'],
       ['Ready to scale', 'Built to handle more users, branches and transactions without a rewrite.'],
     ],
-    tech: ['React', 'Node.js', 'Python', '.NET', 'PostgreSQL', 'MySQL', 'REST APIs', 'Cloud Hosting'],
+    advText: 'Software that fits how your team already works, grows with your business and keeps your data safe.',
+    advantages: [
+      [Workflow, 'Workflow Automation', 'Replace manual steps and spreadsheets with processes that run reliably on their own.'],
+      [Layers, 'Scales With You', 'A modular foundation that handles more users, branches and data without a rewrite.'],
+      [Lock, 'Secure by Design', 'Role-based access, encrypted data and audit trails protect your information.'],
+      [Plug, 'Fits Your Processes', 'Connects with your accounting, payments and CRM so nothing is entered twice.'],
+    ],
     process: [
       ['Discovery', 'We study your workflow, users and goals, then define the scope together.'],
       ['Architecture & Design', 'We plan the system, data model and interface before writing code.'],
       ['Agile Development', 'You see working builds every sprint and can steer the product early.'],
       ['Launch & Support', 'Testing, deployment, training and continued improvements after go-live.'],
     ],
-    idealFor: ['Businesses replacing spreadsheets', 'Operations and logistics teams', 'Startups building a first product', 'Companies modernising legacy systems'],
     value:
       'Custom software turns your know-how into a lasting asset: fewer manual steps, fewer errors and a system you fully own.',
-    ctaTitle: 'Ready to plan your software?',
+    cta: ['Ready to plan', 'your software?'],
     ctaText: 'Tell us about your process and the problems you want solved. We will suggest a practical way to build it.',
   },
 
   website: {
-    kicker: 'Web Design',
+    h: {
+      hero: ['Websites That Build Trust and', 'Bring Enquiries'],
+      features: ['Everything your website needs to', 'perform'],
+      benefits: ['Benefits of a', 'Professionally Built Website'],
+      process: ['A clear path from', 'brief to launch'],
+    },
     lead:
       'Your website is often the first impression customers get. We design fast, beautiful, search-friendly websites that explain what you do clearly and turn visitors into enquiries.',
     points: ['Responsive on every device', 'SEO-ready structure', 'Fast loading pages'],
@@ -64,22 +82,32 @@ export const SERVICE_CONTENT = {
       ['Better search visibility', 'A well-structured site gives you a solid base for ranking and growth.'],
       ['Easy to maintain', 'Simple updates and dependable hosting keep your site fresh and online.'],
     ],
-    tech: ['HTML5 & CSS3', 'React', 'Tailwind CSS', 'WordPress', 'Figma', 'Google Analytics', 'SEO', 'Vercel'],
+    advText: 'A website that looks professional, loads fast and is set up to bring you enquiries.',
+    advantages: [
+      [Smartphone, 'Responsive Design', 'Pages that look and work perfectly on phones, tablets and desktops.'],
+      [Search, 'SEO-Ready Structure', 'Clean markup and metadata give you a solid base for ranking on Google.'],
+      [Gauge, 'Fast Performance', 'Optimised images and code keep pages quick and Core Web Vitals strong.'],
+      [MousePointerClick, 'Built to Convert', 'Clear calls to action, forms and WhatsApp links placed where visitors act.'],
+    ],
     process: [
       ['Brief & Sitemap', 'We understand your audience and plan the pages and content you need.'],
       ['Design Concepts', 'You review visual designs in Figma before development begins.'],
       ['Build & Optimise', 'We develop the site, test it on real devices and tune its speed.'],
       ['Launch & Handover', 'Go live with analytics set up and a short guide to managing your content.'],
     ],
-    idealFor: ['Small and local businesses', 'Professional service firms', 'Restaurants, clinics and shops', 'Brands refreshing an old website'],
     value:
       'A well-built website works for you around the clock, building trust, answering questions and bringing in new enquiries.',
-    ctaTitle: 'Ready for a website that works harder?',
+    cta: ['Ready for a website that', 'works harder?'],
     ctaText: 'Share your business and your goals. We will recommend a design and a plan that fits your budget.',
   },
 
   webapp: {
-    kicker: 'Web Applications',
+    h: {
+      hero: ['Secure Web Applications for', 'Modern Businesses'],
+      features: ['Features that power your', 'web application'],
+      benefits: ['Why businesses choose', 'web applications'],
+      process: ['From requirements to', 'cloud launch'],
+    },
     lead:
       'From customer portals to admin dashboards and SaaS products, we build secure, data-driven web applications that your team and customers can use from any browser.',
     points: ['Secure login and roles', 'Real-time dashboards', 'Cloud-ready deployment'],
@@ -97,22 +125,32 @@ export const SERVICE_CONTENT = {
       ['Faster operations', 'Automated approvals, notifications and reports save hours every week.'],
       ['Easy to extend', 'Add modules, users and integrations as your business evolves.'],
     ],
-    tech: ['React', 'Node.js', 'Express', 'PostgreSQL', 'MongoDB', 'REST & GraphQL', 'JWT Auth', 'Docker'],
+    advText: 'Web applications that bring your people, data and processes together in one secure place.',
+    advantages: [
+      [ShieldCheck, 'Secure by Design', 'Encrypted data, validated inputs and protected sessions from day one.'],
+      [Cloud, 'Access From Anywhere', 'Nothing to install. Your team and customers use it from any browser.'],
+      [BarChart3, 'Live Business Insight', 'Dashboards and reports that show what is happening as it happens.'],
+      [Plug, 'Connects to Your Systems', 'Clean APIs link the app with your payments, CRM and other tools.'],
+    ],
     process: [
       ['Requirements', 'We map user roles, features and data so the scope is clear and realistic.'],
       ['UX & Prototype', 'Interactive wireframes let you test the flow before development starts.'],
       ['Build & Test', 'Frontend, backend and database are developed and tested in short cycles.'],
       ['Deploy & Improve', 'We launch on secure cloud hosting and keep improving from user feedback.'],
     ],
-    idealFor: ['Customer and vendor portals', 'SaaS product ideas', 'Booking and ordering systems', 'Internal admin dashboards'],
     value:
       'A web application brings your people, data and processes into one secure place, so decisions are faster and operations run smoothly.',
-    ctaTitle: 'Ready to build your web application?',
+    cta: ['Ready to build your', 'web application?'],
     ctaText: 'Describe the users and tasks you have in mind. We will outline the features, timeline and approach.',
   },
 
   mobile: {
-    kicker: 'Mobile Apps',
+    h: {
+      hero: ['Mobile Apps Your Customers Will', 'Love to Use'],
+      features: ['Features that keep users', 'coming back'],
+      benefits: ['Benefits of', 'Owning Your App'],
+      process: ['From idea to', 'app store'],
+    },
     lead:
       'We create smooth, intuitive Android and iOS apps that keep your customers connected, with thoughtful design, dependable performance and publishing support on the app stores.',
     points: ['Android and iOS', 'Intuitive, modern UI', 'Store publishing support'],
@@ -130,22 +168,32 @@ export const SERVICE_CONTENT = {
       ['Faster delivery', 'Cross-platform development reaches both stores sooner and costs less.'],
       ['Built to grow', 'A clean architecture makes new features and updates straightforward.'],
     ],
-    tech: ['Flutter', 'React Native', 'Kotlin', 'Swift', 'Firebase', 'REST APIs', 'Push Notifications', 'Play Store & App Store'],
+    advText: 'Apps that keep your customers connected, on the devices they use every day.',
+    advantages: [
+      [Smartphone, 'Android and iOS Reach', 'One efficient codebase delivers a native-quality experience on both platforms.'],
+      [Bell, 'Stay Engaged', 'Push notifications and saved preferences bring users back to your app.'],
+      [RefreshCw, 'Works Offline', 'Core features keep working on weak connections and sync when back online.'],
+      [Zap, 'Store-Ready Launch', 'We handle Play Store and App Store submission and ongoing updates.'],
+    ],
     process: [
       ['Idea & Scope', 'We define your audience, core features and the first version to launch.'],
       ['Design & Prototype', 'Clickable screens let you experience the app before it is built.'],
       ['Develop & Test', 'We build and test on real Android and iOS devices.'],
       ['Publish & Support', 'We handle store submission and support the app after release.'],
     ],
-    idealFor: ['Retail and delivery businesses', 'Service booking platforms', 'Education and fitness apps', 'Startups validating an idea'],
     value:
       'A mobile app gives customers a direct, always-available channel to your business, which builds loyalty and repeat sales.',
-    ctaTitle: 'Ready to put your app in their pocket?',
+    cta: ['Ready to put your app', 'in their pocket?'],
     ctaText: 'Tell us who the app is for and what it should do. We will help you shape a launch-ready first version.',
   },
 
   windows: {
-    kicker: 'Windows Applications',
+    h: {
+      hero: ['Fast, Dependable Software for', 'Windows Desktops'],
+      features: ['Built for counters, offices and', 'daily operations'],
+      benefits: ['Benefits of', 'Windows Applications'],
+      process: ['How we deliver', 'desktop software'],
+    },
     lead:
       'For billing, inventory, accounts and daily operations, a fast desktop application is still the most dependable choice. We build robust Windows software that works smoothly, even with limited internet.',
     points: ['Fast, reliable desktop software', 'Works offline', 'Printing and hardware support'],
@@ -163,22 +211,32 @@ export const SERVICE_CONTENT = {
       ['Data stays under your control', 'Keep sensitive business data on your own systems with controlled access.'],
       ['Familiar to your team', 'A clean Windows interface that staff learn quickly with minimal training.'],
     ],
-    tech: ['C#', '.NET', 'WPF', 'WinForms', 'SQL Server', 'SQLite', 'Crystal Reports', 'MSI Installers'],
+    advText: 'Desktop software that keeps billing, stock and accounts fast, even when the internet is not.',
+    advantages: [
+      [Zap, 'Fast at the Counter', 'Keyboard-friendly screens built for staff who handle many tasks every hour.'],
+      [HardDrive, 'Works Offline', 'Local and network databases keep operations running without internet.'],
+      [Printer, 'Hardware Ready', 'Barcode scanners, thermal printers and weighing scales connect out of the box.'],
+      [Lock, 'Your Data, Your Control', 'Sensitive records stay on your own systems with automatic backups.'],
+    ],
     process: [
       ['Understand the Workflow', 'We observe how your staff work, from billing to stock to reports.'],
       ['Design the Screens', 'We plan simple, fast screens and the data behind them.'],
       ['Build & Field Test', 'We test with your real data, printers and devices before release.'],
       ['Install & Train', 'On-site or remote installation, staff training and ongoing support.'],
     ],
-    idealFor: ['Retail and wholesale shops', 'Pharmacies and clinics', 'Workshops and manufacturers', 'Schools and offices'],
     value:
       'Reliable desktop software keeps daily operations fast and uninterrupted, protecting revenue at your busiest counters and desks.',
-    ctaTitle: 'Ready for dependable desktop software?',
+    cta: ['Ready for', 'dependable desktop software?'],
     ctaText: 'Tell us how your team works today. We will propose a Windows application that makes it faster.',
   },
 
   marketing: {
-    kicker: 'Digital Marketing',
+    h: {
+      hero: ['Digital Marketing That Delivers', 'Measurable Growth'],
+      features: ['Services that grow your', 'online presence'],
+      benefits: ['Benefits of', 'Data-Driven Marketing'],
+      process: ['How we run', 'your campaigns'],
+    },
     lead:
       'We help you reach the right customers online with search, social media and paid campaigns, tracked with clear reports, so every rupee of marketing budget has a purpose.',
     points: ['Data-driven campaigns', 'Transparent reporting', 'Local and national reach'],
@@ -196,32 +254,42 @@ export const SERVICE_CONTENT = {
       ['Consistent brand presence', 'A steady, professional voice builds recognition and trust over time.'],
       ['Better use of budget', 'Ongoing testing and optimisation lower your cost per lead.'],
     ],
-    tech: ['Google Ads', 'Meta Ads', 'SEO', 'Search Console', 'Google Analytics 4', 'Email Marketing', 'WhatsApp Business', 'Canva & Figma'],
+    advText: 'Marketing that reaches the right people and shows you clearly what each rupee achieves.',
+    advantages: [
+      [Target, 'Reach the Right Audience', 'Targeted search and social campaigns aimed at enquiries, calls and sales.'],
+      [BarChart3, 'Measurable Results', 'Every campaign is tracked and reported in plain language each month.'],
+      [Search, 'Found When It Matters', 'SEO and local search that put you in front of people ready to buy.'],
+      [Share2, 'Consistent Brand Voice', 'Regular, professional content builds recognition and trust over time.'],
+    ],
     process: [
       ['Audit & Goals', 'We review your website, competitors and audience, then set clear targets.'],
       ['Strategy & Setup', 'We choose the right channels and prepare tracking, creatives and campaigns.'],
       ['Launch & Optimise', 'We run campaigns and refine them weekly based on real performance.'],
       ['Report & Scale', 'You get simple reports and a plan to grow what is working.'],
     ],
-    idealFor: ['Local shops and clinics', 'Online stores', 'Training institutes', 'Brands launching a new product'],
     value:
       'Consistent, measurable marketing turns online attention into qualified leads and gives every campaign a clear return.',
-    ctaTitle: 'Ready to grow your online presence?',
+    cta: ['Ready to grow your', 'online presence?'],
     ctaText: 'Share your goals and audience. We will suggest a marketing plan that fits your budget.',
   },
 
   card: {
-    kicker: 'Digital Business Cards',
+    h: {
+      hero: ['V-Cards: The Future of', 'Business Networking'],
+      features: ['Smart features for', 'modern networking'],
+      benefits: ['Benefits of', 'Digital Business Cards'],
+      process: ['From your details to', 'a live V-Card'],
+    },
     lead:
-      'Replace paper cards with a smart, shareable digital profile. Share your contact details, services, location and social links instantly through a QR code, link or tap.',
-    points: ['Share with a QR code or link', 'Update details anytime', 'Always on-brand'],
+      'Replace paper cards with a smart, shareable digital profile. Share your contact details, services, location and social links instantly with a QR code, a link or an NFC tap, and capture every lead along the way.',
+    points: ['QR code and NFC sharing', 'Update details anytime', 'Eco-friendly networking'],
     features: [
-      [QrCode, 'QR Code Sharing', 'A unique QR code on your products, desk or signage opens your profile instantly.'],
-      [Link2, 'One Link for Everything', 'Calls, WhatsApp, email, website, maps and social profiles in a single page.'],
-      [Users, 'Save to Contacts', 'One-tap vCard download so people can save you straight to their phone.'],
-      [Globe, 'Custom Domain & Branding', 'Your logo, colours and address, designed to match your business identity.'],
-      [Boxes, 'Products & Services Showcase', 'Present your catalogue, gallery, brochures and customer reviews.'],
-      [BarChart3, 'View Insights', 'See how many people opened your card and which links they tapped.'],
+      [QrCode, 'QR Code Sharing', 'A unique QR code on your desk, products or signage opens your profile in one scan, with no app needed.'],
+      [Wifi, 'NFC Tap-to-Share', 'NFC-compatible cards and tags let people tap their phone to open your profile instantly.'],
+      [Contact, 'Digital Contact Profile', 'Your photo, designation, services and one-tap Save to Contacts, all on a single branded page.'],
+      [Link2, 'Social & Contact Links', 'Call, WhatsApp, email, website, maps and social profiles in one link that never goes out of date.'],
+      [UserPlus, 'Lead Generation', 'Enquiry forms, click-to-call and WhatsApp buttons turn every introduction into a lead you can follow up.'],
+      [Leaf, 'Eco-Friendly Networking', 'Reusable and always current, so there is no reprinting and no paper waste.'],
     ],
     benefits: [
       ['Always up to date', 'Change a phone number or offer once and every share shows the latest version.'],
@@ -229,19 +297,30 @@ export const SERVICE_CONTENT = {
       ['Memorable first impression', 'A modern profile shows you are professional and tech-savvy.'],
       ['Turns contacts into leads', 'Direct call, WhatsApp and enquiry buttons make it easy to reach you.'],
     ],
-    tech: ['QR Codes', 'NFC-Ready', 'vCard', 'WhatsApp Links', 'Google Maps', 'Social Links', 'Custom Domain', 'Analytics'],
+    advText: 'A digital identity that is easy to share, always current and built to bring in new leads.',
+    advantages: [
+      [QrCode, 'Instant Sharing', 'Share your profile with a QR code, a link or an NFC tap in a few seconds.'],
+      [Contact, 'Digital Identity', 'One branded profile with your services, location and social links.'],
+      [Users, 'Contact Management', 'Visitors save you to their phone and you update your details in one place.'],
+      [UserPlus, 'Lead Generation', 'Enquiry forms, click-to-call and WhatsApp buttons turn introductions into leads.'],
+    ],
     process: [
       ['Share Your Details', 'Send us your logo, contact information, services and links.'],
       ['Design the Card', 'We design a branded profile page that looks great on every phone.'],
       ['Review & Launch', 'You approve the card and we publish it with its QR code and link.'],
       ['Share & Track', 'Share it anywhere and see how people engage with it.'],
     ],
-    idealFor: ['Business owners and consultants', 'Sales teams', 'Doctors, lawyers and freelancers', 'Event and exhibition attendees'],
     value:
       'A smart business card makes every introduction effortless and keeps your details current, so no opportunity is lost.',
-    ctaTitle: 'Ready for your digital business card?',
+    cta: ['Ready for your', 'digital business card?'],
     ctaText: 'Send us your details and we will design a smart card that makes every introduction easy.',
   },
+}
+
+/** Heading for the shared "Built to Work With Your Business" section. */
+export const ADVANTAGES_HEADING = {
+  label: 'WHY IT FITS',
+  title: 'Built to Work With Your Business',
 }
 
 /** Decide which content profile a SERVICES entry should use. */
