@@ -5123,3 +5123,14 @@ p {
 .hm .svc-text {
   font-family: var(--font-body);
 }
+.hm {
+  --hm-head: "Plus Jakarta Sans", Inter, sans-serif;
+  font-family: "Inter", sans-serif;
+}
+
+.hm h1,
+.hm h2,
+.hm h3 {
+  font-family: var(--hm-head);
+  letter-spacing: -0.02em;
+}

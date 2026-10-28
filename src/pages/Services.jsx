@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import {
   CheckCircle2,
@@ -11,11 +12,14 @@ import {
   Headset,
   Target,
 } from 'lucide-react'
-
+import './ServiceDetail.css'
+import '../components/ServiceCard'
 import Seo from '../components/Seo'
 import { PageHero, ServiceCard } from '../components/ui'
 import ServicesHero from '../components/ServicesHero'
+import ServiceIllustration from '../components/ServiceIllustration'
 import { SERVICES } from '../data/site'
+import { SERVICE_CONTENT, getServiceKind } from '../data/serviceContent'
 import './Home.css'
 
 // ================= WHY CHOOSE US DATA =================
@@ -317,6 +321,52 @@ function ReadyToBuildCTA() {
   )
 }
 
+// ================= SERVICE CARD: STAGGERED REVEAL + HOVER LIGHT =================
+
+function ServiceCardFx({ index, children }) {
+  const ref = useRef(null)
+  const [seen, setSeen] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return undefined
+    if (!('IntersectionObserver' in window)) {
+      setSeen(true)
+      return undefined
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setSeen(true)
+          io.disconnect()
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  const onMove = (e) => {
+    const el = ref.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`)
+    el.style.setProperty('--my', `${e.clientY - r.top}px`)
+  }
+
+  return (
+    <li
+      ref={ref}
+      className={`svx-card ${seen ? 'is-in' : ''}`}
+      style={{ '--c3': index % 3, '--c2': index % 2 }}
+      onPointerMove={onMove}
+    >
+      {children}
+    </li>
+  )
+}
+
 // ================= SERVICES PAGE =================
 
 export function Services() {
@@ -331,18 +381,17 @@ export function Services() {
       <ServicesHero />
 
       {/* Services cards: compact design, full descriptions */}
-      
-<section id="services-list" className="section svc-page-section">
-  <div className="container-x">
-    <ul className="svc-grid">
-      {SERVICES.map((service, index) => (
-        <li key={service.slug}>
-          <ServiceCard s={service} n={index + 1} full />
-        </li>
-      ))}
-    </ul>
-  </div>
-</section>
+      <section id="services-list" className="section svc-page-section">
+        <div className="container-x">
+          <ul className="svc-grid">
+            {SERVICES.map((service, index) => (
+              <ServiceCardFx key={service.slug} index={index}>
+                <ServiceCard s={service} n={index + 1} full />
+              </ServiceCardFx>
+            ))}
+          </ul>
+        </div>
+      </section>
 
       {/* WHY CHOOSE US */}
       <WhyChooseUs />
@@ -355,9 +404,60 @@ export function Services() {
 
 // ================= SERVICE DETAIL PAGE =================
 
+// Fades a block in once, when it scrolls into view.
+function Reveal({ as: Tag = 'div', className = '', delay = 0, children }) {
+  const ref = useRef(null)
+  const [seen, setSeen] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return undefined
+    if (!('IntersectionObserver' in window)) {
+      setSeen(true)
+      return undefined
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setSeen(true)
+          io.disconnect()
+        }
+      },
+      { threshold: 0.12 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  return (
+    <Tag
+      ref={ref}
+      className={`service-detail-reveal ${seen ? 'is-in' : ''} ${className}`}
+      style={{ '--d': `${delay}ms` }}
+    >
+      {children}
+    </Tag>
+  )
+}
+
+function SectionHeading({ label, title, text }) {
+  return (
+    <Reveal className="service-detail-heading">
+      <span>{label}</span>
+      <h2 className="service-detail-grad">{title}</h2>
+      {text && <p>{text}</p>}
+    </Reveal>
+  )
+}
+
 export function ServiceDetail({ slug: fixed }) {
   const params = useParams()
   const slug = fixed || params.slug
+
+  // Always start a service page at the top when switching services.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [slug])
 
   const service = SERVICES.find((item) => item.slug === slug)
 
@@ -365,46 +465,193 @@ export function ServiceDetail({ slug: fixed }) {
     return <Navigate to="/service" replace />
   }
 
+  const kind = getServiceKind(service)
+  const c = SERVICE_CONTENT[kind]
+  const enquiryUrl = `/contact?service=${encodeURIComponent(service.title)}`
+
   return (
     <>
-      <Seo
-        title={service.title}
-        description={service.summary}
-      />
+      <Seo title={service.title} description={service.summary} />
 
-      <PageHero
-        title={service.title}
-        text={service.summary}
-      />
+      <main className="service-detail-page" key={service.slug}>
+        {/* ---------------- HERO ---------------- */}
+        <section className="service-detail-hero">
+          <div className="service-detail-container">
+            <div className="service-detail-copy">
+              <span className="service-detail-eyebrow">
+                <span />
+                {c.kicker}
+              </span>
 
-      {/* Service benefits */}
-      <section className="section">
-        <div className="container-x max-w-3xl">
-          <h2 className="text-2xl">Benefits</h2>
+              <h1 className="service-detail-title">{service.title}</h1>
 
-          <ul className="mt-4 space-y-3">
-            {service.benefits.map((benefit) => (
-              <li key={benefit} className="flex gap-3">
-                <CheckCircle2
-                  className="shrink-0 text-accent-dark"
-                  aria-hidden="true"
-                />
-                <span>{benefit}</span>
-              </li>
-            ))}
-          </ul>
+              <p className="service-detail-description">{c.lead}</p>
 
-          <Link
-            to={`/contact?service=${encodeURIComponent(service.title)}`}
-            className="btn-dark mt-8 inline-flex"
-          >
-            Enquire About This Service
-          </Link>
-        </div>
-      </section>
+              <div className="service-detail-actions">
+                <Link to={enquiryUrl} className="service-detail-primary">
+                  Enquire About This Service
+                  <ArrowUpRight size={18} aria-hidden="true" />
+                </Link>
+              </div>
 
-      {/* CTA on service detail page */}
-      <ReadyToBuildCTA />
+              <ul className="service-detail-points">
+                {c.points.map((point) => (
+                  <li key={point}>
+                    <CheckCircle2 size={17} aria-hidden="true" />
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="service-detail-visual">
+              <ServiceIllustration kind={kind} />
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------- FEATURES ---------------- */}
+        <section className="service-detail-section service-detail-features">
+          <div className="service-detail-container">
+            <SectionHeading
+              label="WHAT'S INCLUDED"
+              title={`Key features of ${service.title}`}
+              text="Everything you need to go from idea to a reliable, professional result."
+            />
+
+            <div className="service-detail-feature-grid">
+              {c.features.map(([Icon, title, text], i) => (
+                <Reveal
+                  as="article"
+                  key={title}
+                  delay={(i % 3) * 70}
+                  className="service-detail-feature"
+                >
+                  <span className="service-detail-icon">
+                    <Icon size={23} strokeWidth={1.8} aria-hidden="true" />
+                  </span>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------- BENEFITS ---------------- */}
+        <section className="service-detail-section service-detail-benefits">
+          <div className="service-detail-container">
+            <SectionHeading
+              label="BUSINESS VALUE"
+              title={`Benefits of ${service.title}`}
+              text={c.value}
+            />
+
+            <div className="service-detail-benefit-grid">
+              {c.benefits.map(([title, text], i) => (
+                <Reveal
+                  as="article"
+                  key={title}
+                  delay={(i % 2) * 80}
+                  className="service-detail-benefit-card"
+                >
+                  <span className="service-detail-check">
+                    <CheckCircle2 size={22} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------- TECHNOLOGIES + USE CASES ---------------- */}
+        <section className="service-detail-section service-detail-stack">
+          <div className="service-detail-container">
+            <Reveal className="service-detail-board">
+              <div className="service-detail-board-col">
+                <h2>Technologies &amp; tools</h2>
+                <p>The tools we rely on to deliver this service.</p>
+                <ul className="service-detail-chips">
+                  {c.tech.map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="service-detail-board-col">
+                <h2>Who it&rsquo;s for</h2>
+                <p>Common situations where this service fits best.</p>
+                <ul className="service-detail-ideal">
+                  {c.idealFor.map((item) => (
+                    <li key={item}>
+                      <span className="service-detail-dot">
+                        <CheckCircle2 size={15} aria-hidden="true" />
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ---------------- PROCESS ---------------- */}
+        <section className="service-detail-section service-detail-process">
+          <div className="service-detail-container">
+            <SectionHeading
+              label="OUR PROCESS"
+              title="How we work with you"
+              text="A clear, collaborative process with no surprises."
+            />
+
+            <ol className="service-detail-steps">
+              {c.process.map(([title, text], i) => (
+                <Reveal as="li" key={title} delay={i * 80} className="service-detail-step">
+                  <span className="service-detail-step-no">{i + 1}</span>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                </Reveal>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* ---------------- LET'S WORK TOGETHER ---------------- */}
+        <section className="service-detail-enquiry" id="enquiry">
+          <div className="service-detail-container">
+            <Reveal className="service-detail-enquiry-inner">
+              <span className="service-detail-enquiry-label">LET&rsquo;S WORK TOGETHER</span>
+              <h2 className="service-detail-grad">{c.ctaTitle}</h2>
+              <p>{c.ctaText}</p>
+
+              <Link to={enquiryUrl} className="service-detail-primary service-detail-primary-lg">
+                Discuss Your Project
+                <ArrowUpRight size={19} aria-hidden="true" />
+              </Link>
+
+              <ul className="service-detail-enquiry-notes">
+                <li>
+                  <ShieldCheck size={16} aria-hidden="true" />
+                  Free initial consultation
+                </li>
+                <li>
+                  <ShieldCheck size={16} aria-hidden="true" />
+                  Clear scope and timelines
+                </li>
+                <li>
+                  <ShieldCheck size={16} aria-hidden="true" />
+                  Confidential by default
+                </li>
+              </ul>
+            </Reveal>
+          </div>
+        </section>
+      </main>
     </>
   )
 }

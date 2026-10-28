@@ -348,16 +348,42 @@ function ServicesGrid() {
       current === 0 ? SERVICES.length - 1 : current - 1
     )
   }
+
 useEffect(() => {
-  const media = window.matchMedia('(max-width: 639px)')
-  if (!media.matches || SERVICES.length < 2) return
+  if (SERVICES.length < 2) return
 
-  const timer = window.setInterval(() => {
-    setActiveIndex((current) => (current + 1) % SERVICES.length)
-  }, 3000)
+  let timer = null
 
-  return () => window.clearInterval(timer)
+  const startAutoSlide = () => {
+    if (timer) {
+      window.clearInterval(timer)
+      timer = null
+    }
+
+    // Auto animation only on mobile
+    if (window.innerWidth > 639) return
+
+    timer = window.setInterval(() => {
+      setActiveIndex((current) => (
+        current + 1
+      ) % SERVICES.length)
+    }, 3000)
+  }
+
+  startAutoSlide()
+
+  // Restart the timer when screen size changes
+  window.addEventListener('resize', startAutoSlide)
+
+  return () => {
+    if (timer) {
+      window.clearInterval(timer)
+    }
+
+    window.removeEventListener('resize', startAutoSlide)
+  }
 }, [])
+
   const next = () => {
     setActiveIndex((current) =>
       current >= SERVICES.length - 1 ? 0 : current + 1

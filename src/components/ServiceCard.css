@@ -296,3 +296,59 @@
     gap: 14px;
   }
 }
+/* Services page cards: staggered scroll reveal + interactive hover (wraps the existing ServiceCard). */
+@property --svx-ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+.svx-card {
+  --svx-r: 22px; /* match the corner radius of your ServiceCard if it differs */
+  position: relative;
+  border-radius: var(--svx-r);
+  opacity: 0;
+  transition: transform .35s cubic-bezier(.2, .7, .2, 1), box-shadow .35s ease;
+}
+.svx-card.is-in {
+  opacity: 1;
+  animation: svx-rise .8s cubic-bezier(.2, .7, .2, 1) backwards;
+  animation-delay: calc(var(--c3, 0) * 90ms);
+}
+@keyframes svx-rise { from { opacity: 0; transform: translateY(26px); } }
+
+/* animated gradient border */
+.svx-card::before {
+  content: ""; position: absolute; inset: -1px; z-index: 2; border-radius: inherit; padding: 1.5px; pointer-events: none;
+  background: conic-gradient(from var(--svx-ang), #1fb6ff, #6d4bff, #2f6bff, #1fb6ff);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity .35s ease;
+}
+/* soft light that follows the pointer */
+.svx-card::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(109, 75, 255, .11), rgba(31, 182, 255, .06) 45%, transparent 70%);
+  transition: opacity .35s ease;
+}
+
+@media (hover: hover) {
+  .svx-card.is-in:hover { transform: translateY(-5px); box-shadow: 0 26px 46px -30px rgba(79, 70, 229, .55); }
+  .svx-card:hover::before { opacity: 1; animation: svx-spin 5s linear infinite; }
+  .svx-card:hover::after { opacity: 1; }
+}
+.svx-card:focus-within::before { opacity: 1; }
+@keyframes svx-spin { to { --svx-ang: 360deg; } }
+
+.dark .svx-card::after {
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(129, 140, 255, .16), rgba(31, 182, 255, .08) 45%, transparent 70%);
+}
+.dark .svx-card.is-in:hover { box-shadow: 0 26px 46px -30px rgba(0, 0, 0, .8); }
+
+/* stagger by column: 3 columns on desktop, 2 on tablet, none on phones */
+@media (max-width: 1000px) { .svx-card.is-in { animation-delay: calc(var(--c2, 0) * 90ms); } }
+@media (max-width: 650px) { .svx-card.is-in { animation-delay: 0ms; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .svx-card { opacity: 1; transition: none; }
+  .svx-card.is-in { animation: none; }
+  .svx-card::before, .svx-card::after { transition: none; }
+  .svx-card:hover::before { animation: none; }
+  .svx-card.is-in:hover { transform: none; }
+}
