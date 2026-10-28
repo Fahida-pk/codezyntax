@@ -242,20 +242,53 @@ export default function Contact() {
     const first = Object.keys(er)[0]
     if (first) { setState('idle'); document.getElementById(`ct-${first}`)?.focus(); return }
     if (hp.current?.value) return // honeypot filled: silently ignore bots
-    if (!SITE.formEndpoint) {
-      setProblem('The enquiry form is not connected to a mailbox yet, so nothing was sent.')
-      setState('error'); return
+
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY
+    if (!accessKey) {
+      setProblem('The enquiry form is not configured yet. Please try again later.')
+      setState('error')
+      return
     }
-    setState('loading'); setProblem('')
-    const f = new FormData()
-    f.append('name', values.name.trim()); f.append('email', values.email.trim()); f.append('phone', values.phone.trim())
-    f.append('company_name', values.companyName.trim()); f.append('service', service); f.append('budget', values.budget)
-    f.append('message', values.message.trim()); f.append('brief', params.get('brief') || '')
+
+    setState('loading')
+    setProblem('')
+
     try {
-      const r = await fetch(SITE.formEndpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: f })
-      if (r.ok) { setState('success'); setValues(EMPTY); setService(''); setErrors({}) }
-      else { setProblem('The server did not accept the enquiry.'); setState('error') }
-    } catch { setProblem('We could not reach the server. Check your connection.'); setState('error') }
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: 'New Enquiry - CodeZyntax Website',
+          from_name: 'CodeZyntax Website Contact Form',
+          name: values.name.trim(),
+          email: values.email.trim(),
+          phone: values.phone.trim(),
+          company_name: values.companyName.trim(),
+          service,
+          budget: values.budget,
+          message: values.message.trim(),
+          brief: params.get('brief') || '',
+        }),
+      })
+
+      const result = await response.json()
+      if (response.ok && result.success) {
+        setState('success')
+        setValues(EMPTY)
+        setService('')
+        setErrors({})
+      } else {
+        setProblem(result.message || 'The enquiry could not be sent. Please try again.')
+        setState('error')
+      }
+    } catch {
+      setProblem('We could not reach the email service. Please check your internet connection and try again.')
+      setState('error')
+    }
   }
 
   const fieldProps = (k, extra = {}) => ({
