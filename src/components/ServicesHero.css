@@ -24,3 +24,237 @@
   .sv-hero-grid { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; }
 }
 @media (prefers-reduced-motion: reduce) { .sv-fl-a, .sv-fl-b, .sv-fl-c { animation: none; } .sv-btn { transition: none; } }
+/* Services hero — About page layout model */
+.sv-hero {
+  padding: 72px 0 80px;
+  overflow: hidden;
+}
+
+.sv-hero .sv-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.sv-hero .sv-hero-copy {
+  min-width: 0;
+  text-align: left;
+}
+
+.sv-hero .sv-title {
+  text-align: left;
+}
+
+.sv-hero .sv-hero-actions {
+  justify-content: flex-start;
+}
+
+.sv-hero .sv-hero-art {
+  min-width: 0;
+  width: 100%;
+}
+
+.sv-hero .sv-art {
+  width: 100%;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+/* Smooth heading transition */
+.sv-hero .sv-ph {
+  transition:
+    opacity 0.85s ease-in-out,
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.85s ease;
+}
+
+@media (max-width: 1023px) {
+  .sv-hero {
+    padding: 48px 0 56px;
+  }
+
+  .sv-hero .sv-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .sv-hero .sv-hero-art {
+    max-width: 540px;
+    margin-inline: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-hero .sv-ph {
+    transition: none;
+  }
+}
+/* Smooth Services heading animation */
+.sv-rotor {
+  display: grid;
+  position: relative;
+  width: 100%;
+  isolation: isolate;
+}
+
+.sv-ph {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: start;
+  width: 100%;
+  min-width: 0;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translate3d(0, 16px, 0);
+  filter: blur(3px);
+
+  transition:
+    opacity 700ms ease,
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 700ms ease,
+    visibility 0s linear 800ms;
+}
+
+.sv-ph[data-state="active"] {
+  position: relative;
+  z-index: 2;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+
+  transition:
+    opacity 800ms ease,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 800ms ease,
+    visibility 0s;
+}
+
+.sv-ph[data-state="out"] {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, -12px, 0);
+  filter: blur(2px);
+}
+
+.sv-ph .sv-lead,
+.sv-ph .sv-grad {
+  display: block;
+  max-width: 100%;
+}
+
+.sv-ph .sv-grad {
+  background-size: 200% 100%;
+  animation: sv-heading-gradient 6s ease-in-out infinite alternate;
+}
+
+@keyframes sv-heading-gradient {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+/* Keep the heading aligned to the left */
+.sv-hero-copy,
+.sv-title {
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-ph,
+  .sv-ph[data-state="active"],
+  .sv-ph[data-state="out"] {
+    transition: none;
+    filter: none;
+    transform: none;
+  }
+
+  .sv-ph .sv-grad {
+    animation: none;
+  }
+}
+
+/* ABOUT-STYLE BACKGROUND FOR SERVICES HERO */
+.sv-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 72px 0 80px;
+
+  background:
+    radial-gradient(
+      45% 60% at 5% 15%,
+      rgba(111, 174, 240, 0.28),
+      transparent 75%
+    ),
+    radial-gradient(
+      40% 55% at 95% 85%,
+      rgba(99, 160, 235, 0.17),
+      transparent 75%
+    ),
+    linear-gradient(135deg, #edf5ff 0%, #f8fbff 100%);
+}
+
+/* Subtle grid like the About section */
+.sv-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      rgba(82, 135, 200, 0.09) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(82, 135, 200, 0.09) 1px,
+      transparent 1px
+    );
+
+  background-size: 55px 55px;
+}
+
+/* Keep the content above the background */
+.sv-hero .sv-hero-grid {
+  position: relative;
+  z-index: 1;
+}
+
+/* Keep the Our Services pill separate from the heading */
+.sv-hero .sv-title {
+  display: block;
+  text-align: left;
+}
+
+.sv-hero .sv-pill {
+  display: table;
+  margin-bottom: 24px;
+}
+
+.sv-hero .sv-rotor {
+  display: grid;
+  width: 100%;
+  margin-top: 0;
+}
+
+/* Responsive */
+@media (max-width: 1023px) {
+  .sv-hero {
+    padding: 48px 0 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-hero::before {
+    scroll-behavior: auto;
+  }
+}

@@ -18,12 +18,12 @@ import './Digitalmarketing.css'
 
 /* ---------------------------- content ---------------------------- */
 const SERVICES = [
-  { icon: Search, title: 'Search Engine Optimization (SEO)', text: 'Improve rankings, organic visibility and the quality of the traffic reaching your website.' },
-  { icon: Share2, title: 'Social Media Marketing', text: 'Plan, publish and manage content that builds an engaged community around your brand.' },
-  { icon: Megaphone, title: 'Performance Marketing & PPC', text: 'Targeted paid campaigns on search and social platforms, tuned for measurable return.' },
-  { icon: PenTool, title: 'Content Marketing', text: 'Useful, on-brand content that attracts the right audience and supports every channel.' },
-  { icon: Compass, title: 'Brand Strategy & Digital Presence', text: 'A clear voice and visual identity that stays consistent wherever customers find you.' },
-  { icon: BarChart3, title: 'Campaign Analytics & Conversion Optimization', text: 'Transparent tracking and reporting that show what works and what to improve next.' },
+  { icon: Megaphone, title: 'Digital Marketing', text: 'Reach the right audience with coordinated campaigns that build awareness, attract potential customers and support business growth.' },
+  { icon: Search, title: 'Search Engine Optimization (SEO)', text: 'Improve search visibility, strengthen your website structure and attract relevant organic traffic over time.' },
+  { icon: Share2, title: 'Social Media Marketing (SMM)', text: 'Build an engaged community with thoughtful content, consistent publishing and platform-focused campaigns.' },
+  { icon: Globe, title: 'Web Designing', text: 'Create responsive, user-friendly websites that communicate your brand clearly and guide visitors towards action.' },
+  { icon: PenTool, title: 'Graphic Design', text: 'Make your brand memorable with polished creatives, social media posts, promotional designs and visual assets.' },
+  { icon: Layers, title: 'One Connected Strategy', text: 'Bring marketing, search, social, website and design together for a consistent brand experience across channels.' },
 ]
 
 const LAYERS = [
@@ -54,8 +54,8 @@ const CHANNELS = [
 const PROCESS = [
   { icon: Compass, title: 'Discover', text: 'Understand business goals, customers, and competitors.' },
   { icon: Target, title: 'Strategize', text: 'Develop a tailored marketing roadmap.' },
-  { icon: Rocket, title: 'Execute', text: 'Launch campaigns and create engaging content.' },
-  { icon: TrendingUp, title: 'Optimize', text: 'Analyse results and continuously improve performance.' },
+  { icon: Rocket, title: 'Create & Launch', text: 'Develop creative assets and launch a consistent digital presence.' },
+  { icon: TrendingUp, title: 'Improve', text: 'Review performance, learn from insights and refine what comes next.' },
 ]
 
 /* Illustrative chart shapes only. These are not real results. */
@@ -400,10 +400,50 @@ function Gyro() {
   )
 }
 
-function Cube({ size = 64, className = '' }) {
+/* ---------------------------- FINAL CTA: 3D SCENES (left + right) ---------------------------- */
+const CTA_BARS = [
+  { l: 10, t: 10, h: 122 },
+  { l: 38, t: 38, h: 91 },
+  { l: 66, t: 38, h: 65 },
+  { l: 38, t: 66, h: 64 },
+  { l: 66, t: 66, h: 41 },
+]
+
+function CtaBars() {
+  const wrap = useRef(null)
+  useLive(wrap)
   return (
-    <div className={`dm-cubewrap ${className}`} style={{ '--s': `${size}px` }} aria-hidden="true">
-      <div className="dm-cube"><i /><i /><i /><i /><i /><i /></div>
+    <div className="dm-ctaart dm-3d" ref={wrap}>
+      <div className="dm-ctaart-stage" role="img" aria-label="Animated 3D illustration of rising bars showing business growth">
+        <span className="dm-ctaart-glow" aria-hidden="true" />
+        <div className="dm-ctaart-scene">
+          <div className="dm-ctaart-floor" />
+          {CTA_BARS.map((b, i) => (
+            <div key={i} className="dm-bx" style={{ left: `${b.l}%`, top: `${b.t}%`, '--h': `${b.h}px`, '--i': i }}>
+              <i className="dm-bx-top" /><i className="dm-bx-front" /><i className="dm-bx-right" />
+            </div>
+          ))}
+        </div>
+        <span className="dm-ctaart-ring" aria-hidden="true" />
+        <span className="dm-ctaart-chip dm-lf" style={{ '--d': '5s' }} aria-hidden="true"><TrendingUp /></span>
+        <span className="dm-ctaart-sphere dm-lf" style={{ '--d': '6s', '--delay': '-2s' }} aria-hidden="true" />
+        <span className="dm-ctaart-sphere is-small dm-lf" style={{ '--d': '4.6s', '--delay': '-1s' }} aria-hidden="true" />
+      </div>
+    </div>
+  )
+}
+
+function CtaOrbit() {
+  const wrap = useRef(null)
+  useLive(wrap)
+  return (
+    <div className="dm-ctaart dm-3d" ref={wrap}>
+      <div className="dm-gyro" role="img" aria-label="Animated 3D orbit rings around a rocket, showing launch and growth">
+        <div className="dm-ringset r1"><span /></div>
+        <div className="dm-ringset r2"><span /></div>
+        <div className="dm-ringset r3"><span /></div>
+        <div className="dm-sphere"><Rocket aria-hidden="true" /></div>
+      </div>
     </div>
   )
 }
@@ -415,17 +455,17 @@ export default function DigitalMarketing() {
     <div className="dm" ref={root}>
       <Seo
         title="Best Digital Marketing Company in Palakkad"
-        description="Choose one of the best digital marketing companies in Palakkad for SEO, social media marketing, and result-focused digital growth services."
+        description="Grow your online presence with digital marketing, SEO, social media marketing, web designing and graphic design from CodeZyntax Softwares LLP."
       />
 
       {/* 1. HERO */}
       <section className="dm-hero" aria-labelledby="dm-hero-title">
         <div className="dm-wrap dm-hero-grid">
           <div className="dm-hero-copy">
-            <p className="dm-eyebrow dm-eyebrow-pill dm-rv">DIGITAL MARKETING &amp; GROWTH</p>
-            <h1 id="dm-hero-title" className="dm-hero-title dm-rv">Turn Your Digital Presence Into Measurable Growth</h1>
+            <p className="dm-eyebrow dm-hero-kicker dm-rv">DIGITAL MARKETING &amp; GROWTH</p>
+            <h1 id="dm-hero-title" className="dm-hero-title dm-rv"><span className="dm-title-static">Turn Your </span><span className="dm-title-animated">Digital Presence Into Measurable Growth</span></h1>
             <p className="dm-lead dm-rv">
-              CodeZyntax Softwares LLP helps businesses grow online through SEO, paid advertising, content marketing, social media and data-driven strategies, connected to the technology that keeps them running.
+              CodeZyntax Softwares LLP helps businesses grow online through digital marketing, SEO, social media, website design and creative visuals that make your brand stand out.
             </p>
             <div className="dm-cta-row dm-rv">
               <Link to="/contact" className="dm-btn dm-btn-primary">Get a Proposal <ArrowUpRight size={17} aria-hidden="true" /></Link>
@@ -447,7 +487,7 @@ export default function DigitalMarketing() {
           <div className="dm-svc-intro">
             <h2 id="dm-svc-title" className="dm-h2 dm-rv">Everything You Need to Grow Online</h2>
             <p className="dm-body dm-rv">
-              From being found on search to turning visitors into customers, one team plans, runs and measures every part of your digital marketing.
+              From building your online presence to turning visitors into customers, we bring the essential digital services together under one strategy.
             </p>
             <div className="dm-rv"><Link to="/contact" className="dm-link">Discuss your goals <ArrowRight size={16} aria-hidden="true" /></Link></div>
           </div>
@@ -472,10 +512,10 @@ export default function DigitalMarketing() {
           <div className="dm-split-copy">
             <h2 id="dm-about-title" className="dm-h2 dm-rv">Strategy, Creativity and Technology Working Together</h2>
             <p className="dm-body dm-rv">
-              Good marketing starts with knowing who you are talking to. We research your audience and competitors, then shape creative campaigns that speak to them clearly.
+              We start by understanding your business, audience and goals. Then we shape clear messaging, thoughtful design and practical digital strategies that help your brand connect with the right people.
             </p>
             <p className="dm-body dm-rv">
-              Technology and analysis hold it all together. Tracking, automation and regular performance reviews show what is working, so each campaign supports the growth your business is aiming for.
+              We bring marketing, creative design and technology together to build a consistent digital presence and support your business growth.
             </p>
             <div className="dm-rv"><Link to="/contact" className="dm-btn dm-btn-primary">Talk to Our Team <ArrowUpRight size={17} aria-hidden="true" /></Link></div>
           </div>
@@ -486,8 +526,8 @@ export default function DigitalMarketing() {
       <section className="dm-sec" aria-labelledby="dm-why-title">
         <div className="dm-wrap dm-split dm-split-rev">
           <div className="dm-split-copy">
-            <h2 id="dm-why-title" className="dm-h2 dm-rv">A Smarter Approach to Digital Growth</h2>
-            <p className="dm-body dm-rv">Why businesses choose CodeZyntax as their digital marketing partner:</p>
+            <h2 id="dm-why-title" className="dm-h2 dm-rv">Strategy, Creativity and Technology Working Together</h2>
+            <p className="dm-body dm-rv">We combine tailored strategies, creative execution, clear reporting and ongoing improvement to strengthen your digital presence.</p>
             <ul className="dm-why">
               {WHY.map(({ icon: Icon, title, text }, i) => (
                 <li key={title} className="dm-rv" style={{ transitionDelay: `${i * 50}ms` }}>
@@ -506,7 +546,7 @@ export default function DigitalMarketing() {
         <div className="dm-wrap">
           <header className="dm-head">
             <h2 id="dm-proc-title" className="dm-h2 dm-rv">Our Digital Marketing Process</h2>
-            <p className="dm-body dm-rv">Four clear stages take a campaign from first conversation to continuous improvement.</p>
+            <p className="dm-body dm-rv">Four clear stages take your business from planning to a stronger digital presence.</p>
           </header>
           <ol className="dm-flow dm-rv">
             {PROCESS.map(({ icon: Icon, title, text }, i) => (
@@ -523,25 +563,12 @@ export default function DigitalMarketing() {
         </div>
       </section>
 
-      {/* 6. DATA */}
-      <section className="dm-sec" aria-labelledby="dm-data-title">
-        <div className="dm-wrap">
-          <header className="dm-head">
-            <h2 id="dm-data-title" className="dm-h2 dm-rv">Marketing Decisions Backed by Data</h2>
-            <p className="dm-body dm-rv">
-              We track what matters, from traffic and leads to engagement and campaign performance, and report it clearly. The dashboard below is an illustration with sample values. Switch the metric to see how a trend view works.
-            </p>
-          </header>
-          <DataBoard />
-        </div>
-      </section>
-
       {/* 7. GOALS */}
       <section className="dm-sec dm-tint" aria-labelledby="dm-cap-title">
         <div className="dm-wrap">
           <header className="dm-head">
-            <h2 id="dm-cap-title" className="dm-h2 dm-rv">Digital Solutions Designed Around Your Goals</h2>
-            <p className="dm-body dm-rv">Whatever you want your marketing to achieve, we shape the mix of channels around it.</p>
+            <h2 id="dm-cap-title" className="dm-h2 dm-rv">Digital Solutions Designed for Your Business</h2>
+            <p className="dm-body dm-rv">Whether you want more visibility, stronger engagement or a more effective website, we help you focus on the outcomes that matter.</p>
           </header>
           <div className="dm-cap">
             <ul className="dm-cap-col is-left">
@@ -570,13 +597,16 @@ export default function DigitalMarketing() {
         <div className="dm-wrap">
           <div className="dm-cta-panel dm-rv">
             <div className="dm-cta-inner">
-              <Cube size={64} className="dm-cube-a" />
-              <Cube size={40} className="dm-cube-b" />
-              <span className="dm-cta-orb" aria-hidden="true" />
-              <h2 id="dm-cta-title">Ready to Grow Your Digital Presence?</h2>
-              <p>Let&rsquo;s create a digital marketing strategy aligned with your business goals.</p>
-              <Link to="/contact" className="dm-btn dm-btn-primary">Get a Proposal <ArrowUpRight size={17} aria-hidden="true" /></Link>
-              {SITE.email && <p className="dm-cta-mail"><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>}
+              <div className="dm-cta-side"><CtaBars /></div>
+
+              <div className="dm-cta-main">
+                <h2 id="dm-cta-title">Ready to Grow Your Digital Presence?</h2>
+                <p>Let's create a digital marketing plan that fits your business goals and helps your brand make a stronger impression online.</p>
+                <Link to="/contact" className="dm-btn dm-btn-primary">Get a Proposal <ArrowUpRight size={17} aria-hidden="true" /></Link>
+                {SITE.email && <p className="dm-cta-mail"><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>}
+              </div>
+
+              <div className="dm-cta-side"><CtaOrbit /></div>
             </div>
           </div>
         </div>
