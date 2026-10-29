@@ -227,7 +227,7 @@ export default function Contact() {
   const preset = params.get('service') || ''
   const presetTitle = (services.find(s => s.title === preset || s.slug === preset) || {}).title || ''
   const [values, setValues] = useState(EMPTY)
-  const [service, setService] = useState(presetTitle)
+  const [service, setService] = useState(presetTitle ? [presetTitle] : [])
   const [errors, setErrors] = useState({})
   const [state, setState] = useState('idle') // idle | loading | success | error
   const [problem, setProblem] = useState('')
@@ -242,53 +242,20 @@ export default function Contact() {
     const first = Object.keys(er)[0]
     if (first) { setState('idle'); document.getElementById(`ct-${first}`)?.focus(); return }
     if (hp.current?.value) return // honeypot filled: silently ignore bots
-
-    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY
-    if (!accessKey) {
-      setProblem('The enquiry form is not configured yet. Please try again later.')
-      setState('error')
-      return
+    if (!SITE.formEndpoint) {
+      setProblem('The enquiry form is not connected to a mailbox yet, so nothing was sent.')
+      setState('error'); return
     }
-
-    setState('loading')
-    setProblem('')
-
+    setState('loading'); setProblem('')
+    const f = new FormData()
+    f.append('name', values.name.trim()); f.append('email', values.email.trim()); f.append('phone', values.phone.trim())
+    f.append('company_name', values.companyName.trim()); f.append('service', service.join(', ')); f.append('budget', values.budget)
+    f.append('message', values.message.trim()); f.append('brief', params.get('brief') || '')
     try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          access_key: accessKey,
-          subject: 'New Enquiry - CodeZyntax Website',
-          from_name: 'CodeZyntax Website Contact Form',
-          name: values.name.trim(),
-          email: values.email.trim(),
-          phone: values.phone.trim(),
-          company_name: values.companyName.trim(),
-          service,
-          budget: values.budget,
-          message: values.message.trim(),
-          brief: params.get('brief') || '',
-        }),
-      })
-
-      const result = await response.json()
-      if (response.ok && result.success) {
-        setState('success')
-        setValues(EMPTY)
-        setService('')
-        setErrors({})
-      } else {
-        setProblem(result.message || 'The enquiry could not be sent. Please try again.')
-        setState('error')
-      }
-    } catch {
-      setProblem('We could not reach the email service. Please check your internet connection and try again.')
-      setState('error')
-    }
+      const r = await fetch(SITE.formEndpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: f })
+      if (r.ok) { setState('success'); setValues(EMPTY); setService(''); setErrors({}) }
+      else { setProblem('The server did not accept the enquiry.'); setState('error') }
+    } catch { setProblem('We could not reach the server. Check your connection.'); setState('error') }
   }
 
   const fieldProps = (k, extra = {}) => ({
@@ -353,7 +320,7 @@ export default function Contact() {
             ) : (
               <form onSubmit={submit} noValidate aria-labelledby="ct-form-title">
                 <div className="ct-form-head">
-                  <h2 id="ct-form-title">Tell us about your project</h2>
+                  <h2 id="ct-form-title">Build your project brief</h2>
                   <p>Fields marked <span aria-hidden="true">*</span><span className="ct-sr"> with an asterisk</span> are required.</p>
                 </div>
 
@@ -375,12 +342,27 @@ export default function Contact() {
 
                 <fieldset className="ct-field ct-services">
                   <legend>Service required</legend>
-                  <div className="ct-chips" role="radiogroup">
-                    {services.map(s => (
-                      <label key={s.slug} className={`ct-chip ${service === s.title ? 'on' : ''}`}>
-                        <input type="radio" name="service" value={s.title} checked={service === s.title} onChange={() => setService(s.title)} />
-                        <span>{s.title}</span>
-                      </label>))}
+                  <div className="ct-service-options">
+                    {services.map(s => {
+                      const checked = service.includes(s.title)
+                      return (
+                        <label key={s.slug} className={`ct-service-option ${checked ? 'on' : ''}`}>
+                          <input
+                            type="checkbox"
+                            name="service"
+                            value={s.title}
+                            checked={checked}
+                            onChange={() => setService(current =>
+                              checked
+                                ? current.filter(item => item !== s.title)
+                                : [...current, s.title]
+                            )}
+                          />
+                          <span className="ct-service-check" aria-hidden="true">{checked ? '✓' : ''}</span>
+                          <span className="ct-service-label">{s.title}</span>
+                        </label>
+                      )
+                    })}
                   </div>
                 </fieldset>
 

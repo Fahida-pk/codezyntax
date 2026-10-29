@@ -17,7 +17,7 @@ import './About.css'
 const STATS = [
   [ShieldCheck, '100%', 'Quality'],
   [Briefcase, '500+', 'Projects'],
-  [Award, '7+', 'Years of experience'],
+  [Award, '9+', 'Years of experience'],
 ]
 
 const MV = [
@@ -153,9 +153,7 @@ export default function About() {
         <span className="ab-bgorb ab-bgorb-1" aria-hidden="true" />
         <span className="ab-bgorb ab-bgorb-2" aria-hidden="true" />
         <div className="ab-wrap">
-          <nav className="ab-crumbs" aria-label="Breadcrumb">
-            <Link to="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">About</span>
-          </nav>
+          
           <div className="ab-hero-grid">
             <div className="ab-hero-copy">
               <div data-ab>
