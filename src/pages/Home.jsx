@@ -107,7 +107,7 @@ const HERO_SHOWCASE = [
     title: 'ZyntaWeb',
     category: 'Website & Software',
     image: '/images/projects/zynta.webp',
-    url: 'https://demo.zyntaweb.com/',
+    url: 'https://zyntaweb.com/',
   },
 ]
 

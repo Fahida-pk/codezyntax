@@ -35,14 +35,14 @@ const SHOWCASE = [
   { slug: 'zynta-crm', title: 'Zynta CRM', type: 'Web Application', label: 'CRM Software', url: 'https://crm.1card.co.in/', image: '/images/projects/hairship.webp' },
   { slug: '1card-demo', title: 'Payroll Management System', type: 'Web Application', label: 'Live Demo', url: 'https://demo.payroll.zyntaweb.com/login.php', image: '/images/projects/payroll.webp' },
   { slug: 'zyntaweb', title: 'Serlog', type: 'Web Application', label: 'Service Management', url: 'https://zyntaweb.com/', image: '/images/projects/zynta.webp' },
-  { slug: 'qr-code-generator', title: 'QR Code Generator', type: 'Web Application', image: '/images/projects/qr-code-generator.webp', summary: 'A fast online tool to create QR codes for links, text and contact details.' },
+  { slug: 'qr-code-generator', title: 'QR Code Generator', type: 'Web Application', label: 'QR Code Generator', url: 'https://tools.zyntaweb.com/qrgen.php', image: '/images/projects/qr-code-generator.webp', summary: 'A fast online tool to create QR codes for links, text and contact details.' },
 
 {
   slug: 'alafiya',
   title: 'Alafiya',
   type: 'Web Application',
   label: 'Web Application',
-  url: 'https://alafiya.zyntaweb.com/',
+  
   images: [
     '/images/projects/Alafiya1.webp',
     '/images/projects/alafiya2.webp',

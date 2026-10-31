@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import emailjs from '@emailjs/browser'
+import ReCAPTCHA from 'react-google-recaptcha'
 import PhoneInput from 'react-phone-input-2'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import 'react-phone-input-2/lib/style.css'
@@ -52,23 +53,15 @@ const BUDGETS = [
 ]
 const EMPTY = { name: '', email: '', phone: '', companyName: '', budget: '', message: '' }
 
-const CAPTCHA_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-function createCaptchaCode() {
-  const values = new Uint32Array(6)
-  if (window.crypto?.getRandomValues) {
-    window.crypto.getRandomValues(values)
-    return Array.from(values, value => CAPTCHA_CHARS[value % CAPTCHA_CHARS.length]).join('')
-  }
-  return Array.from({ length: 6 }, () => CAPTCHA_CHARS[Math.floor(Math.random() * CAPTCHA_CHARS.length)]).join('')
-}
-
 const POINTS = ['Direct line to our team', 'Clear next steps', 'Your details stay private']
 
 function validate(v, phoneCountry = 'in') {
   const er = {}
   if (!v.name.trim()) er.name = 'Please enter your name.'
   if (!v.email.trim()) er.email = 'Please enter your email address.'
- 
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email.trim())) {
+    er.email = 'Enter a valid email address, for example name@company.com.'
+  }
 
   const phoneValue = v.phone.trim()
   if (!phoneValue) {
@@ -462,11 +455,12 @@ export default function Contact() {
   const [errors, setErrors] = useState({})
   const [state, setState] = useState('idle') // idle | loading | success | error
   const [problem, setProblem] = useState('')
-  const [captchaCode, setCaptchaCode] = useState(() => createCaptchaCode())
-  const [captchaAnswer, setCaptchaAnswer] = useState('')
+  const [captchaToken, setCaptchaToken] = useState(null)
   const [captchaError, setCaptchaError] = useState('')
   const [phoneCountry, setPhoneCountry] = useState('in')
+  const captchaRef = useRef(null)
   const hp = useRef(null)
+  const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY
 
   const set = k => e => { setValues(v => ({ ...v, [k]: e.target.value })); if (errors[k]) setErrors(x => ({ ...x, [k]: undefined })) }
 
@@ -484,10 +478,14 @@ export default function Contact() {
     }
     if (hp.current?.value) return // honeypot filled: silently ignore bots
 
-    if (captchaAnswer.trim().toUpperCase() !== captchaCode) {
-      setCaptchaError('Incorrect CAPTCHA code. Please try again.')
-      setCaptchaAnswer('')
-      setCaptchaCode(createCaptchaCode())
+    if (!recaptchaSiteKey) {
+      setProblem('reCAPTCHA is not configured. Please add VITE_RECAPTCHA_SITE_KEY to your environment variables.')
+      setState('error')
+      return
+    }
+
+    if (!captchaToken) {
+      setCaptchaError('Please complete the security verification before submitting.')
       return
     }
 
@@ -521,6 +519,7 @@ export default function Contact() {
           message: values.message.trim(),
           brief: params.get('brief') || '',
           reply_to: values.email.trim() || '',
+          'g-recaptcha-response': captchaToken,
         },
         { publicKey }
       )
@@ -530,15 +529,15 @@ export default function Contact() {
       setPhoneCountry('in')
       setService([])
       setErrors({})
-      setCaptchaAnswer('')
-      setCaptchaCode(createCaptchaCode())
+      captchaRef.current?.reset()
+      setCaptchaToken(null)
       setCaptchaError('')
     } catch (error) {
       console.error('EmailJS enquiry submission failed:', error)
       setProblem('We could not send your enquiry. Please try again or contact us by email.')
       setState('error')
-      setCaptchaAnswer('')
-      setCaptchaCode(createCaptchaCode())
+      captchaRef.current?.reset()
+      setCaptchaToken(null)
     }
   }
 
@@ -705,53 +704,30 @@ export default function Contact() {
                     <textarea {...fieldProps('message', { rows: 6, placeholder: 'What would you like to build? Mention goals, key features, timeline and any existing systems.', required: true })} /></div><Err k="message" /></div>
 
                 <div className="ct-captcha-wrap">
-                  <label className="ct-captcha-label" htmlFor="ct-captcha-answer">
-                    Security verification <b aria-hidden="true">*</b>
-                  </label>
-
-                  <div className="ct-captcha-challenge">
-                    <div className="ct-captcha-image" aria-label={`CAPTCHA code: ${captchaCode}`}>
-                      {captchaCode.split('').map((char, index) => (
-                        <span key={`${char}-${index}`} style={{ '--captcha-index': index }}>
-                          {char}
-                        </span>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      className="ct-captcha-refresh"
-                      onClick={() => {
-                        setCaptchaCode(createCaptchaCode())
-                        setCaptchaAnswer('')
+                  {recaptchaSiteKey ? (
+                    <ReCAPTCHA
+                      ref={captchaRef}
+                      sitekey={recaptchaSiteKey}
+                      onChange={(token) => {
+                        setCaptchaToken(token)
                         setCaptchaError('')
                       }}
-                      aria-label="Generate a new CAPTCHA code"
-                      title="Refresh CAPTCHA"
-                    >
-                      <span aria-hidden="true">↻</span>
-                    </button>
-                  </div>
-
-                  <input
-                    id="ct-captcha-answer"
-                    name="captcha"
-                    type="text"
-                    value={captchaAnswer}
-                    onChange={e => {
-                      setCaptchaAnswer(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))
-                      if (captchaError) setCaptchaError('')
-                    }}
-                    placeholder="Enter the code shown above"
-                    autoComplete="off"
-                    maxLength={6}
-                    spellCheck="false"
-                    aria-invalid={captchaError ? 'true' : undefined}
-                    aria-describedby={captchaError ? 'ct-captcha-error' : undefined}
-                    className="ct-captcha-input"
-                  />
-
+                      onExpired={() => {
+                        setCaptchaToken(null)
+                        setCaptchaError('Your security verification expired. Please verify again.')
+                      }}
+                      onErrored={() => {
+                        setCaptchaToken(null)
+                        setCaptchaError('CAPTCHA could not load. Please refresh the page and try again.')
+                      }}
+                    />
+                  ) : (
+                    <p className="ct-alert" role="alert">
+                      reCAPTCHA site key is missing. Please configure VITE_RECAPTCHA_SITE_KEY.
+                    </p>
+                  )}
                   {captchaError && (
-                    <span id="ct-captcha-error" className="ct-err" role="alert">
+                    <span className="ct-err" role="alert">
                       <AlertCircle size={14} aria-hidden="true" />{captchaError}
                     </span>
                   )}
