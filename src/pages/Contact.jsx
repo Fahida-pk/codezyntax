@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import emailjs from '@emailjs/browser'
 import PhoneInput from 'react-phone-input-2'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import 'react-phone-input-2/lib/style.css'
 import { useSearchParams } from 'react-router-dom'
 import {
@@ -51,16 +52,44 @@ const BUDGETS = [
 ]
 const EMPTY = { name: '', email: '', phone: '', companyName: '', budget: '', message: '' }
 
+const CAPTCHA_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+function createCaptchaCode() {
+  const values = new Uint32Array(6)
+  if (window.crypto?.getRandomValues) {
+    window.crypto.getRandomValues(values)
+    return Array.from(values, value => CAPTCHA_CHARS[value % CAPTCHA_CHARS.length]).join('')
+  }
+  return Array.from({ length: 6 }, () => CAPTCHA_CHARS[Math.floor(Math.random() * CAPTCHA_CHARS.length)]).join('')
+}
+
 const POINTS = ['Direct line to our team', 'Clear next steps', 'Your details stay private']
 
-function validate(v) {
+function validate(v, phoneCountry = 'in') {
   const er = {}
   if (!v.name.trim()) er.name = 'Please enter your name.'
   if (!v.email.trim()) er.email = 'Please enter your email address.'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email.trim())) er.email = 'Enter a valid email address, for example name@company.com.'
-  const phoneDigits = v.phone.replace(/\D/g, '')
-  if (!phoneDigits) er.phone = 'Please enter your phone number.'
-  else if (phoneDigits.length < 7 || phoneDigits.length > 15) er.phone = 'Enter a valid phone number (7–15 digits).'
+ 
+
+  const phoneValue = v.phone.trim()
+  if (!phoneValue) {
+    er.phone = 'Please enter your phone number.'
+  } else {
+    try {
+      const parsedPhone = parsePhoneNumberFromString(phoneValue)
+      const selectedCountry = String(phoneCountry || '').toUpperCase()
+
+      if (
+        !parsedPhone ||
+        !parsedPhone.isValid() ||
+        (selectedCountry && parsedPhone.country && parsedPhone.country !== selectedCountry)
+      ) {
+        er.phone = 'Enter a valid phone number for the selected country.'
+      }
+    } catch {
+      er.phone = 'Enter a valid phone number for the selected country.'
+    }
+  }
+
   if (!v.message.trim()) er.message = 'Please enter your project details.'
   return er
 }
@@ -227,43 +256,24 @@ function GlobeScene() {
   )
 }
 
-/* ---------------------------- 3D map directions scene ---------------------------- */
-/* City blocks: buildings are generated between the road grid so they never sit on a road. */
-const MAP_X = [0, 12, 30, 50, 70, 88, 100]
-const MAP_Y = [0, 10, 24, 37, 52, 63, 70]
-const MAP_BUILDINGS = (() => {
-  const out = []
-  for (let i = 0; i < MAP_X.length - 1; i++) {
-    for (let j = 0; j < MAP_Y.length - 1; j++) {
-      if (i === 5) continue              // river
-      if (i === 1 && j === 4) continue   // park
-      const x0 = MAP_X[i] + 2.6, x1 = MAP_X[i + 1] - 2.6
-      const y0 = MAP_Y[j] + 2.6, y1 = MAP_Y[j + 1] - 2.6
-      const w = x1 - x0, h = y1 - y0
-      if (w < 3.5 || h < 3.5) continue
-      const split = w > 11
-      const pw = split ? (w - 1.2) / 2 : w
-      for (let k = 0; k < (split ? 2 : 1); k++) {
-        const shrink = ((i + j + k) % 3) * 0.9
-        out.push({
-          x: x0 + k * (pw + 1.2), y: y0 + shrink, w: pw,
-          h: h - shrink - ((i * j + k) % 2) * 0.8, tint: (i + j + k) % 4 === 0,
-        })
-      }
-    }
-  }
-  return out
-})()
-const MAP_MINOR_H = [10, 24, 52, 63]
-const MAP_MINOR_V = [12, 30, 50, 70, 88]
-const ROUTE_A = 'M8 63 H30 V52 H50 V37'
-const ROUTE_B = 'M92 10 H70 V24 H50 V37'
-const ARROWS_A = [[20, 63, 0], [30, 57.5, -90], [40, 52, 0], [50, 44, -90]]
-const ARROWS_B = [[81, 10, 180], [70, 17, 90], [60, 24, 180], [50, 30, 90]]
-const roadsH = MAP_MINOR_H.map(y => `M0 ${y} H100`).join(' ')
-const roadsV = MAP_MINOR_V.map(x => `M${x} 0 V70`).join(' ')
+/* ---------------------------- 3D DIRECTIONS SCENE ----------------------------
+   Floating map slab with a glowing route, a 3D compass dial, two arrow-shaped
+   direction signs, a glass destination pin and soft ripples.
+   Uses the "directions scene" rules in Contact.css (.ct-dcomp, .ct-dnavbig,
+   .ct-dpin, .ct-dsA / .ct-dsB, .ct-dring ...) plus the shared
+   .ct-oscene / .ct-osway / .ct-oplate rules. */
+const DIR_ROUTE = 'M8 62 H62 V46 H82 V24'
+const DIR_BLOCKS = [
+  [6, 6, 14, 9], [24, 6, 16, 9], [44, 6, 14, 9], [62, 6, 14, 9],
+  [6, 22, 10, 12], [62, 28, 14, 12], [86, 40, 9, 12],
+  [6, 40, 10, 14], [66, 52, 12, 10], [84, 8, 11, 9],
+]
 
-function OfficeScene() {
+/* Live Google Maps embed centred on the office (lat 10.8144624, lng 76.2070185).
+   Clicking the mini map opens MAPS_DIRECTIONS_URL in a new tab. */
+const OFFICE_EMBED = 'https://www.google.com/maps?q=10.8144624,76.2070185&z=16&hl=en&output=embed'
+
+function DirectionsScene() {
   const wrap = useRef(null)
   const stage = useRef(null)
   useLive(wrap)
@@ -272,143 +282,153 @@ function OfficeScene() {
     <div className="ct-owrap ct-3d" ref={wrap}>
       <div
         className="ct-ostage" ref={stage} role="img"
-        aria-label="Animated 3D map of Pattambi with roads, buildings, a blue navigation route with direction arrows, start markers and a glowing location pin for the CodeZyntax office"
+        aria-label="Animated 3D directions illustration: a floating map with a glowing blue route, a compass, direction signs and a glass location pin marking the CodeZyntax office in Pattambi"
       >
         <div className="ct-glow" aria-hidden="true" />
         <div className="ct-oscene">
           <div className="ct-osway">
             <div className="ct-l ct-oground" />
 
-            {/* floating map slab */}
-            <div className="ct-l ct-oplate" style={{ '--z': '0px' }}>
-              {/* layer 1: the street map (water, park, 3D buildings, roads, labels) */}
-              <div className="ct-omap" aria-hidden="true">
-                <svg viewBox="0 0 100 70" preserveAspectRatio="xMidYMid slice">
-                  <defs>
-                    <path id="ctOmRoad" d="M0 37 H100" />
-                  </defs>
-                  <rect width="100" height="70" fill="#f3f6fc" />
+          
+{/* Main 3D map slab with live Google Map */}
+<div className="ct-l ct-oplate" style={{ '--z': '0px' }}>
 
-                  {/* river + park */}
-                  <path d="M96 0 C91 18 100 40 93 70 H100 V0 Z" fill="#cfe0fb" />
-                  <path d="M96 0 C91 18 100 40 93 70" fill="none" stroke="#b9d0f6" strokeWidth=".6" />
-                  <rect x="13.6" y="53.6" width="15" height="8" rx="1.6" fill="#e4e9fb" stroke="#d3dbf5" strokeWidth=".4" />
-                  <g fill="#c7d2f5">
-                    <circle cx="16.5" cy="56.5" r="1.1" /><circle cx="20" cy="58.8" r="1.1" /><circle cx="24" cy="56" r="1.1" />
-                    <circle cx="26.5" cy="59.2" r="1.1" /><circle cx="18" cy="60" r=".9" />
-                  </g>
+  {/* Actual Google Map directly inside the 3D platform */}
+  <div className="ct-omap">
+    <iframe
+      src={OFFICE_EMBED}
+      title="CodeZyntax office location in Pattambi"
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
+      allowFullScreen
+    />
+  </div>
 
-                  {/* buildings: soft ground shadow, side wall, then roof */}
-                  <g>
-                    {MAP_BUILDINGS.map((b, n) => (
-                      <g key={n}>
-                        <rect x={b.x + 1.5} y={b.y + 1.5} width={b.w} height={b.h} rx=".9" fill="#6b7bb8" opacity=".14" />
-                        <rect x={b.x + .8} y={b.y + .8} width={b.w} height={b.h} rx=".9" fill={b.tint ? '#cfc6ee' : '#c3cfe6'} />
-                        <rect x={b.x} y={b.y} width={b.w} height={b.h} rx=".9" fill={b.tint ? '#efeafc' : '#f1f4fb'} stroke="#fff" strokeWidth=".3" />
-                      </g>
-                    ))}
-                  </g>
+  {/* Blue route overlay */}
+  <svg
+    viewBox="0 0 100 70"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <defs>
+      <filter id="ctDirGlow">
+        <feGaussianBlur stdDeviation="1.2" />
+      </filter>
 
-                  {/* roads: wide casings first, then fills, so junctions merge */}
-                  <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={`${roadsH} ${roadsV}`} stroke="#c6d3e8" strokeWidth="2.1" />
-                    <path d="M0 37 H100" stroke="#bccae2" strokeWidth="4" />
-                    <path d={`${roadsH} ${roadsV}`} stroke="#fdfeff" strokeWidth="1.4" />
-                    <path d="M0 37 H100" stroke="#fdfeff" strokeWidth="3.2" />
-                    <path d="M0 37 H100" stroke="#dbe5f5" strokeWidth=".35" strokeDasharray="1.6 1.6" />
-                  </g>
-                  {/* roundabouts */}
-                  <g fill="#fdfeff" stroke="#bccae2" strokeWidth=".6">
-                    <circle cx="30" cy="37" r="3" /><circle cx="70" cy="37" r="3" />
-                  </g>
-                  <g fill="#f3f6fc" stroke="#cbd6e8" strokeWidth=".4">
-                    <circle cx="30" cy="37" r="1.2" /><circle cx="70" cy="37" r="1.2" />
-                  </g>
+      <linearGradient
+        id="ctDirRoute"
+        x1="0" y1="1" x2="1" y2="0"
+      >
+        <stop offset="0" stopColor="#2563eb" />
+        <stop offset="1" stopColor="#7c3aed" />
+      </linearGradient>
+    </defs>
 
-                  {/* places of interest */}
-                  <g stroke="#fff" strokeWidth=".6">
-                    <circle cx="22" cy="17" r="1.6" fill="#2563eb" /><circle cx="79" cy="17" r="1.6" fill="#2563eb" />
-                    <circle cx="60" cy="57.5" r="1.6" fill="#7c3aed" /><circle cx="40" cy="44.5" r="1.6" fill="#7c3aed" />
-                  </g>
+    <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path
+        d={DIR_ROUTE}
+        stroke="#2563eb"
+        strokeWidth="5"
+        opacity=".45"
+        filter="url(#ctDirGlow)"
+      />
+      <path d={DIR_ROUTE} stroke="#fff" strokeWidth="3.5" />
+      <path d={DIR_ROUTE} stroke="url(#ctDirRoute)" strokeWidth="2.2" />
+      <path
+        d={DIR_ROUTE}
+        stroke="#fff"
+        strokeWidth=".7"
+        strokeDasharray="1.2 2.8"
+        className="ct-dash"
+      />
+    </g>
 
-                  {/* labels */}
-                  <text fontSize="2.1" fontWeight="600" fill="#5b6b86" dy=".72" style={{ fontFamily: 'inherit' }}>
-                    <textPath href="#ctOmRoad" startOffset="58%">Pattambi - Cherpulassery Rd</textPath>
-                  </text>
-                  <text x="34" y="20" fontSize="2.8" fontWeight="700" letterSpacing=".7" fill="#9aa9c6" stroke="#f3f6fc" strokeWidth=".8" paintOrder="stroke" style={{ fontFamily: 'inherit' }}>PATTAMBI</text>
-                  <rect x="57" y="27.2" width="27" height="4.6" rx="2.3" fill="#fff" stroke="#cbd6f0" strokeWidth=".35" />
-                  <text x="59" y="30.4" fontSize="2.2" fontWeight="700" fill="#1d4ed8" style={{ fontFamily: 'inherit' }}>CodeZyntax Softwares LLP</text>
+    <circle cx="8" cy="62" r="2.8" fill="#fff"
+      stroke="#2563eb" strokeWidth="1" />
+    <circle cx="8" cy="62" r="1" fill="#2563eb" />
+  </svg>
 
-                  {/* compass */}
-                  <g>
-                    <circle cx="7" cy="7" r="3.2" fill="#fff" stroke="#cbd6f0" strokeWidth=".4" />
-                    <polygon points="7,3.6 8.3,7 7,6.4 5.7,7" fill="#4f46e5" />
-                    <text x="7" y="9.6" textAnchor="middle" fontSize="2" fontWeight="700" fill="#4f46e5" style={{ fontFamily: 'inherit' }}>N</text>
-                  </g>
-                </svg>
-              </div>
+  <span className="ct-dring r1" />
+  <span className="ct-dring r2" />
 
-              {/* layer 2: navigation routes, arrows and markers */}
-              <svg viewBox="0 0 100 70" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                <defs>
-                  <filter id="ctOmGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation=".9" /></filter>
-                  <linearGradient id="ctOmRoute" x1="0" y1="1" x2="1" y2="0">
-                    <stop offset="0" stopColor="#2563eb" />
-                    <stop offset="1" stopColor="#4f46e5" />
-                  </linearGradient>
-                </defs>
-                <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-                  {/* alternate route (violet) */}
-                  <path d={ROUTE_B} stroke="#fff" strokeWidth="2.6" opacity=".95" />
-                  <path d={ROUTE_B} stroke="#8b5cf6" strokeWidth="1.3" opacity=".9" />
-                  {/* main route (blue) with glow */}
-                  <path d={ROUTE_A} stroke="#4f46e5" strokeWidth="4.6" opacity=".35" filter="url(#ctOmGlow)" />
-                  <path d={ROUTE_A} stroke="#fff" strokeWidth="3.4" />
-                  <path d={ROUTE_A} stroke="url(#ctOmRoute)" strokeWidth="2" />
-                  {/* flowing direction dots */}
-                  <path d={ROUTE_A} stroke="#fff" strokeWidth=".7" strokeDasharray="1.2 2.8" className="ct-dash" />
-                  <path d={ROUTE_B} stroke="#fff" strokeWidth=".6" strokeDasharray="1.2 2.8" className="ct-dash" />
+</div>
+
+
+            {/* 3D compass dial */}
+            <div className="ct-l ct-dcomp" style={{ '--z': '40px' }} aria-hidden="true">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="44" fill="none" stroke="#b9cff5" strokeWidth="1.6" />
+                <g stroke="#9db8ea" strokeWidth="1.4" strokeLinecap="round">
+                  {Array.from({ length: 12 }, (_, i) => {
+                    const a = (i * 30 * Math.PI) / 180
+                    const r1 = i % 3 === 0 ? 34 : 38
+                    return <line key={i} x1={50 + Math.sin(a) * r1} y1={50 - Math.cos(a) * r1} x2={50 + Math.sin(a) * 42} y2={50 - Math.cos(a) * 42} />
+                  })}
                 </g>
-
-                {/* direction chevrons */}
-                <g fill="#fff" stroke="#2563eb" strokeWidth=".35" strokeLinejoin="round">
-                  {ARROWS_A.map(([x, y, r]) => <polygon key={`a${x}${y}`} points="-1.5,-1.3 1.6,0 -1.5,1.3 -.6,0" transform={`translate(${x} ${y}) rotate(${r})`} />)}
+                <g fontSize="9" fontWeight="700" fill="#4f46e5" textAnchor="middle" style={{ fontFamily: 'inherit' }}>
+                  <text x="50" y="22">N</text><text x="80" y="53">E</text><text x="50" y="84">S</text><text x="20" y="53">W</text>
                 </g>
-                <g fill="#fff" stroke="#7c3aed" strokeWidth=".35" strokeLinejoin="round">
-                  {ARROWS_B.map(([x, y, r]) => <polygon key={`b${x}${y}`} points="-1.5,-1.3 1.6,0 -1.5,1.3 -.6,0" transform={`translate(${x} ${y}) rotate(${r})`} />)}
-                </g>
-
-                {/* start markers */}
-                <g>
-                  <circle cx="8" cy="63" r="2.8" fill="#fff" stroke="#2563eb" strokeWidth="1" />
-                  <circle cx="8" cy="63" r="1" fill="#2563eb" />
-                  <rect x="3" y="55.8" width="10" height="4.2" rx="2.1" fill="#fff" stroke="#cbd6f0" strokeWidth=".3" />
-                  <text x="8" y="58.8" textAnchor="middle" fontSize="2.1" fontWeight="700" fill="#1d4ed8" style={{ fontFamily: 'inherit' }}>Start</text>
-                  <circle cx="92" cy="10" r="2.8" fill="#fff" stroke="#7c3aed" strokeWidth="1" />
-                  <circle cx="92" cy="10" r="1" fill="#7c3aed" />
+                <g className="ct-dneedle">
+                  <polygon points="50,24 57,50 43,50" fill="#4f46e5" />
+                  <polygon points="50,76 57,50 43,50" fill="#c7d2fe" />
+                  <circle cx="50" cy="50" r="4" fill="#fff" stroke="#4f46e5" strokeWidth="1.6" />
                 </g>
               </svg>
-              <span className="ct-oring r1" /><span className="ct-oring r2" /><span className="ct-oring r3" />
             </div>
 
-            <div className="ct-l ct-opin-shadow" style={{ '--z': '2px' }} aria-hidden="true" />
+            {/* small tilted glass panel with a live map of the office; the whole panel is a link */}
+            <div className="ct-l ct-dmap" style={{ '--z': '100px' }}>
+              <div className="ct-lf" style={{ '--d': '6.8s', '--delay': '-2s' }}>
+                <div className="ct-dmap-panel">
+                  <iframe
+                    className="ct-dmap-frame"
+                    src={OFFICE_EMBED}
+                    title="Map showing the CodeZyntax Softwares LLP office in Pattambi"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                  />
+                  <span className="ct-dmap-pulse" aria-hidden="true" />
+                  <i className="ct-dmap-pin" aria-hidden="true" />
+                  <span className="ct-dmap-label" aria-hidden="true"><MapPin />CodeZyntax Office</span>
+                  <a
+                    className="ct-dmap-link"
+                    href={MAPS_DIRECTIONS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Open the CodeZyntax Softwares LLP office in Google Maps (opens in a new tab)"
+                  />
+                </div>
+              </div>
+            </div>
 
-            {/* glass destination pin (tip lands on the end of the route) */}
-            <div className="ct-l ct-opin" style={{ '--z': '70px' }} aria-hidden="true">
+            {/* floating navigation tile */}
+            <div className="ct-l ct-dnavbig" style={{ '--z': '120px' }} aria-hidden="true">
+              <span className="ct-lf ct-tile" style={{ '--d': '5.4s' }}><Navigation /></span>
+            </div>
+
+            {/* destination pin */}
+            <div className="ct-l ct-dpin-shadow" style={{ '--z': '2px' }} aria-hidden="true" />
+            <div className="ct-l ct-dpin" style={{ '--z': '70px' }} aria-hidden="true">
               <div className="ct-lf" style={{ '--d': '4.8s' }}><i className="ct-opinbody" /></div>
             </div>
 
-            {/* floating glass cards */}
-            <div className="ct-l ct-onav" style={{ '--z': '110px' }} aria-hidden="true">
-              <div className="ct-lf ct-glass ct-ocard" style={{ '--d': '6.4s', '--delay': '-1.5s' }}>
-                <span className="ct-oico"><Navigation /></span>
-                <div className="ct-otext"><b>Directions</b><small>Pattambi, Kerala</small></div>
+            {/* direction signs */}
+            <div className="ct-l ct-dsA" style={{ '--z': '110px' }} aria-hidden="true">
+              <div className="ct-dsh">
+                <div className="ct-lf ct-ocard ct-dsign ct-dsign-r ct-dsign-glass" style={{ '--d': '6.4s', '--delay': '-1.5s' }}>
+                  <span className="ct-oico"><Navigation /></span>
+                  <div className="ct-otext"><b>Head to office</b><small>Pattambi, Kerala</small></div>
+                </div>
               </div>
             </div>
-            <div className="ct-l ct-ohours" style={{ '--z': '96px' }} aria-hidden="true">
-              <div className="ct-lf ct-card3d ct-ocard" style={{ '--d': '7.2s', '--delay': '-3s' }}>
-                <span className="ct-oico ct-oico-v"><Clock /></span>
-                <div><span /><span className="is-short" /></div>
+            <div className="ct-l ct-dsB" style={{ '--z': '96px' }} aria-hidden="true">
+              <div className="ct-dsh">
+                <div className="ct-lf ct-ocard ct-dsign ct-dsign-l ct-dsign-solid" style={{ '--d': '7.2s', '--delay': '-3s' }}>
+                  <span className="ct-oico ct-oico-v"><MapPin /></span>
+                  <div className="ct-otext"><b>You&rsquo;ve arrived</b><small>CodeZyntax Softwares</small></div>
+                </div>
               </div>
             </div>
 
@@ -442,13 +462,17 @@ export default function Contact() {
   const [errors, setErrors] = useState({})
   const [state, setState] = useState('idle') // idle | loading | success | error
   const [problem, setProblem] = useState('')
+  const [captchaCode, setCaptchaCode] = useState(() => createCaptchaCode())
+  const [captchaAnswer, setCaptchaAnswer] = useState('')
+  const [captchaError, setCaptchaError] = useState('')
+  const [phoneCountry, setPhoneCountry] = useState('in')
   const hp = useRef(null)
 
   const set = k => e => { setValues(v => ({ ...v, [k]: e.target.value })); if (errors[k]) setErrors(x => ({ ...x, [k]: undefined })) }
 
   const submit = async e => {
     e.preventDefault()
-    const er = validate(values)
+    const er = validate(values, phoneCountry)
     if (service.length === 0) er.service = 'Please select at least one service.'
     setErrors(er)
     const first = Object.keys(er)[0]
@@ -459,6 +483,14 @@ export default function Contact() {
       return
     }
     if (hp.current?.value) return // honeypot filled: silently ignore bots
+
+    if (captchaAnswer.trim().toUpperCase() !== captchaCode) {
+      setCaptchaError('Incorrect CAPTCHA code. Please try again.')
+      setCaptchaAnswer('')
+      setCaptchaCode(createCaptchaCode())
+      return
+    }
+
     const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
     const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
@@ -495,12 +527,18 @@ export default function Contact() {
 
       setState('success')
       setValues(EMPTY)
+      setPhoneCountry('in')
       setService([])
       setErrors({})
+      setCaptchaAnswer('')
+      setCaptchaCode(createCaptchaCode())
+      setCaptchaError('')
     } catch (error) {
       console.error('EmailJS enquiry submission failed:', error)
       setProblem('We could not send your enquiry. Please try again or contact us by email.')
       setState('error')
+      setCaptchaAnswer('')
+      setCaptchaCode(createCaptchaCode())
     }
   }
 
@@ -574,7 +612,6 @@ export default function Contact() {
                 <div className="ct-form-head">
                   <h2 id="ct-form-title">Build Your Project Brief</h2>
                   <p className="ct-form-sub">Share your vision, goals, and requirements. We&rsquo;ll help you choose the right technology and create a solution that moves your business forward.</p>
-                  <p className="ct-form-note">Fields marked with <b aria-hidden="true">*</b> are required. Company name and project budget are optional.</p>
                 </div>
 
                 {/* hidden spam trap: real visitors never see or fill this */}
@@ -594,8 +631,9 @@ export default function Contact() {
                       <PhoneInput
                         country="in"
                         value={values.phone.replace(/^\+/, '')}
-                        onChange={(phone) => {
+                        onChange={(phone, country) => {
                           const internationalPhone = phone ? `+${phone}` : ''
+                          setPhoneCountry(country?.countryCode || 'in')
                           setValues(v => ({ ...v, phone: internationalPhone }))
                           if (errors.phone) setErrors(x => ({ ...x, phone: undefined }))
                         }}
@@ -666,6 +704,59 @@ export default function Contact() {
                   <div className="ct-ic ct-ic-area"><FileText className="ct-ic-i" size={18} aria-hidden="true" />
                     <textarea {...fieldProps('message', { rows: 6, placeholder: 'What would you like to build? Mention goals, key features, timeline and any existing systems.', required: true })} /></div><Err k="message" /></div>
 
+                <div className="ct-captcha-wrap">
+                  <label className="ct-captcha-label" htmlFor="ct-captcha-answer">
+                    Security verification <b aria-hidden="true">*</b>
+                  </label>
+
+                  <div className="ct-captcha-challenge">
+                    <div className="ct-captcha-image" aria-label={`CAPTCHA code: ${captchaCode}`}>
+                      {captchaCode.split('').map((char, index) => (
+                        <span key={`${char}-${index}`} style={{ '--captcha-index': index }}>
+                          {char}
+                        </span>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      className="ct-captcha-refresh"
+                      onClick={() => {
+                        setCaptchaCode(createCaptchaCode())
+                        setCaptchaAnswer('')
+                        setCaptchaError('')
+                      }}
+                      aria-label="Generate a new CAPTCHA code"
+                      title="Refresh CAPTCHA"
+                    >
+                      <span aria-hidden="true">↻</span>
+                    </button>
+                  </div>
+
+                  <input
+                    id="ct-captcha-answer"
+                    name="captcha"
+                    type="text"
+                    value={captchaAnswer}
+                    onChange={e => {
+                      setCaptchaAnswer(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))
+                      if (captchaError) setCaptchaError('')
+                    }}
+                    placeholder="Enter the code shown above"
+                    autoComplete="off"
+                    maxLength={6}
+                    spellCheck="false"
+                    aria-invalid={captchaError ? 'true' : undefined}
+                    aria-describedby={captchaError ? 'ct-captcha-error' : undefined}
+                    className="ct-captcha-input"
+                  />
+
+                  {captchaError && (
+                    <span id="ct-captcha-error" className="ct-err" role="alert">
+                      <AlertCircle size={14} aria-hidden="true" />{captchaError}
+                    </span>
+                  )}
+                </div>
+
                 <div className="ct-submit">
                   <button className="ct-btn ct-btn-primary" disabled={state === 'loading'}>
                     {state === 'loading' ? <><Loader2 className="ct-spin" size={18} aria-hidden="true" />Sending…</> : <>Send enquiry <Send size={17} aria-hidden="true" /></>}
@@ -699,7 +790,7 @@ export default function Contact() {
                 </a>
               </div>
             </div>
-            <OfficeScene />
+            <DirectionsScene />
           </div>
         </div>
       </div>

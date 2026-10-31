@@ -649,15 +649,30 @@ useEffect(() => {
                           View live website <ArrowUpRight size={20} strokeWidth={1.8} />
                           <span className="hm-sr"> (opens in a new tab)</span>
                         </a>
+                        
                       </div>
                     </article>
                   </li>
                 )
               })}
             </ul>
-            <div data-reveal className="hm-work-foot">
-              <Link to="/contact" className="hm-btn hm-btn-outline hm-btn-sm">Start Your Project <ArrowUpRight size={16} aria-hidden="true" /></Link>
-            </div>
+         <div data-reveal className="hm-work-foot">
+  <Link
+    to="/contact"
+    className="hm-btn hm-btn-outline hm-btn-sm"
+  >
+    Start Your Project
+    <ArrowUpRight size={16} aria-hidden="true" />
+  </Link>
+
+  <Link
+    to="/portfolio"
+    className="hm-btn hm-btn-outline hm-btn-sm"
+  >
+    View Our Projects
+    <ArrowRight size={16} aria-hidden="true" />
+  </Link>
+</div>
           </>
         ) : (
           <div data-reveal className="hm-empty">
@@ -682,6 +697,7 @@ useEffect(() => {
               <div className="hm-empty-actions">
                 <Link to="/contact" className="hm-btn hm-btn-primary hm-btn-sm">Start a Project <ArrowUpRight size={16} aria-hidden="true" /></Link>
                 <Link to="/portfolio" className="hm-btn hm-btn-outline hm-btn-sm">View Portfolio <ArrowRight size={16} aria-hidden="true" /></Link>
+                
               </div>
             </div>
           </div>

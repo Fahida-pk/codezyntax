@@ -352,3 +352,25 @@
   .svx-card:hover::before { animation: none; }
   .svx-card.is-in:hover { transform: none; }
 }
+/* Professional justified alignment for service descriptions */
+.svc-text {
+  width: 100%;
+  text-align: justify !important;
+  text-align-last: left;
+  text-justify: inter-word;
+
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+
+  line-height: 1.7;
+}
+
+/* Full service descriptions */
+.svc-text-full {
+  text-align: justify !important;
+  text-align-last: left;
+  hyphens: none !important;
+  word-break: normal !important;
+}

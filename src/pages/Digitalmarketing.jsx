@@ -52,8 +52,8 @@ const CHANNELS = [
 ]
 
 const PROCESS = [
-  { icon: Compass, title: 'Discover', text: 'Understand business goals, customers, and competitors.' },
-  { icon: Target, title: 'Strategize', text: 'Develop a tailored marketing roadmap.' },
+  { icon: Compass, title: 'Discover', text: 'Understand your business, audience, goals and competitors.' },
+  { icon: Target, title: 'Strategize', text: 'Choose the right mix of marketing, SEO, social, web and design.' },
   { icon: Rocket, title: 'Create & Launch', text: 'Develop creative assets and launch a consistent digital presence.' },
   { icon: TrendingUp, title: 'Improve', text: 'Review performance, learn from insights and refine what comes next.' },
 ]
@@ -249,24 +249,54 @@ function HeroStage() {
   )
 }
 
-/* ---------------------------- 3. ABOUT: LAYERED 3D STACK ---------------------------- */
+/* ---------------------------- 3. ABOUT: GLASSMORPHISM 3D STACK ---------------------------- */
 function LayerStack() {
   const wrap = useRef(null)
+  const stage = useRef(null)
   useLive(wrap)
+  useParallax(stage)
+  const last = LAYERS.length - 1
   return (
-    <div className="dm-isowrap dm-3d" ref={wrap}>
-      <div className="dm-iso" role="img" aria-label="Animated 3D stack of four layers: audience research, creative campaigns, marketing technology and performance analysis">
-        <div className="dm-iso-scene">
-          <div className="dm-iso-floor" />
-          <div className="dm-iso-beam" />
-          {LAYERS.map(({ icon: Icon, label }, i) => (
-            <div key={label} className="dm-slab-pos" style={{ '--i': i }}>
-              <div className="dm-slab">
-                <span className="dm-ico3d"><Icon aria-hidden="true" /></span>
-                <b>{label}</b>
+    <div className="dm-glwrap dm-3d" ref={wrap}>
+      <div
+        className="dm-gl" ref={stage} role="img"
+        aria-label="Animated 3D glass illustration of four floating panels: audience research, creative campaigns, marketing technology and performance analysis"
+      >
+        <span className="dm-gl-aura is-a" aria-hidden="true" />
+        <span className="dm-gl-aura is-b" aria-hidden="true" />
+
+        <div className="dm-gl-scene">
+          <div className="dm-gl-sway">
+            <div className="dm-gl-floor" />
+            <div className="dm-gl-halo" />
+
+            {LAYERS.map(({ icon: Icon, label }, i) => (
+              <div key={label} className={`dm-gl-pos${i === last ? ' is-hero' : ''}`} style={{ '--i': i }}>
+                <div className="dm-gl-panel">
+                  <span className="dm-ico3d"><Icon aria-hidden="true" /></span>
+                  <b>{label}</b>
+                  <span className="dm-gl-bars" aria-hidden="true"><i /><i /><i /><i /></span>
+                </div>
+              </div>
+            ))}
+
+            <div className="dm-gl-pos dm-gl-orbpos">
+              <span className="dm-gl-orb" />
+            </div>
+
+            <div className="dm-gl-pos dm-gl-chippos">
+              <div className="dm-gl-chip">
+                <TrendingUp aria-hidden="true" />
+                <svg viewBox="0 0 60 24" aria-hidden="true">
+                  <path pathLength="100" d="M0 20 C10 18 14 8 24 11 S40 14 48 6 S56 3 60 2" />
+                </svg>
               </div>
             </div>
-          ))}
+
+            <div className="dm-gl-pos dm-gl-gempos">
+              <span className="dm-gl-gem"><Sparkles aria-hidden="true" /></span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -508,16 +538,62 @@ export default function DigitalMarketing() {
       {/* 3. APPROACH */}
       <section className="dm-sec dm-tint" aria-labelledby="dm-about-title">
         <div className="dm-wrap dm-split">
-          <div className="dm-split-art dm-rv"><LayerStack /></div>
+          <div className="dm-split-art dm-rv">
+            <LayerStack />
+          </div>
+
           <div className="dm-split-copy">
-            <h2 id="dm-about-title" className="dm-h2 dm-rv">Strategy, Creativity and Technology Working Together</h2>
+            <h2 id="dm-about-title" className="dm-h2 dm-rv">
+              Strategy, Creativity and Technology Working Together
+            </h2>
+
             <p className="dm-body dm-rv">
-              We start by understanding your business, audience and goals. Then we shape clear messaging, thoughtful design and practical digital strategies that help your brand connect with the right people.
+              We start by understanding your business, audience and goals.
+              Then we shape clear messaging, thoughtful design and practical
+              digital strategies that help your brand connect with the right people.
             </p>
-            <p className="dm-body dm-rv">
-              We bring marketing, creative design and technology together to build a consistent digital presence and support your business growth.
-            </p>
-            <div className="dm-rv"><Link to="/contact" className="dm-btn dm-btn-primary">Talk to Our Team <ArrowUpRight size={17} aria-hidden="true" /></Link></div>
+
+            <div className="dm-approach-points dm-rv">
+              <div className="dm-approach-item">
+                <span className="dm-approach-icon">
+                  <Target size={16} />
+                </span>
+                <div>
+                  <h3>Tailored strategies</h3>
+                  <p>Built around your business goals.</p>
+                </div>
+              </div>
+
+              <div className="dm-approach-item">
+                <span className="dm-approach-icon">
+                  <ArrowUpRight size={16} />
+                </span>
+                <div>
+                  <h3>Creative execution</h3>
+                  <p>Consistent, professional brand presence.</p>
+                </div>
+              </div>
+
+              <div className="dm-approach-item">
+                <span className="dm-approach-icon">
+                  <BarChart3 size={16} />
+                </span>
+                <div>
+                  <h3>Clear reporting</h3>
+                  <p>Understand progress and opportunities.</p>
+                </div>
+              </div>
+
+              <div className="dm-approach-item">
+                <span className="dm-approach-icon">
+                  <TrendingUp size={16} />
+                </span>
+                <div>
+                  <h3>Ongoing improvement</h3>
+                  <p>Refine your digital presence over time.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

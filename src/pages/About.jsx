@@ -46,7 +46,7 @@ const STACK = [
   [Server, 'Backend Development', ['PHP', 'Laravel', 'Node.js', 'Express.js', 'REST APIs']],
   [CodeXml, 'Programming Languages', ['C#', 'Python', 'JavaScript', 'C++']],
   [PanelsTopLeft, 'CMS & Website Development', ['WordPress', 'Custom Websites', 'Responsive Web Design']],
-  [Database, 'Database Management', ['MySQL', 'MongoDB', 'PostgreSQL']],
+  [Database, 'Database Management', ['MySQL', 'MongoDB', 'PostgreSQL', 'Ms SQL']],
   [Monitor, 'Development Tools', ['Visual Studio', 'Visual Studio Code', 'Git', 'GitHub', 'Postman']],
   [HardDrive, 'Web Hosting & Servers', ['cPanel', 'Plesk', 'DirectAdmin', 'VPS Hosting', 'Cloud Hosting']],
   [Globe, 'Cloud & Deployment', ['Vercel', 'Netlify', 'CI/CD', 'Domain & DNS Management']],

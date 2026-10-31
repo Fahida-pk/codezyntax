@@ -5134,3 +5134,131 @@ p {
   font-family: var(--hm-head);
   letter-spacing: -0.02em;
 }
+
+.hm-view-project-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 23px;
+  margin-top: 20px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #397cff, #2456e8);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hm-view-project-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.28);
+}
+
+.hm-view-project-btn svg {
+  transition: transform 0.25s ease;
+}
+
+.hm-view-project-btn:hover svg {
+  transform: translate(3px, -3px);
+}
+.hm-work-foot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+/* ===== About Us - Standard Feature Cards Layout ===== */
+
+.hm-ab-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: stretch;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+/* Remove staggered card positioning */
+.hm-ab-cards .hm-ab-card,
+.hm-ab-cards .hm-ab-card:nth-child(even) {
+  transform: none !important;
+}
+
+/* Standard equal-height cards */
+.hm-ab-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 0;
+  height: 100%;
+  padding: 20px;
+  border-radius: 18px;
+}
+
+/* Icon spacing */
+.hm-ab-ico {
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+/* Heading */
+.hm-ab-card h3 {
+  margin: 14px 0 0;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+/* Normal paragraph alignment */
+.hm-ab-card p {
+  margin: 7px 0 0;
+  text-align: left !important;
+  text-justify: auto;
+  font-size: .9rem;
+  line-height: 1.6;
+  word-spacing: normal;
+  overflow-wrap: normal;
+}
+
+/* Consistent hover */
+.hm .hm-ab-card:hover {
+  transform: translateY(-3px) !important;
+}
+
+/* Mobile */
+@media (max-width: 479px) {
+  .hm-ab-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .hm-ab-card {
+    padding: 18px;
+  }
+}
+/* About section – Equal paragraph text width */
+
+.hm-ab-copy > .hm-ab-lead,
+.hm-ab-copy > .hm-ab-text,
+.hm-ab-copy > .hm-ab-mv .hm-ab-mvi p {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: justify;
+  text-justify: inter-word;
+  word-spacing: normal;
+  line-height: 1.7;
+  overflow-wrap: normal;
+}
+
+/* Right-side feature descriptions */
+.hm-ab-card p {
+  text-align: left !important;
+  word-spacing: normal !important;
+  line-height: 1.7;
+}

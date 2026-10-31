@@ -1061,3 +1061,121 @@ a.ab-detail:hover strong { color: var(--ab-blue); }
 .ab-hero-grid {
   margin-top: -18px;
 }
+
+/* ==========================================
+   ABOUT HERO — MOBILE VIEW FIX
+   Desktop layout remains unchanged
+   ========================================== */
+
+@media (max-width: 767px) {
+  .ab-hero {
+    padding-top: 100px !important;
+    padding-bottom: 28px !important;
+    overflow: hidden;
+  }
+
+  .ab-hero .ab-wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .ab-hero-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .ab-hero-copy {
+    width: 100%;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .ab-kicker {
+    font-size: 11px;
+    letter-spacing: 2px;
+    line-height: 1.5;
+  }
+
+  .ab-animated-title {
+    margin-top: 14px;
+    font-size: clamp(29px, 7.5vw, 38px) !important;
+    line-height: 1.12 !important;
+    letter-spacing: -1.3px;
+    overflow-wrap: break-word;
+  }
+
+  .ab-title-base,
+  .ab-title-gradient {
+    display: block;
+  }
+
+  .ab-hero-side {
+    margin-top: 18px;
+    width: 100%;
+  }
+
+  .ab-hero-side p {
+    font-size: 15px;
+    line-height: 1.85;
+    margin: 0;
+  }
+
+  .ab-hero-side .ab-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+    padding-bottom: 14px;
+  }
+
+  /* 3D image placement */
+  .ab-stage {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1 / 0.88;
+    margin: 8px auto 0;
+    overflow: visible;
+  }
+
+  .ab-stage .ab-3d {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ab-stage canvas,
+  .ab-stage svg {
+    max-width: 100%;
+  }
+
+  /* Prevent extra space below the illustration */
+  .ab-hero .ab-bgorb {
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .ab-hero {
+    padding-top: 92px !important;
+  }
+
+  .ab-animated-title {
+    font-size: 29px !important;
+  }
+
+  .ab-hero-side p {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .ab-stage {
+    max-width: 310px;
+  }
+}

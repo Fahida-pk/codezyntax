@@ -1,0 +1,44 @@
+/* ---------- light mode (default) ---------- */
+
+.hx-svg {
+  --hx-p1: #ffffff;
+  --hx-p2: #c9d2fa;
+  --hx-plat-edge: #e4e9ff;
+  --hx-glass: rgba(255, 255, 255, 0.78);
+  --hx-glass-line: #ffffff;
+  --hx-glass-gloss: rgba(255, 255, 255, 0.6);
+  --hx-shadow: #8d9be4;
+  --hx-chart-base: #c3d4f4;
+}
+
+/* ---------- dark mode ---------- */
+
+.dark .hx-svg,
+[data-theme='dark'] .hx-svg {
+  --hx-p1: #5a6fe0;
+  --hx-p2: #26308f;
+  --hx-plat-edge: #6f84ee;
+  --hx-glass: rgba(140, 168, 255, 0.2);
+  --hx-glass-line: rgba(255, 255, 255, 0.5);
+  --hx-glass-gloss: rgba(255, 255, 255, 0.16);
+  --hx-shadow: #1a2790;
+  --hx-chart-base: rgba(255, 255, 255, 0.4);
+}
+
+.hx-glass { fill: var(--hx-glass); stroke: var(--hx-glass-line); }
+.hx-gloss { fill: var(--hx-glass-gloss); }
+.hx-shadow { fill: var(--hx-shadow); opacity: 0.55; }
+
+/* ---------- gentle float ---------- */
+
+.hx-a { animation: hx-bob 6s ease-in-out infinite; }
+.hx-b { animation: hx-bob 7.5s ease-in-out -2s infinite reverse; }
+
+@keyframes hx-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-a, .hx-b { animation: none; }
+}
