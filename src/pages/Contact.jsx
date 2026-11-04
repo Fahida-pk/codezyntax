@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import Seo from '../components/Seo'
 import { SITE, SERVICES, REGIONS } from '../data/site'
+import { useCmsPage } from '../cms/useCmsPage'
 import './Contact.css'
 
 /* =========================================================================
@@ -448,6 +449,16 @@ const Info = ({ icon: Icon, label, children, href, external }) => {
 
 /* ============================== PAGE ============================== */
 export default function Contact() {
+  const { content: cms = {} } = useCmsPage('contact')
+  const hero = cms.hero || {}
+  const details = cms.details || {}
+  const formContent = cms.form || {}
+  const mapContent = cms.map || {}
+  const contactEmail = details.email || SITE.email
+  const contactPhone = details.phone || SITE.phone
+  const contactWhatsapp = details.whatsapp || SITE.whatsapp
+  const contactAddress = details.address || SITE.address
+  const contactHours = details.workingHours || SITE.hours
   const [params] = useSearchParams()
   const presetTitle = resolvePreset(params.get('service') || '')
   const [values, setValues] = useState(EMPTY)
@@ -546,7 +557,7 @@ export default function Contact() {
     'aria-invalid': errors[k] ? 'true' : undefined, 'aria-describedby': errors[k] ? `ct-${k}-err` : undefined, ...extra,
   })
   const Err = ({ k }) => errors[k] ? <span id={`ct-${k}-err`} role="alert" className="ct-err"><AlertCircle size={14} aria-hidden="true" />{errors[k]}</span> : null
-  const hasDirect = SITE.email || SITE.whatsapp || SITE.phone
+  const hasDirect = contactEmail || contactWhatsapp || contactPhone
 
   return (<div className="ct">
     <Seo title="Contact Us" description="Send a project enquiry to CodeZyntax Softwares LLP for custom software, websites, web and mobile applications and digital marketing." />
@@ -556,12 +567,12 @@ export default function Contact() {
       <div className="ct-hero-bg" aria-hidden="true" />
       <div className="ct-wrap ct-hero-grid">
         <div className="ct-hero-copy">
-          <span className="ct-pill ct-rise" style={{ '--i': 0 }}><i />Contact us</span>
-          <h1 id="ct-hero-title" className="ct-h1 ct-grad-text ct-rise" style={{ '--i': 1 }}>Let&rsquo;s Build Something Great Together</h1>
-          <p className="ct-lead ct-rise" style={{ '--i': 2 }}>Have an idea in mind? Tell us about your project, and our team will help you transform it into a scalable, high-quality digital solution.</p>
+          <span className="ct-pill ct-rise" style={{ '--i': 0 }}><i />{hero.eyebrow || 'Contact us'}</span>
+          <h1 id="ct-hero-title" className="ct-h1 ct-grad-text ct-rise" style={{ '--i': 1 }}>{hero.heading || "Let's Build Something Great Together"}</h1>
+          <p className="ct-lead ct-rise" style={{ '--i': 2 }}>{hero.description || 'Have an idea in mind? Tell us about your project, and our team will help you transform it into a scalable, high-quality digital solution.'}</p>
           <div className="ct-actions ct-rise ct-desktop-actions" style={{ '--i': 3 }}>
             <a href="#enquiry" className="ct-btn ct-btn-primary">Send an enquiry <ArrowRight size={18} aria-hidden="true" /></a>
-            {SITE.whatsapp && <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener noreferrer" className="ct-btn ct-btn-ghost"><MessageCircle size={18} aria-hidden="true" />Chat on WhatsApp</a>}
+            {contactWhatsapp && <a href={`https://wa.me/${contactWhatsapp}`} target="_blank" rel="noopener noreferrer" className="ct-btn ct-btn-ghost"><MessageCircle size={18} aria-hidden="true" />Chat on WhatsApp</a>}
           </div>
           <ul className="ct-points ct-rise" style={{ '--i': 4 }}>
             {POINTS.map(p => <li key={p}><Check size={16} aria-hidden="true" />{p}</li>)}
@@ -572,7 +583,7 @@ export default function Contact() {
         {/* Mobile-only enquiry buttons: displayed below the 3D envelope illustration. */}
         <div className="ct-actions ct-rise ct-mobile-actions" style={{ '--i': 3 }}>
           <a href="#enquiry" className="ct-btn ct-btn-primary">Send an enquiry <ArrowRight size={18} aria-hidden="true" /></a>
-          {SITE.whatsapp && <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener noreferrer" className="ct-btn ct-btn-ghost"><MessageCircle size={18} aria-hidden="true" />Chat on WhatsApp</a>}
+          {contactWhatsapp && <a href={`https://wa.me/${contactWhatsapp}`} target="_blank" rel="noopener noreferrer" className="ct-btn ct-btn-ghost"><MessageCircle size={18} aria-hidden="true" />Chat on WhatsApp</a>}
         </div>
       </div>
     </section>
@@ -582,16 +593,16 @@ export default function Contact() {
       <div className="ct-wrap ct-grid">
         <aside className="ct-side" aria-label="Contact information">
           <div data-reveal className="ct-side-head">
-            <h2>Contact information</h2>
-            <p>{hasDirect ? 'Reach us directly, or use the enquiry form.' : 'Use the enquiry form and we will get back to you.'}</p>
+            <h2>{details.heading || 'Contact information'}</h2>
+            <p>{details.description || (hasDirect ? 'Reach us directly, or use the enquiry form.' : 'Use the enquiry form and we will get back to you.')}</p>
           </div>
           <div data-reveal className="ct-side-art"><GlobeScene /></div>
           <div className="ct-infos" data-reveal>
-            {SITE.email && <Info icon={Mail} label="Email" href={`mailto:${SITE.email}`}>{SITE.email}</Info>}
-            {SITE.phone && <Info icon={Phone} label="Phone" href={`tel:${SITE.phone.replace(/[^\d+]/g, '')}`}>{SITE.phone}</Info>}
-            {SITE.whatsapp && <Info icon={MessageCircle} label="WhatsApp" href={`https://wa.me/${SITE.whatsapp}`} external>Message us on WhatsApp</Info>}
-            {SITE.address && <Info icon={MapPin} label="Office address" href={SITE.mapUrl || MAPS_DIRECTIONS_URL} external>{SITE.address}</Info>}
-            {SITE.hours && <Info icon={Clock} label="Business hours">{SITE.hours}</Info>}
+            {contactEmail && <Info icon={Mail} label="Email" href={`mailto:${contactEmail}`}>{contactEmail}</Info>}
+            {contactPhone && <Info icon={Phone} label="Phone" href={`tel:${contactPhone.replace(/[^\d+]/g, '')}`}>{contactPhone}</Info>}
+            {contactWhatsapp && <Info icon={MessageCircle} label="WhatsApp" href={`https://wa.me/${contactWhatsapp}`} external>Message us on WhatsApp</Info>}
+            {contactAddress && <Info icon={MapPin} label="Office address" href={SITE.mapUrl || MAPS_DIRECTIONS_URL} external>{contactAddress}</Info>}
+            {contactHours && <Info icon={Clock} label="Business hours">{contactHours}</Info>}
             <Info icon={Globe} label="Regions we serve">{REGIONS.join(' · ')}</Info>
             <Info icon={Headphones} label="Support">24/7 support, including after launch</Info>
           </div>
@@ -602,30 +613,30 @@ export default function Contact() {
             {state === 'success' ? (
               <div className="ct-success" role="status" aria-live="polite">
                 <span className="ct-success-ico"><CheckCircle2 size={34} aria-hidden="true" /></span>
-                <h2>Thank you. Your enquiry has been sent.</h2>
-                <p>We have received your project details and will respond to the email address you provided.</p>
+                <h2>{formContent.successHeading || 'Thank you. Your enquiry has been sent.'}</h2>
+                <p>{formContent.successMessage || 'We have received your project details and will respond to the email address you provided.'}</p>
                 <button type="button" className="ct-btn ct-btn-ghost" onClick={() => setState('idle')}>Send another enquiry</button>
               </div>
             ) : (
               <form onSubmit={submit} noValidate aria-labelledby="ct-form-title">
                 <div className="ct-form-head">
-                  <h2 id="ct-form-title">Build Your Project Brief</h2>
-                  <p className="ct-form-sub">Share your vision, goals, and requirements. We&rsquo;ll help you choose the right technology and create a solution that moves your business forward.</p>
+                  <h2 id="ct-form-title">{formContent.heading || 'Build Your Project Brief'}</h2>
+                  <p className="ct-form-sub">{formContent.description || 'Share your vision, goals, and requirements. We’ll help you choose the right technology and create a solution that moves your business forward.'}</p>
                 </div>
 
                 {/* hidden spam trap: real visitors never see or fill this */}
                 <div className="ct-trap" aria-hidden="true"><label>Website<input ref={hp} name="website" tabIndex="-1" autoComplete="off" /></label></div>
 
                 <div className="ct-row">
-                  <div className="ct-field"><label htmlFor="ct-name">Full name <b aria-hidden="true">*</b></label>
+                  <div className="ct-field"><label htmlFor="ct-name">{formContent.nameLabel || "Full name"} <b aria-hidden="true">*</b></label>
                     <div className="ct-ic"><User className="ct-ic-i" size={18} aria-hidden="true" />
                       <input {...fieldProps('name', { type: 'text', autoComplete: 'name', placeholder: 'Your full name', required: true })} /></div><Err k="name" /></div>
-                  <div className="ct-field"><label htmlFor="ct-email">Business email <b aria-hidden="true">*</b></label>
+                  <div className="ct-field"><label htmlFor="ct-email">{formContent.emailLabel || "Business email"} <b aria-hidden="true">*</b></label>
                     <div className="ct-ic"><Mail className="ct-ic-i" size={18} aria-hidden="true" />
                       <input {...fieldProps('email', { type: 'email', autoComplete: 'email', inputMode: 'email', placeholder: 'name@company.com', required: true })} /></div><Err k="email" /></div>
                 </div>
                 <div className="ct-row">
-                  <div className="ct-field"><label htmlFor="ct-phone">Phone number <b aria-hidden="true">*</b></label>
+                  <div className="ct-field"><label htmlFor="ct-phone">{formContent.phoneLabel || "Phone number"} <b aria-hidden="true">*</b></label>
                     <div className="ct-phone-group ct-phone-searchable">
                       <PhoneInput
                         country="in"
@@ -699,7 +710,7 @@ export default function Contact() {
                   <div className="ct-ic"><Wallet className="ct-ic-i" size={18} aria-hidden="true" />
                     <select {...fieldProps('budget')}><option value="">Select a budget range</option>{BUDGETS.map(b => <option key={b}>{b}</option>)}</select></div></div>
 
-                <div className="ct-field"><label htmlFor="ct-message">Project details <b aria-hidden="true">*</b></label>
+                <div className="ct-field"><label htmlFor="ct-message">{formContent.messageLabel || "Project details"} <b aria-hidden="true">*</b></label>
                   <div className="ct-ic ct-ic-area"><FileText className="ct-ic-i" size={18} aria-hidden="true" />
                     <textarea {...fieldProps('message', { rows: 6, placeholder: 'What would you like to build? Mention goals, key features, timeline and any existing systems.', required: true })} /></div><Err k="message" /></div>
 
@@ -735,7 +746,7 @@ export default function Contact() {
 
                 <div className="ct-submit">
                   <button className="ct-btn ct-btn-primary" disabled={state === 'loading'}>
-                    {state === 'loading' ? <><Loader2 className="ct-spin" size={18} aria-hidden="true" />Sending…</> : <>Send enquiry <Send size={17} aria-hidden="true" /></>}
+                    {state === 'loading' ? <><Loader2 className="ct-spin" size={18} aria-hidden="true" />Sending…</> : <>{formContent.submitText || 'Send enquiry'} <Send size={17} aria-hidden="true" /></>}
                   </button>
                   <p className="ct-privacy"><ShieldCheck size={16} aria-hidden="true" />Your details are used only to respond to your enquiry.</p>
                 </div>
@@ -758,11 +769,11 @@ export default function Contact() {
         <div className="ct-map-card" data-reveal>
           <div className="ct-map-top">
             <div className="ct-map-head">
-              <h2 id="ct-map-title">Ready to Discuss Your Project?</h2>
-              <p>Find our office in Pattambi, Kerala, and let&rsquo;s turn your ideas into reality.</p>
+              <h2 id="ct-map-title">{mapContent.heading || 'Ready to Discuss Your Project?'}</h2>
+              <p>{mapContent.description || 'Find our office in Pattambi, Kerala, and let’s turn your ideas into reality.'}</p>
               <div className="ct-map-actions">
                 <a className="ct-btn ct-btn-primary" href={MAPS_DIRECTIONS_URL} target="_blank" rel="noopener noreferrer">
-                  <Navigation size={18} aria-hidden="true" />Get Directions<ArrowUpRight size={18} aria-hidden="true" />
+                  <Navigation size={18} aria-hidden="true" />{mapContent.buttonText || 'Get Directions'}<ArrowUpRight size={18} aria-hidden="true" />
                 </a>
               </div>
             </div>

@@ -10,6 +10,7 @@ import About from './pages/About'
 import DigitalMarketing from './pages/Digitalmarketing'
 import VCardsAlt from './pages/Vcardsalt'
 import SelectedWork from './components/SelectedWork'
+import  BlogList from './pages/Blog'
 
 const STATIC = [
   'industries',
@@ -38,6 +39,7 @@ export default function App() {
 
         {/* Portfolio Projects */}
         <Route path="portfolio" element={<SelectedWork />} />
+        <Route path="blog" element={<BlogList />} />
 
         {/* Static Pages */}
         {STATIC.map(p => (

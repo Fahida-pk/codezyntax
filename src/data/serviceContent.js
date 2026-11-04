@@ -1,20 +1,22 @@
 import {
   Layers, Plug, Lock, BarChart3, Wrench, Workflow, Smartphone, Bell, Cloud,
   Gauge, RefreshCw, Monitor, HardDrive, Printer, Settings, Search,
-  Target, Mail, Share2, QrCode, Link2, Palette,
+  Target, QrCode, Link2, Palette,
   LayoutTemplate, MousePointerClick, PenTool, Database, ShieldCheck, Zap,
   FileText, Users, Wifi, Leaf, UserPlus, Contact,
+  MapPin, Calendar, Image as ImageIcon, MessageCircle, Lightbulb,
+  ClipboardCheck, Compass, Route, Handshake, Presentation,
 } from 'lucide-react'
 
 /**
- * Rich, service-specific content.
- * Each SERVICES entry is matched to one of these profiles by its slug/title
- * (see getServiceKind below), so the pages keep working if slugs are renamed.
+ * One separate content profile per service (9 in total).
+ * Each SERVICES entry is matched to a profile by slug/title in getServiceKind below.
  *
  * Headings are [plain, highlighted] pairs. The highlighted part is rendered
  * with the animated blue / violet / cyan gradient.
  */
 export const SERVICE_CONTENT = {
+  /* ========== 1. CUSTOM SOFTWARE DEVELOPMENT ========== */
   software: {
     h: {
       hero: ['Custom Software Built Around', 'Your Business'],
@@ -58,6 +60,7 @@ export const SERVICE_CONTENT = {
     ctaText: 'Tell us about your process and the problems you want solved. We will suggest a practical way to build it.',
   },
 
+  /* ========== 2. WEBSITE DESIGN & DEVELOPMENT ========== */
   website: {
     h: {
       hero: ['Websites That Build Trust and', 'Bring Enquiries'],
@@ -101,6 +104,7 @@ export const SERVICE_CONTENT = {
     ctaText: 'Share your business and your goals. We will recommend a design and a plan that fits your budget.',
   },
 
+  /* ========== 3. WEB APPLICATION DEVELOPMENT ========== */
   webapp: {
     h: {
       hero: ['Secure Web Applications for', 'Modern Businesses'],
@@ -144,6 +148,7 @@ export const SERVICE_CONTENT = {
     ctaText: 'Describe the users and tasks you have in mind. We will outline the features, timeline and approach.',
   },
 
+  /* ========== 4. MOBILE APPLICATION DEVELOPMENT ========== */
   mobile: {
     h: {
       hero: ['Mobile Apps Your Customers Will', 'Love to Use'],
@@ -187,6 +192,7 @@ export const SERVICE_CONTENT = {
     ctaText: 'Tell us who the app is for and what it should do. We will help you shape a launch-ready first version.',
   },
 
+  /* ========== 5. WINDOWS APPLICATION DEVELOPMENT ========== */
   windows: {
     h: {
       hero: ['Fast, Dependable Software for', 'Windows Desktops'],
@@ -230,49 +236,95 @@ export const SERVICE_CONTENT = {
     ctaText: 'Tell us how your team works today. We will propose a Windows application that makes it faster.',
   },
 
-  marketing: {
+  /* ========== 6. DIGITAL MARKETING & SEO ========== */
+  seo: {
     h: {
-      hero: ['Digital Marketing That Delivers', 'Measurable Growth'],
-      features: ['Services that grow your', 'online presence'],
-      benefits: ['Benefits of', 'Data-Driven Marketing'],
-      process: ['How we run', 'your campaigns'],
+      hero: ['Digital Marketing & SEO That Brings', 'Qualified Enquiries'],
+      features: ['Everything that helps customers', 'find you first'],
+      benefits: ['Benefits of', 'Search-Led Marketing'],
+      process: ['How we grow', 'your visibility'],
     },
     lead:
-      'We help you reach the right customers online with search, social media and paid campaigns, tracked with clear reports, so every rupee of marketing budget has a purpose.',
-    points: ['Data-driven campaigns', 'Transparent reporting', 'Local and national reach'],
+      'When customers search for what you offer, we make sure they find you. We combine technical SEO, local search, Google Ads and clear reporting so your marketing budget is tied to enquiries, not guesswork.',
+    points: ['Technical and local SEO', 'Google Ads management', 'Plain-language monthly reports'],
     features: [
-      [Search, 'Search Engine Optimisation', 'On-page and local SEO that improves your ranking and brings steady organic traffic.'],
-      [Target, 'Google & Meta Ads', 'Targeted paid campaigns focused on enquiries, calls and sales, not just clicks.'],
-      [Share2, 'Social Media Management', 'Consistent posts, creatives and community engagement across your platforms.'],
-      [Mail, 'Email & WhatsApp Campaigns', 'Direct messages that nurture leads and bring past customers back.'],
-      [FileText, 'Content Creation', 'Blog posts, product copy and visuals that explain and promote your offer.'],
-      [BarChart3, 'Analytics & Reporting', 'Monthly reports showing traffic, leads and what to improve next.'],
+      [Search, 'Technical & On-Page SEO', 'Site structure, metadata, speed and schema fixes that help search engines understand your pages.'],
+      [MapPin, 'Local SEO & Google Business', 'Optimised business profiles, reviews and local citations so nearby customers find you.'],
+      [Target, 'Google Ads Management', 'Search and display campaigns built around calls, forms and WhatsApp enquiries.'],
+      [FileText, 'Content & Keyword Strategy', 'Pages and articles planned around the words your customers actually search.'],
+      [Link2, 'Authority & Link Building', 'Relevant, quality links and listings that strengthen your site over time.'],
+      [BarChart3, 'Analytics & Reporting', 'Tracking for traffic, calls and leads, with clear monthly reports and next steps.'],
     ],
     benefits: [
-      ['Reach people ready to buy', 'Reach customers while they are actively searching for what you offer.'],
-      ['Measurable results', 'Every campaign is tracked, so you can see what works and what does not.'],
-      ['Consistent brand presence', 'A steady, professional voice builds recognition and trust over time.'],
-      ['Better use of budget', 'Ongoing testing and optimisation lower your cost per lead.'],
+      ['Found when people are ready to act', 'Appear in front of customers who are already searching for your service.'],
+      ['Compounding organic traffic', 'Good SEO keeps working after the work is done, unlike a campaign you stop paying for.'],
+      ['Spend you can account for', 'Every call and enquiry is tracked back to the channel that produced it.'],
+      ['Stronger local presence', 'A complete, trusted business profile helps you win nearby searches in India and the Gulf.'],
     ],
-    advText: 'Marketing that reaches the right people and shows you clearly what each rupee achieves.',
+    advText: 'Search marketing run with clear goals, honest reporting and no inflated promises.',
     advantages: [
-      [Target, 'Reach the Right Audience', 'Targeted search and social campaigns aimed at enquiries, calls and sales.'],
-      [BarChart3, 'Measurable Results', 'Every campaign is tracked and reported in plain language each month.'],
-      [Search, 'Found When It Matters', 'SEO and local search that put you in front of people ready to buy.'],
-      [Share2, 'Consistent Brand Voice', 'Regular, professional content builds recognition and trust over time.'],
+      [Search, 'Search-First Approach', 'We start with what your customers type into Google, then build around it.'],
+      [Gauge, 'Technical Foundation', 'Fast, crawlable pages give every campaign a stronger base.'],
+      [BarChart3, 'Transparent Reporting', 'You see traffic, leads and actions in plain language every month.'],
+      [Target, 'Focused on Enquiries', 'Campaigns are judged by calls and leads, not by clicks alone.'],
     ],
     process: [
-      ['Audit & Goals', 'We review your website, competitors and audience, then set clear targets.'],
-      ['Strategy & Setup', 'We choose the right channels and prepare tracking, creatives and campaigns.'],
-      ['Launch & Optimise', 'We run campaigns and refine them weekly based on real performance.'],
-      ['Report & Scale', 'You get simple reports and a plan to grow what is working.'],
+      ['Audit & Keywords', 'We review your site, competitors and search demand, then set priorities.'],
+      ['Fix & Optimise', 'We resolve technical issues and improve key pages and profiles.'],
+      ['Content & Campaigns', 'We publish content and run ads aimed at your target enquiries.'],
+      ['Report & Refine', 'Monthly reviews show what is working and what we will improve next.'],
     ],
     value:
-      'Consistent, measurable marketing turns online attention into qualified leads and gives every campaign a clear return.',
-    cta: ['Ready to grow your', 'online presence?'],
-    ctaText: 'Share your goals and audience. We will suggest a marketing plan that fits your budget.',
+      'Search visibility is one of the few marketing assets that keeps paying back. Done properly, it brings steady, high-intent enquiries.',
+    cta: ['Ready to be found', 'on Google?'],
+    ctaText: 'Share your website and your market. We will review it and suggest a practical SEO and advertising plan.',
   },
 
+  /* ========== 7. SOCIAL MEDIA MARKETING ========== */
+  social: {
+    h: {
+      hero: ['Social Media Marketing That Builds', 'Your Brand'],
+      features: ['Everything your brand needs to', 'stay active and visible'],
+      benefits: ['Benefits of', 'Consistent Social Presence'],
+      process: ['How we manage', 'your social channels'],
+    },
+    lead:
+      'We plan, design and publish content that keeps your brand active on the platforms your customers use, and we run paid campaigns that turn attention into messages and enquiries.',
+    points: ['Content calendar and creatives', 'Meta ad campaigns', 'Community engagement'],
+    features: [
+      [Calendar, 'Content Calendar', 'A monthly plan of posts, offers and festivals so your channels never go quiet.'],
+      [ImageIcon, 'Posts, Reels & Creatives', 'Branded designs, short videos and carousels made for each platform.'],
+      [Target, 'Meta Ads Campaigns', 'Facebook and Instagram ads aimed at messages, calls and store visits.'],
+      [MessageCircle, 'Community Engagement', 'Replies to comments and messages that keep your audience active and cared for.'],
+      [Users, 'Audience & Page Setup', 'Profiles, bios, highlights and links set up properly so your pages look professional.'],
+      [BarChart3, 'Insights & Reports', 'Reach, engagement and lead reports with clear suggestions for the next month.'],
+    ],
+    benefits: [
+      ['A professional, active image', 'Regular, well-designed posts show customers that your business is alive and reliable.'],
+      ['Closer customer relationships', 'Replies and conversations build trust before a customer ever calls.'],
+      ['Reach beyond your followers', 'Targeted ads put your offers in front of the right local and regional audiences.'],
+      ['Time back for you', 'We handle planning, design and posting so you can focus on running the business.'],
+    ],
+    advText: 'Social media handled by a team that understands your brand, your audience and your goals.',
+    advantages: [
+      [Palette, 'On-Brand Creatives', 'Every post follows your colours, tone and style so the feed feels like one brand.'],
+      [Calendar, 'Consistent Posting', 'A planned schedule keeps you visible without last-minute scrambling.'],
+      [Target, 'Ads With a Purpose', 'Campaigns are built around enquiries, not vanity numbers.'],
+      [MessageCircle, 'Real Engagement', 'We talk with your audience, not just post at them.'],
+    ],
+    process: [
+      ['Brand & Audience', 'We learn your offer, tone and the people you want to reach.'],
+      ['Plan the Month', 'We prepare a content calendar and creatives for your approval.'],
+      ['Publish & Engage', 'We post, reply and run campaigns on your chosen platforms.'],
+      ['Review & Improve', 'Monthly insights guide what we keep, change and try next.'],
+    ],
+    value:
+      'Steady, thoughtful social media turns followers into customers and keeps your brand in mind between purchases.',
+    cta: ['Ready to grow your', 'social presence?'],
+    ctaText: 'Tell us about your brand and the platforms you use. We will suggest a content and campaign plan to match.',
+  },
+
+  /* ========== 8. DIGITAL BUSINESS CARDS (NFC & QR) ========== */
   card: {
     h: {
       hero: ['V-Cards: The Future of', 'Business Networking'],
@@ -315,6 +367,50 @@ export const SERVICE_CONTENT = {
     cta: ['Ready for your', 'digital business card?'],
     ctaText: 'Send us your details and we will design a smart card that makes every introduction easy.',
   },
+
+  /* ========== 9. SOFTWARE CONSULTING & BUSINESS SOLUTIONS ========== */
+  consulting: {
+    h: {
+      hero: ['Software Consulting That Turns Ideas Into', 'Clear Plans'],
+      features: ['Advice that gets you from idea to', 'a sound build'],
+      benefits: ['Benefits of', 'Expert Consulting'],
+      process: ['How a consulting', 'engagement works'],
+    },
+    lead:
+      'Before you invest in software, get clarity. We review your processes, recommend the right solution and give you a roadmap, estimate and architecture you can build on, with us or with any team.',
+    points: ['Process and requirement review', 'Technology and architecture advice', 'Roadmap and estimates'],
+    features: [
+      [ClipboardCheck, 'Requirement Analysis', 'We turn rough ideas and scattered notes into clear, prioritised requirements.'],
+      [Workflow, 'Process Review', 'We map how work flows today and find the steps worth automating first.'],
+      [Compass, 'Technology Selection', 'Honest guidance on build versus buy, and on the stack that suits your needs and budget.'],
+      [Layers, 'Solution Architecture', 'A clear structure for data, modules and integrations before development begins.'],
+      [Route, 'Roadmap & Estimates', 'A phased plan with scope, timeline and cost ranges you can plan around.'],
+      [ShieldCheck, 'Review & Risk Check', 'An independent look at existing software for security, performance and maintainability.'],
+    ],
+    benefits: [
+      ['Decide with confidence', 'Know what to build, in what order and at what cost before you commit budget.'],
+      ['Avoid expensive rework', 'Catching gaps in the plan costs far less than fixing them after launch.'],
+      ['Right-sized solutions', 'We recommend what fits your stage, not the biggest system we could sell.'],
+      ['A plan you own', 'Documents are yours to use with any developer or vendor.'],
+    ],
+    advText: 'Practical, unbiased advice from a team that builds software every day.',
+    advantages: [
+      [Lightbulb, 'Practical Advice', 'Recommendations grounded in what works for real businesses, not theory.'],
+      [Handshake, 'Unbiased Guidance', 'We tell you when an existing tool is a better fit than custom development.'],
+      [Presentation, 'Clear Deliverables', 'Written requirements, architecture and roadmap you can share with your team.'],
+      [Layers, 'Ready to Build', 'If you choose to proceed, the plan flows straight into development.'],
+    ],
+    process: [
+      ['Discovery Session', 'We listen to your goals, challenges and current tools.'],
+      ['Analysis', 'We study your processes, users and data to find what matters most.'],
+      ['Recommendation', 'We present options, trade-offs and a suggested solution.'],
+      ['Roadmap Handover', 'You receive the plan, estimates and next steps in writing.'],
+    ],
+    value:
+      'A little planning up front saves months later. Consulting gives you a clear, realistic path from problem to working software.',
+    cta: ['Ready to plan your', 'next solution?'],
+    ctaText: 'Tell us what you are trying to solve. We will arrange a consultation and outline the best way forward.',
+  },
 }
 
 /** Heading for the shared "Built to Work With Your Business" section. */
@@ -323,15 +419,20 @@ export const ADVANTAGES_HEADING = {
   title: 'Built to Work With Your Business',
 }
 
-/** Decide which content profile a SERVICES entry should use. */
+/**
+ * Decide which content profile a SERVICES entry should use.
+ * Order matters: more specific services are tested before general ones.
+ */
 export function getServiceKind(service) {
   const text = `${service?.slug || ''} ${service?.title || ''}`.toLowerCase()
 
   if (/card|vcard|nfc|qr/.test(text)) return 'card'
-  if (/market|seo|social|advertis|promotion/.test(text)) return 'marketing'
-  if (/mobile|android|ios|flutter|app store/.test(text)) return 'mobile'
-  if (/windows|desktop|pc software/.test(text)) return 'windows'
-  if (/web[\s-]*app|web application|portal|saas/.test(text)) return 'webapp'
+  if (/consult|business[\s-]*solution/.test(text)) return 'consulting'
+  if (/social|smm/.test(text)) return 'social'
+  if (/seo|digital[\s-]*marketing|marketing|advertis/.test(text)) return 'seo'
+  if (/mobile|android|\bios\b|flutter/.test(text)) return 'mobile'
+  if (/windows|desktop|pc[\s-]*software/.test(text)) return 'windows'
+  if (/web[\s-]*app|portal|saas/.test(text)) return 'webapp'
   if (/website|web[\s-]*design|web[\s-]*dev|ui[\s/-]*ux/.test(text)) return 'website'
   return 'software'
 }

@@ -11,6 +11,7 @@ import {
   MessageSquareText,
 } from 'lucide-react'
 import { PROJECTS } from '../data/site'
+import { useCmsPage, items as cmsItems } from '../cms/useCmsPage'
 import HeroArt3D from './HeroArt3D'
 import './SelectedWork.css'
 
@@ -64,8 +65,24 @@ const SHOWCASE = [
   summary: 'A smart student learning management platform featuring daily task tracking, performance analytics, task accuracy monitoring, progress visualization, and subscription management.'
 },
 
-  // Windows / desktop applications (add real entries here)
-
+// Windows / desktop applications
+{
+  slug: 'negbis-erp',
+  title: 'neGbis ERP',
+  type: 'Windows Application',
+  label: 'ERP Desktop Software',
+  images: [
+    '/images/projects/negbis-erp-1.webp',
+    '/images/projects/negbis-erp-2.webp',
+    '/images/projects/negbis-erp-3.webp',
+    '/images/projects/negbis-erp-4.webp',
+    '/images/projects/negbis-erp-5.webp',
+    '/images/projects/negbis-erp-6.webp',
+    '/images/projects/negbis-erp-7.webp',
+  ],
+  summary:
+    'A comprehensive Windows-based ERP solution designed to streamline business operations, billing, inventory management, accounting, reporting, and daily business activities.'
+},
   // Websites
   { slug: 'qaf-uae', title: 'QAF UAE', type: 'Website', label: 'Website', url: 'https://qafuae.com/', image: '/images/projects/qaf-uae.webp', summary: 'A professional business website for QAF UAE with a clear, modern presentation.' },
   { slug: 'hairship', title: 'Hairship', type: 'Website', label: 'Website', url: 'https://hairship.in/', image: '/images/projects/hairship1.webp', summary: 'A clean, brand-focused website for Hairship, built to showcase its products and services.' },
@@ -73,8 +90,15 @@ const SHOWCASE = [
   { slug: 'brothers-corp-trading', title: 'Brothers Corp Trading', type: 'Website', label: 'Website', url: 'https://brotherscorptrading.com/', image: '/images/projects/brothers-corp-trading.jpg', summary: 'A trading company website that presents products and company details clearly.' },
   { slug: 'bali-it-solutions', title: 'Bali IT Solutions', type: 'Website', label: 'Website', url: 'https://www.baliitsolutions.com/', image: '/images/projects/bali-it-solutions.webp', summary: 'An IT services website that explains solutions and makes it easy to get in touch.' },
   { slug: 'costain-travels', title: 'Costain Travels', type: 'Website', label: 'Website', url: 'https://costaintravels.com/', image: '/images/projects/costain-travels.webp', summary: 'A travel website designed to present destinations and services to visitors.' },
-  { slug: 'sfsc', title: 'SFSC', type: 'Website', label: 'Website', url: 'https://sfsc.com/', image: '/images/projects/sfsc.jpg', summary: 'A modern, easy-to-navigate website for SFSC.' },
-]
+{
+  slug: 'brightmoon',
+  title: 'Brightmoon',
+  type: 'Website',
+  label: 'Website',
+  url: 'https://brightmoonuae.com/',
+  image: '/images/projects/brightmoon.jpg',
+  summary: 'A professional business website showcasing Brightmoon’s transportation, construction, and contracting services with a modern design and user-friendly experience.'
+},]
 
 // Merge with existing PROJECTS (matched by URL) so slugs, summaries and other
 // existing fields keep working. Type, label and image come from SHOWCASE.
@@ -186,19 +210,21 @@ function Screenshot({ project, desktop }) {
   const [idx, setIdx] = useState(0)
 
   // Only Alafiya and SkillLab use the slow automatic slideshow.
-  const isSlideshow =
-    ['alafiya', 'skilllab'].includes(project.slug) && list.length === 3
-
+const isSlideshow = [
+  'negbis-erp',
+  'skilllab',
+  'alafiya'
+].includes(project.slug) && list.length > 1
   // Change image slowly; the CSS below handles the smooth slide/fade.
-  useEffect(() => {
-    if (!isSlideshow) return
+ useEffect(() => {
+  if (!isSlideshow) return
 
-    const timer = window.setInterval(() => {
-      setIdx(current => (current + 1) % 3)
-    }, 7000)
+  const timer = window.setInterval(() => {
+    setIdx(current => (current + 1) % list.length)
+  }, 5000)
 
-    return () => window.clearInterval(timer)
-  }, [isSlideshow])
+  return () => window.clearInterval(timer)
+}, [isSlideshow, list.length])
 
   const src = list[idx]
 
@@ -222,13 +248,13 @@ function Screenshot({ project, desktop }) {
       height="900"
       loading="lazy"
       decoding="async"
-      onError={() => {
-        if (isSlideshow) {
-          setIdx(current => (current + 1) % 3)
-        } else {
-          setIdx(current => Math.min(current + 1, list.length - 1))
-        }
-      }}
+     onError={() => {
+  if (isSlideshow) {
+    setIdx(current => (current + 1) % list.length)
+  } else {
+    setIdx(current => Math.min(current + 1, list.length - 1))
+  }
+}}
     />
   )
 }
@@ -623,26 +649,22 @@ function CtaArt() {
   )
 }
 
-function ContactCta() {
+function ContactCta({ data = {} }) {
   return (
     <section className="sw-cta" aria-labelledby="sw-cta-title">
       <div className="sw-cta-inner">
         <div className="sw-cta-content">
           <h2 id="sw-cta-title">
-            Ready to Build Something <span className="sw-grad-text">Exceptional?</span>
+            {data.heading || 'Ready to Build Something'} <span className="sw-grad-text">{data.highlight || 'Exceptional?'}</span>
           </h2>
-          <p>
-            Have an idea or a business challenge? Let&rsquo;s turn your vision
-            into a powerful digital solution with the right technology and
-            creative approach.
-          </p>
+          <p>{data.description || 'Have an idea or a business challenge? Let’s turn your vision into a powerful digital solution with the right technology and creative approach.'}</p>
           <div className="sw-cta-actions">
             <Link className="sw-cta-primary" to="/contact">
-              Let&rsquo;s Discuss Your Project
+              {data.primaryText || "Let's Discuss Your Project"}
               <MessageSquareText size={17} />
             </Link>
             <Link className="sw-cta-secondary" to="/service">
-              Explore Our Services
+              {data.secondaryText || 'Explore Our Services'}
               <ArrowUpRight size={17} />
             </Link>
           </div>
@@ -711,6 +733,23 @@ function TabCard({ cat, count, active, onSelect }) {
 /* ---------- section ---------- */
 
 export default function SelectedWork() {
+  const { content: cms = {} } = useCmsPage('portfolio')
+  const hero = cms.hero || {}
+  const projectSection = cms.projects || {}
+  const cta = cms.cta || {}
+  const projectRows = cmsItems(projectSection.items, ALL_PROJECTS)
+  const projects = projectRows.map((item, index) => {
+    const original = ALL_PROJECTS.find(p => p.slug === (item.slug || item.id)) || ALL_PROJECTS[index] || {}
+    const existingImages = Array.isArray(item.images) && item.images.length
+      ? item.images
+      : (original.images || [])
+    const images = item.image
+      ? [item.image, ...existingImages.slice(1)]
+      : existingImages
+    return { ...original, ...item, slug: item.slug || item.id || original.slug, images }
+  })
+  const categoryRows = cmsItems(cms.categories?.items, CATEGORIES.map(({ title, type, tone, description }) => ({ title, type, tone, description })))
+  const categories = categoryRows.map((item, index) => ({ ...CATEGORIES[index % CATEGORIES.length], ...item }))
   const [active, setActive] = useState('web')
 
   // highlight the tab whose band is on screen
@@ -729,11 +768,10 @@ export default function SelectedWork() {
       <div className="sw-container sw-hero">
         <header className="sw-heading">
           <h2 id="sw-title">
-            Selected Work, Built for{' '}
-            <span className="sw-title-grad">Real Businesses</span>
+            {hero.heading || 'Selected Work, Built for'}{' '}
+            <span className="sw-title-grad">{hero.highlight || 'Real Businesses'}</span>
           </h2>
-          <p>
-Explore our portfolio of custom software development, Windows applications, web and mobile app development, and professional website design. From scalable business solutions to SEO, digital marketing, and innovative digital branding tools, we build technology-driven solutions that help businesses improve efficiency, strengthen their online presence, and achieve sustainable growth.          </p>
+          <p>{hero.description || 'Explore our portfolio of custom software development, Windows applications, web and mobile app development, and professional website design. From scalable business solutions to SEO, digital marketing, and innovative digital branding tools, we build technology-driven solutions that help businesses improve efficiency, strengthen their online presence, and achieve sustainable growth.'}</p>
           <HeroHighlights />
         </header>
 
@@ -742,11 +780,11 @@ Explore our portfolio of custom software development, Windows applications, web 
         </div>
 
         <nav className="sw-tabs" aria-label="Project categories">
-          {CATEGORIES.map(cat => (
+          {categories.map(cat => (
             <TabCard
               key={cat.tone}
               cat={cat}
-              count={ALL_PROJECTS.filter(p => p.type === cat.type).length}
+              count={projects.filter(p => p.type === cat.type).length}
               active={active === cat.tone}
               onSelect={setActive}
             />
@@ -754,8 +792,8 @@ Explore our portfolio of custom software development, Windows applications, web 
         </nav>
       </div>
 
-      {CATEGORIES.map(({ title, type, tone, description, Icon }) => {
-        const items = ALL_PROJECTS.filter(p => p.type === type)
+      {categories.map(({ title, type, tone, description, Icon }) => {
+        const items = projects.filter(p => p.type === type)
 
         return (
           <section
@@ -791,7 +829,7 @@ Explore our portfolio of custom software development, Windows applications, web 
         )
       })}
 
-      <ContactCta />
+      <ContactCta data={cta} />
     </section>
   )
 }

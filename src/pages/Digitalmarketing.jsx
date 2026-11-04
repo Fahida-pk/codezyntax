@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import Seo from '../components/Seo'
 import { SITE } from '../data/site'
+import { useCmsPage, items as cmsItems } from '../cms/useCmsPage'
 import './Digitalmarketing.css'
 
 /* =========================================================================
@@ -481,6 +482,28 @@ function CtaOrbit() {
 /* ============================== PAGE ============================== */
 export default function DigitalMarketing() {
   const root = useReveal()
+  const { content: cms = {} } = useCmsPage('digital-marketing')
+  const hero = cms.hero || {}
+  const servicesSection = cms.services || {}
+  const approach = cms.approach || {}
+  const why = cms.why || {}
+  const process = cms.process || {}
+  const goals = cms.goals || {}
+  const cta = cms.cta || {}
+
+  const serviceItems = cmsItems(servicesSection.items, SERVICES.map(({ title, text }) => ({ title, text })))
+  const approachItems = cmsItems(approach.items, [
+    { title: 'Tailored strategies', description: 'Built around your business goals.' },
+    { title: 'Creative execution', description: 'Consistent, professional brand presence.' },
+    { title: 'Clear reporting', description: 'Understand progress and opportunities.' },
+    { title: 'Ongoing improvement', description: 'Refine your digital presence over time.' },
+  ])
+  const whyItems = cmsItems(why.items, WHY.map(({ title, text }) => ({ title, text })))
+  const processItems = cmsItems(process.items, PROCESS.map(({ title, text }) => ({ title, text })))
+  const leftGoals = cmsItems(goals.leftItems, GOALS_L.map(({ title, text }) => ({ title, text })))
+  const rightGoals = cmsItems(goals.rightItems, GOALS_R.map(({ title, text }) => ({ title, text })))
+  const trustItems = cmsItems(hero.trustItems, ['Transparent reporting', 'Data-driven decisions', 'Performance-focused'])
+
   return (
     <div className="dm" ref={root}>
       <Seo
@@ -492,19 +515,19 @@ export default function DigitalMarketing() {
       <section className="dm-hero" aria-labelledby="dm-hero-title">
         <div className="dm-wrap dm-hero-grid">
           <div className="dm-hero-copy">
-            <p className="dm-eyebrow dm-hero-kicker dm-rv">DIGITAL MARKETING &amp; GROWTH</p>
-            <h1 id="dm-hero-title" className="dm-hero-title dm-rv"><span className="dm-title-static">Turn Your </span><span className="dm-title-animated">Digital Presence Into Measurable Growth</span></h1>
-            <p className="dm-lead dm-rv">
-              CodeZyntax Softwares LLP helps businesses grow online through digital marketing, SEO, social media, website design and creative visuals that make your brand stand out.
-            </p>
+            <p className="dm-eyebrow dm-hero-kicker dm-rv">{hero.eyebrow || 'DIGITAL MARKETING & GROWTH'}</p>
+            <h1 id="dm-hero-title" className="dm-hero-title dm-rv"><span className="dm-title-static">{hero.headingPrefix || 'Turn Your '}</span><span className="dm-title-animated">{hero.heading || 'Digital Presence Into Measurable Growth'}</span></h1>
+            <p className="dm-lead dm-rv">{hero.description || 'CodeZyntax Softwares LLP helps businesses grow online through digital marketing, SEO, social media, website design and creative visuals that make your brand stand out.'}</p>
             <div className="dm-cta-row dm-rv">
-              <Link to="/contact" className="dm-btn dm-btn-primary">Get a Proposal <ArrowUpRight size={17} aria-hidden="true" /></Link>
-              <a href="#dm-services" className="dm-btn dm-btn-ghost">Explore Our Services <ArrowRight size={17} aria-hidden="true" /></a>
+              <Link to="/contact" className="dm-btn dm-btn-primary">{hero.primaryText || 'Get a Proposal'} <ArrowUpRight size={17} aria-hidden="true" /></Link>
+              <a href="#dm-services" className="dm-btn dm-btn-ghost">{hero.secondaryText || 'Explore Our Services'} <ArrowRight size={17} aria-hidden="true" /></a>
             </div>
             <ul className="dm-trust dm-rv">
-              {['Transparent reporting', 'Data-driven decisions', 'Performance-focused'].map(t => (
-                <li key={t}><Check size={16} aria-hidden="true" />{t}</li>
-              ))}
+              {trustItems.map((entry, index) => {
+                const t = typeof entry === 'string' ? entry : entry.text || entry.title || ''
+                return (
+                <li key={t || index}><Check size={16} aria-hidden="true" />{t}</li>
+              )})}
             </ul>
           </div>
           <HeroStage />
@@ -515,14 +538,16 @@ export default function DigitalMarketing() {
       <section id="dm-services" className="dm-sec" aria-labelledby="dm-svc-title">
         <div className="dm-wrap dm-svc">
           <div className="dm-svc-intro">
-            <h2 id="dm-svc-title" className="dm-h2 dm-rv">Everything You Need to Grow Online</h2>
-            <p className="dm-body dm-rv">
-              From building your online presence to turning visitors into customers, we bring the essential digital services together under one strategy.
-            </p>
+            <h2 id="dm-svc-title" className="dm-h2 dm-rv">{servicesSection.heading || 'Everything You Need to Grow Online'}</h2>
+            <p className="dm-body dm-rv">{servicesSection.description || 'From building your online presence to turning visitors into customers, we bring the essential digital services together under one strategy.'}</p>
             <div className="dm-rv"><Link to="/contact" className="dm-link">Discuss your goals <ArrowRight size={16} aria-hidden="true" /></Link></div>
           </div>
           <ul className="dm-svc-list">
-            {SERVICES.map(({ icon: Icon, title, text }, i) => (
+            {serviceItems.map((item, i) => {
+              const Icon = SERVICES[i]?.icon || Megaphone
+              const title = item.title || ''
+              const text = item.text || item.description || ''
+              return (
               <li key={title} className="dm-svc-item dm-rv" style={{ transitionDelay: `${(i % 2) * 70}ms` }}>
                 <span className="dm-ico3d"><Icon aria-hidden="true" /></span>
                 <div>
@@ -530,7 +555,8 @@ export default function DigitalMarketing() {
                   <p>{text}</p>
                 </div>
               </li>
-            ))}
+              )
+            })}
           </ul>
         </div>
       </section>
@@ -543,56 +569,18 @@ export default function DigitalMarketing() {
           </div>
 
           <div className="dm-split-copy">
-            <h2 id="dm-about-title" className="dm-h2 dm-rv">
-              Strategy, Creativity and Technology Working Together
-            </h2>
+            <h2 id="dm-about-title" className="dm-h2 dm-rv">{approach.heading || 'Strategy, Creativity and Technology Working Together'}</h2>
 
-            <p className="dm-body dm-rv">
-              We start by understanding your business, audience and goals.
-              Then we shape clear messaging, thoughtful design and practical
-              digital strategies that help your brand connect with the right people.
-            </p>
+            <p className="dm-body dm-rv">{approach.description || 'We start by understanding your business, audience and goals. Then we shape clear messaging, thoughtful design and practical digital strategies that help your brand connect with the right people.'}</p>
 
             <div className="dm-approach-points dm-rv">
-              <div className="dm-approach-item">
-                <span className="dm-approach-icon">
-                  <Target size={16} />
-                </span>
-                <div>
-                  <h3>Tailored strategies</h3>
-                  <p>Built around your business goals.</p>
+              {approachItems.map((item, i) => {
+                const Icon = [Target, ArrowUpRight, BarChart3, TrendingUp][i % 4]
+                return <div className="dm-approach-item" key={item.title || i}>
+                  <span className="dm-approach-icon"><Icon size={16} /></span>
+                  <div><h3>{item.title}</h3><p>{item.description || item.text}</p></div>
                 </div>
-              </div>
-
-              <div className="dm-approach-item">
-                <span className="dm-approach-icon">
-                  <ArrowUpRight size={16} />
-                </span>
-                <div>
-                  <h3>Creative execution</h3>
-                  <p>Consistent, professional brand presence.</p>
-                </div>
-              </div>
-
-              <div className="dm-approach-item">
-                <span className="dm-approach-icon">
-                  <BarChart3 size={16} />
-                </span>
-                <div>
-                  <h3>Clear reporting</h3>
-                  <p>Understand progress and opportunities.</p>
-                </div>
-              </div>
-
-              <div className="dm-approach-item">
-                <span className="dm-approach-icon">
-                  <TrendingUp size={16} />
-                </span>
-                <div>
-                  <h3>Ongoing improvement</h3>
-                  <p>Refine your digital presence over time.</p>
-                </div>
-              </div>
+              })}
             </div>
           </div>
         </div>
@@ -602,15 +590,19 @@ export default function DigitalMarketing() {
       <section className="dm-sec" aria-labelledby="dm-why-title">
         <div className="dm-wrap dm-split dm-split-rev">
           <div className="dm-split-copy">
-            <h2 id="dm-why-title" className="dm-h2 dm-rv">Strategy, Creativity and Technology Working Together</h2>
-            <p className="dm-body dm-rv">We combine tailored strategies, creative execution, clear reporting and ongoing improvement to strengthen your digital presence.</p>
+            <h2 id="dm-why-title" className="dm-h2 dm-rv">{why.heading || 'Strategy, Creativity and Technology Working Together'}</h2>
+            <p className="dm-body dm-rv">{why.description || 'We combine tailored strategies, creative execution, clear reporting and ongoing improvement to strengthen your digital presence.'}</p>
             <ul className="dm-why">
-              {WHY.map(({ icon: Icon, title, text }, i) => (
+              {whyItems.map((item, i) => {
+                const Icon = WHY[i]?.icon || TrendingUp
+                const title = item.title || ''
+                const text = item.text || item.description || ''
+                return (
                 <li key={title} className="dm-rv" style={{ transitionDelay: `${i * 50}ms` }}>
                   <span className="dm-why-ico"><Icon size={18} aria-hidden="true" /></span>
                   <div><h3>{title}</h3><p>{text}</p></div>
                 </li>
-              ))}
+              )})}
             </ul>
           </div>
           <div className="dm-split-art dm-rv"><ChannelHub /></div>
@@ -621,11 +613,15 @@ export default function DigitalMarketing() {
       <section className="dm-sec dm-tint" aria-labelledby="dm-proc-title">
         <div className="dm-wrap">
           <header className="dm-head">
-            <h2 id="dm-proc-title" className="dm-h2 dm-rv">Our Digital Marketing Process</h2>
-            <p className="dm-body dm-rv">Four clear stages take your business from planning to a stronger digital presence.</p>
+            <h2 id="dm-proc-title" className="dm-h2 dm-rv">{process.heading || 'Our Digital Marketing Process'}</h2>
+            <p className="dm-body dm-rv">{process.description || 'Four clear stages take your business from planning to a stronger digital presence.'}</p>
           </header>
           <ol className="dm-flow dm-rv">
-            {PROCESS.map(({ icon: Icon, title, text }, i) => (
+            {processItems.map((item, i) => {
+              const Icon = PROCESS[i]?.icon || Compass
+              const title = item.title || ''
+              const text = item.text || item.description || ''
+              return (
               <li key={title} className="dm-flow-item" style={{ '--i': i }}>
                 <span className="dm-flow-num" aria-hidden="true">{i + 1}</span>
                 <div className="dm-flow-body">
@@ -634,7 +630,7 @@ export default function DigitalMarketing() {
                   <p>{text}</p>
                 </div>
               </li>
-            ))}
+            )})}
           </ol>
         </div>
       </section>
@@ -643,26 +639,34 @@ export default function DigitalMarketing() {
       <section className="dm-sec dm-tint" aria-labelledby="dm-cap-title">
         <div className="dm-wrap">
           <header className="dm-head">
-            <h2 id="dm-cap-title" className="dm-h2 dm-rv">Digital Solutions Designed for Your Business</h2>
-            <p className="dm-body dm-rv">Whether you want more visibility, stronger engagement or a more effective website, we help you focus on the outcomes that matter.</p>
+            <h2 id="dm-cap-title" className="dm-h2 dm-rv">{goals.heading || 'Digital Solutions Designed for Your Business'}</h2>
+            <p className="dm-body dm-rv">{goals.description || 'Whether you want more visibility, stronger engagement or a more effective website, we help you focus on the outcomes that matter.'}</p>
           </header>
           <div className="dm-cap">
             <ul className="dm-cap-col is-left">
-              {GOALS_L.map(({ icon: Icon, title, text }, i) => (
+              {leftGoals.map((item, i) => {
+                const Icon = GOALS_L[i]?.icon || Globe
+                const title = item.title || ''
+                const text = item.text || item.description || ''
+                return (
                 <li key={title} className="dm-cap-item dm-rv" style={{ transitionDelay: `${i * 70}ms` }}>
                   <span className="dm-why-ico"><Icon size={18} aria-hidden="true" /></span>
                   <div><h3>{title}</h3><p>{text}</p></div>
                 </li>
-              ))}
+              )})}
             </ul>
             <div className="dm-cap-center dm-rv"><Gyro /></div>
             <ul className="dm-cap-col">
-              {GOALS_R.map(({ icon: Icon, title, text }, i) => (
+              {rightGoals.map((item, i) => {
+                const Icon = GOALS_R[i]?.icon || Globe
+                const title = item.title || ''
+                const text = item.text || item.description || ''
+                return (
                 <li key={title} className="dm-cap-item dm-rv" style={{ transitionDelay: `${i * 70}ms` }}>
                   <span className="dm-why-ico"><Icon size={18} aria-hidden="true" /></span>
                   <div><h3>{title}</h3><p>{text}</p></div>
                 </li>
-              ))}
+              )})}
             </ul>
           </div>
         </div>
@@ -676,9 +680,9 @@ export default function DigitalMarketing() {
               <div className="dm-cta-side"><CtaBars /></div>
 
               <div className="dm-cta-main">
-                <h2 id="dm-cta-title">Ready to Grow Your Digital Presence?</h2>
-                <p>Let's create a digital marketing plan that fits your business goals and helps your brand make a stronger impression online.</p>
-                <Link to="/contact" className="dm-btn dm-btn-primary">Get a Proposal <ArrowUpRight size={17} aria-hidden="true" /></Link>
+                <h2 id="dm-cta-title">{cta.heading || 'Ready to Grow Your Digital Presence?'}</h2>
+                <p>{cta.description || "Let's create a digital marketing plan that fits your business goals and helps your brand make a stronger impression online."}</p>
+                <Link to="/contact" className="dm-btn dm-btn-primary">{cta.buttonText || 'Get a Proposal'} <ArrowUpRight size={17} aria-hidden="true" /></Link>
                 {SITE.email && <p className="dm-cta-mail"><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>}
               </div>
 

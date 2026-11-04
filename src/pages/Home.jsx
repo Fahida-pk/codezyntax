@@ -8,6 +8,7 @@ import {
 import Seo from '../components/Seo'
 import { ServiceCard } from '../components/ui'
 import { SERVICES, PROJECTS, REGIONS } from '../data/site'
+import { useCmsPage, text as cmsText, items as cmsItems } from '../cms/useCmsPage'
 import './Home.css'
 
 /* ------------------------------------------------------------------
@@ -298,7 +299,7 @@ function WhyScene() {
 }
 
 /* FAQ: editorial list on a soft tinted band, with a smooth accordion. */
-function HomeFaq() {
+function HomeFaq({ items = FAQS, title = 'Find Out Answers Here', description = 'Clear answers to the questions we hear most about our software, web, marketing and branding services.' }) {
   const [open, setOpen] = useState(0)
   const uid = useId()
   return (
@@ -307,11 +308,13 @@ function HomeFaq() {
         <div className="hm-faq-grid">
           <header className="hm-faq-intro" data-reveal>
             <p className="hm-faq-label"><span aria-hidden="true">+</span>Frequently Asked</p>
-            <h2 id={`${uid}-title`} className="hm-faq-title">Find Out Answers Here</h2>
-            <p className="hm-faq-desc">Clear answers to the questions we hear most about our software, web, marketing and branding services.</p>
+            <h2 id={`${uid}-title`} className="hm-faq-title">{title}</h2>
+            <p className="hm-faq-desc">{description}</p>
           </header>
           <ul className="hm-faq-list">
-            {FAQS.map(([q, a], i) => {
+            {items.map((entry, i) => {
+              const q = Array.isArray(entry) ? entry[0] : entry.question
+              const a = Array.isArray(entry) ? entry[1] : entry.answer
               const isOpen = open === i
               const btnId = `${uid}-q${i}`
               const panelId = `${uid}-a${i}`
@@ -340,17 +343,17 @@ function HomeFaq() {
 /* Services grid: 3 columns desktop, 2 tablet, 1 mobile. Uses the shared compact ServiceCard
    (src/components/ServiceCard.jsx), the same card as the Services page. */
 
-function ServicesGrid() {
+function ServicesGrid({ items = SERVICES }) {
   const [activeIndex, setActiveIndex] = useState(0)
 
   const previous = () => {
     setActiveIndex((current) =>
-      current === 0 ? SERVICES.length - 1 : current - 1
+      current === 0 ? items.length - 1 : current - 1
     )
   }
 
 useEffect(() => {
-  if (SERVICES.length < 2) return
+  if (items.length < 2) return
 
   let timer = null
 
@@ -366,7 +369,7 @@ useEffect(() => {
     timer = window.setInterval(() => {
       setActiveIndex((current) => (
         current + 1
-      ) % SERVICES.length)
+      ) % items.length)
     }, 3000)
   }
 
@@ -386,7 +389,7 @@ useEffect(() => {
 
   const next = () => {
     setActiveIndex((current) =>
-      current >= SERVICES.length - 1 ? 0 : current + 1
+      current >= items.length - 1 ? 0 : current + 1
     )
   }
 
@@ -396,7 +399,7 @@ useEffect(() => {
         className="svc-grid hm-service-track"
         style={{ '--service-index': activeIndex }}
       >
-        {SERVICES.map((s, index) => (
+        {items.map((s, index) => (
           <li key={s.slug || s.title || index}>
             <ServiceCard s={s} full />
           </li>
@@ -414,7 +417,7 @@ useEffect(() => {
         </button>
 
         <div className="hm-service-dots">
-          {SERVICES.map((service, index) => (
+          {items.map((service, index) => (
             <button
               key={service.slug || service.title || index}
               type="button"
@@ -440,6 +443,33 @@ useEffect(() => {
 }
 
 export default function Home() {
+  // CMS v2: each section is fetched from /api/content.php and cached by useCmsPage.
+  // Existing page content remains as fallback if the API is unavailable.
+  const { content: cms } = useCmsPage('home')
+  const hero = cms.hero || {}
+  const about = cms.about || {}
+  const serviceSection = cms.services || {}
+  const serviceItems = cmsItems(serviceSection.items, SERVICES).map((item) => ({ ...item, slug: item.slug || item.id || item.slug }))
+  const projects = cmsItems(cms.projects, PROJECTS).map((item) => ({ ...item, slug: item.slug || item.id || '' }))
+  const faqs = cmsItems(cms.faqs, FAQS)
+  const whySection = cms.whyChooseUs || {}
+  const whyItems = cmsItems(whySection.items, WHY.map(([, title, description]) => ({ title, description })))
+  const process = cms.process || {}
+  const processItems = cmsItems(process.items || process.steps, STEPS.map(([, title, description]) => ({ title, description })))
+  const testimonials = cmsItems(cms.testimonials, [
+    { initials: 'MS', name: 'MS Square', category: 'Software', title: 'Best choice', quote: 'Partnering with CodeZyntax Softwares LLP was the best decision for our software needs.' },
+    { initials: 'AC', name: 'ARTECHO', category: '1 card', title: 'Great service', quote: 'CodeZyntax created a stylish, professional digital card for our brand.' },
+    { initials: 'S', name: 'Soochi', category: 'Software', title: 'Good communication', quote: 'Their team provided great communication, on-time delivery and exceptional quality.' },
+    { initials: 'AI', name: 'align ideas', category: '1 card', title: 'Creative Designs', quote: 'We are really happy with the modern digital card designed for our brand.' }
+  ]).map((item) => ({
+    ...item,
+    quote: item.quote || item.feedback || '',
+    category: item.category || item.designation || '',
+    title: item.title || 'Client feedback',
+  }))
+  const cta = cms.cta || {}
+  const heroShowcase = cmsItems(hero.showcase, HERO_SHOWCASE).map((item) => ({ ...item, title: item.title || item.name || 'Project' }))
+
    
 useEffect(() => {
   const selector = '.hm [data-reveal]';
@@ -490,17 +520,17 @@ useEffect(() => {
       <div className="hm-wrap hm-hero-grid">
         <div className="hm-hero-copy" data-reveal>
           <h1 id="hm-hero-title" className="hm-h1 hm-hero-editorial-title">
-            <span className="hm-l">Improving Your Business</span>
-            <span className="hm-l">Potential With</span>
-            <span className="hm-l hm-hero-blue">Innovation &amp; Technology</span>
+            <span className="hm-l">{hero.line1 || "Improving Your Business"}</span>
+            <span className="hm-l">{hero.line2 || "Potential With"}</span>
+            <span className="hm-l hm-hero-blue">{hero.highlight || "Innovation & Technology"}</span>
           </h1>
-          <p className="hm-lead">Best software development company In Palakkad</p>
+          <p className="hm-lead">{hero.subtitle || "Best software development company In Palakkad"}</p>
         </div>
 
         <div className="hm-hero-art hm-hero-showcase" data-reveal aria-label="Website and software project previews">
        
 <div className="hm-showcase-collage">
-  {HERO_SHOWCASE.map((item, i) => (
+  {heroShowcase.map((item, i) => (
     <a
       key={item.title}
       className={
@@ -517,7 +547,7 @@ useEffect(() => {
         <span />
         <span />
         <span />
-        <b>{new URL(item.url).hostname}</b>
+        <b>{(() => { try { return new URL(item.url, window.location.origin).hostname } catch { return item.url || '' } })()}</b>
       </div>
 
       <div className="hm-showcase-image">
@@ -541,8 +571,8 @@ useEffect(() => {
     {/* ================= MOVING SERVICE STRIP ================= */}
     <div className="hm-ticker" role="presentation">
       <ul className="hm-ticker-track" aria-label="Our services">
-        {[...SERVICES, ...SERVICES].map((s, i) => (
-          <li key={i} aria-hidden={i >= SERVICES.length ? 'true' : undefined}><span>{s.title}</span><i /></li>
+        {[...cmsItems(cms.strip?.items, SERVICES.map((s) => s.title)), ...cmsItems(cms.strip?.items, SERVICES.map((s) => s.title))].map((s, i) => (
+          <li key={i} aria-hidden={i >= SERVICES.length ? 'true' : undefined}><span>{typeof s === 'string' ? s : s.title}</span><i /></li>
         ))}
       </ul>
     </div>
@@ -553,21 +583,25 @@ useEffect(() => {
           <div className="hm-ab-copy">
             <div data-reveal className="hm-head">
               <span className="hm-pill"><i />About</span>
-              <h2 id="hm-about-title">Empowering Businesses with Smart Digital Solutions</h2>
+              <h2 id="hm-about-title">{about.title || "Empowering Businesses with Smart Digital Solutions"}</h2>
             </div>
-            <p data-reveal className="hm-ab-lead">We are a <strong>software development company in Palakkad</strong> committed to providing smart, scalable and easy-to-use digital solutions for businesses of any size. Our services cover <strong>custom software development</strong>, <strong>web and mobile applications</strong>, and <strong>digital marketing</strong> created to enhance your online presence.</p>
-            <p data-reveal className="hm-ab-text">At CodeZyntax Softwares LLP, we believe technology should be user-friendly, reliable and suited to your goals. With a highly skilled team of developers and digital experts, we focus on creating innovative tools that solve challenges and deliver measurable business growth.</p>
-            <p data-reveal className="hm-ab-text">As the best software development company in Palakkad, we prioritize <strong>transparency, collaboration</strong> and innovative technologies to turn your vision into reality. From startups to established enterprises, we adapt our strategies to shifting market trends to make sure of maximum impact. Alongside our development services, we also operate as a leading <strong>digital marketing agency in Pattambi</strong>, helping businesses grow their digital reach and gain long-term success.</p>
+            <p data-reveal className="hm-ab-lead">{about.paragraph1 || "We are a software development company in Palakkad committed to providing smart, scalable and easy-to-use digital solutions for businesses of any size."}</p>
+            <p data-reveal className="hm-ab-text">{about.paragraph2 || "At CodeZyntax Softwares LLP, we believe technology should be user-friendly, reliable and suited to your goals."}</p>
+            <p data-reveal className="hm-ab-text">{about.paragraph3 || "We prioritize transparency, collaboration and innovative technologies to turn your vision into reality."}</p>
             <div className="hm-ab-mv">
-              {ABOUT_MV.map(([Icon, t, d]) => (
+              {(Array.isArray(about.missionVision) ? about.missionVision : [about.mission, about.vision].filter(Boolean).length ? [about.mission, about.vision].filter(Boolean) : ABOUT_MV.map(([, title, description]) => ({ title, description }))).map((item, index) => {
+                const Icon = ABOUT_MV[index]?.[0] || Target
+                const t = item.title
+                const d = item.description
+                return (
                 <div key={t} data-reveal className="hm-ab-mvi">
                   <span className="hm-ab-mvico"><Icon size={20} strokeWidth={1.8} aria-hidden="true" /></span>
                   <h3>{t}</h3>
                   <p>{d}</p>
                 </div>
-              ))}
+              )})}
             </div>
-            <p data-reveal className="hm-ab-close">Let's create something remarkable together.</p>
+            <p data-reveal className="hm-ab-close">{about.closing || "Let's create something remarkable together."}</p>
             <Link data-reveal to="/about" className="hm-btn hm-btn-primary hm-btn-sm">About Us <ArrowRight size={16} aria-hidden="true" /></Link>
           </div>
 
@@ -584,13 +618,17 @@ useEffect(() => {
               <p className="hm-ab-loc"><Globe size={16} aria-hidden="true" />Based in Palakkad, serving India and the Gulf</p>
             </div>
             <div className="hm-ab-cards">
-              {ABOUT_FEATURES.map(([Icon, t, d]) => (
+              {(Array.isArray(about.features) ? about.features : ABOUT_FEATURES.map(([, title, description]) => ({ title, description }))).map((item, index) => {
+                const Icon = ABOUT_FEATURES[index]?.[0] || SlidersHorizontal
+                const t = item.title
+                const d = item.description
+                return (
                 <div key={t} className="hm-ab-card">
                   <span className="hm-ab-ico"><Icon size={22} strokeWidth={1.8} aria-hidden="true" /></span>
                   <h3>{t}</h3>
                   <p>{d}</p>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
         </div>
@@ -603,12 +641,12 @@ useEffect(() => {
         <div className="hm-split">
           <div data-reveal className="hm-head">
             <span className="hm-pill"><i />Our Services</span>
-            <h2 id="hm-services-title">One Partner for Every Digital Need</h2>
-            <p>From custom software to marketing, our services work together so your product looks, performs and grows as one.</p>
+            <h2 id="hm-services-title">{serviceSection.heading || serviceSection.title || "One Partner for Every Digital Need"}</h2>
+            <p>{serviceSection.description || "From custom software to marketing, our services work together so your product looks, performs and grows as one."}</p>
           </div>
           <Link to="/service" data-reveal className="hm-btn hm-btn-outline hm-btn-sm">View All Services <ArrowRight size={16} aria-hidden="true" /></Link>
         </div>
-        <ServicesGrid />
+        <ServicesGrid items={serviceItems} />
       </div>
     </section>
 
@@ -619,21 +657,21 @@ useEffect(() => {
         <div className="hm-work-head">
           <div data-reveal>
             <p className="hm-work-kicker"><b aria-hidden="true">+</b> Selected Work</p>
-            <h2 id="hm-projects-title">Good ideas, made real.</h2>
+            <h2 id="hm-projects-title">{cms.projects?.heading || cms.projectsSection?.title || "Good ideas, made real."}</h2>
           </div>
-          <p data-reveal className="hm-work-intro">{PROJECTS.length ? 'Every project shown here is live on its own domain. Open it, explore it and experience the work directly.' : 'Case studies and live project links will appear here.'}</p>
+          <p data-reveal className="hm-work-intro">{projects.length ? (cms.projects?.intro || cms.projectsSection?.description || 'Every project shown here is live on its own domain. Open it, explore it and experience the work directly.') : 'Case studies and live project links will appear here.'}</p>
         </div>
-        {PROJECTS.length ? (
+        {projects.length ? (
           <>
             <ul className="hm-work-list">
-              {PROJECTS.map((p, i) => {
+              {projects.map((p, i) => {
                 const isOneCard = p.slug === '1card'
                 return (
                   <li key={p.slug || p.title}>
                     <article data-reveal className={`hm-work${isOneCard ? ' hm-work-1card' : ''}`}>
                       <div className="hm-work-media">
                         <ProjectMedia p={p} />
-                        <span className="hm-work-count" aria-hidden="true">{String(i + 1).padStart(2, '0')} / {String(PROJECTS.length).padStart(2, '0')}</span>
+                        <span className="hm-work-count" aria-hidden="true">{String(i + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}</span>
                       </div>
                       <div className="hm-work-body">
                         <p className="hm-work-cat">{p.category}</p>
@@ -711,87 +749,28 @@ useEffect(() => {
       <div className="hm-testimonials-shell">
         <div className="hm-testimonials-intro" data-reveal>
           <p className="hm-testimonials-kicker">+ CLIENT EXPERIENCES / TRUSTED PARTNERS</p>
-          <h2 id="hm-testimonials-title">Good work speaks through the people we work with.</h2>
-          <p className="hm-testimonials-lead">We help businesses turn everyday needs into practical digital solutions, with a focus on thoughtful design, dependable delivery and responsive support.</p>
-          <p className="hm-testimonials-note">Every business is different. We listen first, understand the workflow, and build around what matters.</p>
+          <h2 id="hm-testimonials-title">{cms.testimonials?.heading || cms.testimonialSection?.title || "Good work speaks through the people we work with."}</h2>
+          <p className="hm-testimonials-lead">{cms.testimonials?.intro || cms.testimonialSection?.description || "We help businesses turn everyday needs into practical digital solutions, with a focus on thoughtful design, dependable delivery and responsive support."}</p>
+          <p className="hm-testimonials-note">{cms.testimonialSection?.note || "Every business is different. We listen first, understand the workflow, and build around what matters."}</p>
           <Link to="/contact" className="hm-testimonials-link">Discuss your project <ArrowRight size={17} aria-hidden="true" /></Link>
         </div>
         <div className="hm-testimonials-panel">
           <p className="hm-testimonials-location">WHAT OUR CLIENTS SAY</p>
-          <h3>Built around real business needs.</h3>
+          <h3>{cms.testimonialSection?.panelTitle || "Built around real business needs."}</h3>
           <div className="hm-testimonial-rail">
-          
-          <article className="hm-testimonial-item" data-reveal>
-            <div className="hm-testimonial-meta">
-              <span className="hm-testimonial-mark">MS</span>
-              <div><strong>MS Square</strong><small>Software</small></div>
-            </div>
-            <div className="hm-testimonial-copy">
-              <h4>Best choice</h4>
-              <p>“Partnering with CodeZyntax Softwares LLP was the best decision for our software needs. As a software development company in Palakkad, their team delivered us exactly what we were looking for. It was fast, functional, and delivered efficient results that were beyond our expectations.”</p>
-              <span className="hm-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</span>
-            </div>
-          </article>
-          <article className="hm-testimonial-item" data-reveal>
-            <div className="hm-testimonial-meta">
-              <span className="hm-testimonial-mark hm-testimonial-mark-light">AC</span>
-              <div><strong>ARTECHO</strong><small>1 card</small></div>
-            </div>
-            <div className="hm-testimonial-copy">
-              <h4>Great service</h4>
-              <p>“CodeZyntax Softwares LLP created a stylish, professional digital card for our brand. Their service was quick, responsive, and exactly what we needed to stand out.”</p>
-              <span className="hm-testimonial-stars" aria-label="5 out of 5 stars">★★★★★</span>
-            </div>
-          </article>
-          
-{/* SOOCHI */}
-<article className="hm-testimonial-item" data-reveal>
-  <div className="hm-testimonial-meta">
-    <span className="hm-testimonial-mark">S</span>
-    <div>
-      <strong>Soochi</strong>
-      <small>Software</small>
-    </div>
-  </div>
-
-  <div className="hm-testimonial-copy">
-    <h4>Good communication</h4>
-    <p>
-      “CodeZyntax given us a good product without breaking our budget.
-      Their team provided great communication, on-time delivery and
-      exceptional quality at a very good price. We are highly satisfied
-      with their service and will recommend them.”
-    </p>
-    <span className="hm-testimonial-stars"
-      aria-label="5 out of 5 stars">★★★★★</span>
-  </div>
-</article>
-
-{/* ALIGN IDEAS */}
-<article className="hm-testimonial-item" data-reveal>
-  <div className="hm-testimonial-meta">
-    <span className="hm-testimonial-mark hm-testimonial-mark-light">
-      AI
-    </span>
-    <div>
-      <strong>align ideas</strong>
-      <small>1 card</small>
-    </div>
-  </div>
-
-  <div className="hm-testimonial-copy">
-    <h4>Creative Designs</h4>
-    <p>
-      “We are really happy and satisfied with the digital card they
-      designed for us, which was very modern, creative and perfectly
-      suited for our brand image. Their NFC business cards are a
-      great way to make a lasting impression.”
-    </p>
-    <span className="hm-testimonial-stars"
-      aria-label="5 out of 5 stars">★★★★★</span>
-  </div>
-</article>
-
+            {testimonials.map((item, index) => (
+              <article className="hm-testimonial-item" data-reveal key={`${item.name || 'client'}-${index}`}>
+                <div className="hm-testimonial-meta">
+                  <span className={`hm-testimonial-mark${index % 2 ? ' hm-testimonial-mark-light' : ''}`}>{item.initials || (item.name || 'C').slice(0, 2).toUpperCase()}</span>
+                  <div><strong>{item.name}</strong><small>{item.category || item.designation || ''}</small></div>
+                </div>
+                <div className="hm-testimonial-copy">
+                  <h4>{item.title || 'Client feedback'}</h4>
+                  <p>“{item.quote || item.feedback || ''}”</p>
+                  <span className="hm-testimonial-stars" aria-label={`${item.rating || 5} out of 5 stars`}>{'★'.repeat(Math.max(1, Math.min(5, Number(item.rating) || 5)))}</span>
+                </div>
+              </article>
+            ))}
           </div>
           <Link to="/service" className="hm-testimonials-panel-link">Explore our services <ArrowRight size={17} aria-hidden="true" /></Link>
             </div>
@@ -800,7 +779,7 @@ useEffect(() => {
 
       </div>
  {/* ================= FAQ ================= */}
-    <HomeFaq />
+    <HomeFaq items={faqs} title={cms.faqs?.heading || cms.faqSection?.title || "Find Out Answers Here"} description={cms.faqs?.description || cms.faqSection?.description || undefined} />
 
     
 
@@ -809,13 +788,17 @@ useEffect(() => {
       <div className="hm-wrap">
         <div data-reveal className="hm-head hm-head-c">
           <span className="hm-pill"><i />Our Strengths</span>
-          <h2 id="hm-why-title">Why Choose CodeZyntax</h2>
-          <p>We combine the right strategy, technology and people to deliver reliable solutions that help your business grow.</p>
+          <h2 id="hm-why-title">{whySection.heading || whySection.title || "Why Choose CodeZyntax"}</h2>
+          <p>{whySection.description || "We combine the right strategy, technology and people to deliver reliable solutions that help your business grow."}</p>
         </div>
         <div className="hm-why-layout">
           <div data-reveal className="hm-why-visual"><WhyScene /></div>
           <ul className="hm-why-cards">
-            {WHY.map(([Icon, t, d]) => (
+            {whyItems.map((item, index) => {
+              const Icon = WHY[index]?.[0] || Target
+              const t = Array.isArray(item) ? item[1] : item.title
+              const d = Array.isArray(item) ? item[2] : item.description
+              return (
               <li key={t}>
                 <article data-reveal className="hm-why-card">
                   <span className="hm-why-ico"><Icon size={24} strokeWidth={1.7} aria-hidden="true" /></span>
@@ -823,7 +806,7 @@ useEffect(() => {
                   <p>{d}</p>
                 </article>
               </li>
-            ))}
+            )})}
           </ul>
         </div>
       </div>
@@ -834,17 +817,21 @@ useEffect(() => {
       <div className="hm-wrap">
         <div data-reveal className="hm-head hm-head-c">
           <span className="hm-pill"><i />Our Process</span>
-          <h2 id="hm-process-title">Clear From First Call to Launch</h2>
-          <p>A simple four-step approach that keeps every project on track.</p>
+          <h2 id="hm-process-title">{process.heading || process.title || "Clear From First Call to Launch"}</h2>
+          <p>{process.description || "A simple four-step approach that keeps every project on track."}</p>
         </div>
         <ol className="hm-steps">
-          {STEPS.map(([Icon, t, d], i) => (
+          {processItems.map((item, i) => {
+            const Icon = STEPS[i]?.[0] || Rocket
+            const t = Array.isArray(item) ? item[1] : item.title
+            const d = Array.isArray(item) ? item[2] : item.description
+            return (
             <li key={t} data-reveal>
               <span className="hm-step-node"><Icon size={24} strokeWidth={1.7} aria-hidden="true" /><b>{i + 1}</b></span>
               <h3>{t}</h3>
               <p>{d}</p>
             </li>
-          ))}
+          )})}
         </ol>
       </div>
     </section>
@@ -854,11 +841,11 @@ useEffect(() => {
       <CtaArt side="right" />
       <div className="hm-wrap hm-final-inner" data-reveal>
         <span className="hm-pill"><i />Let's Work Together</span>
-        <h2 id="hm-final-title">Ready to Build the Version Your Business Deserves?</h2>
-        <p>Share your goals with us, and let's turn your ideas into practical digital solutions.</p>
+        <h2 id="hm-final-title">{cta.heading || cta.title || "Ready to Build the Version Your Business Deserves?"}</h2>
+        <p>{cta.description || "Share your goals with us, and let's turn your ideas into practical digital solutions."}</p>
         <div className="hm-final-actions">
-          <Link to="/contact" className="hm-btn hm-btn-primary">Let's Discuss Your Project <ArrowUpRight size={18} aria-hidden="true" /></Link>
-          <Link to="/service" className="hm-btn hm-btn-outline">Explore Our Services <ArrowRight size={18} aria-hidden="true" /></Link>
+          <Link to="/contact" className="hm-btn hm-btn-primary">{cta.primaryText || 'Lets Discuss Your Project'} <ArrowUpRight size={18} aria-hidden="true" /></Link>
+          <Link to="/service" className="hm-btn hm-btn-outline">{cta.secondaryText || 'Explore Our Services'} <ArrowRight size={18} aria-hidden="true" /></Link>
         </div>
       </div>
     </section>

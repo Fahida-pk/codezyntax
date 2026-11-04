@@ -1,0 +1,29 @@
+.sc3d {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.sc3d .sc-win { fill: #ffffff; stroke: #d6e2f8; stroke-width: 1; }
+.sc3d .sc-bar { fill: #eef3fd; }
+.sc3d .sc-tile { fill: #f4f8ff; stroke: #cfdcfb; stroke-width: 1.2; }
+
+/* dark mode (site uses the .dark class) */
+.dark .sc3d .sc-win { fill: #14214a; stroke: #2c4690; }
+.dark .sc3d .sc-bar { fill: #1c2d63; }
+.dark .sc3d .sc-tile { fill: #17275a; stroke: #2f4a9a; }
+
+/* gentle floating motion */
+.sc3d .sc-fl { animation: sc-float 6s ease-in-out infinite; }
+.sc3d .sc-fl-b { animation-duration: 7.5s; animation-delay: -2s; }
+.sc3d .sc-fl-c { animation-duration: 9s; animation-delay: -4s; }
+
+@keyframes sc-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc3d .sc-fl { animation: none; }
+}

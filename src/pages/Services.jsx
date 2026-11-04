@@ -21,8 +21,9 @@ import '../components/ServiceCard'
 import Seo from '../components/Seo'
 import { ServiceCard } from '../components/ui'
 import ServicesHero from '../components/ServicesHero'
-import ServiceIllustration from '../components/ServiceIllustration'
+import ServiceScene3D from '../components/ServiceScene3D'
 import { SERVICES } from '../data/site'
+import { useCmsPage, items as cmsItems } from '../cms/useCmsPage'
 import { SERVICE_CONTENT, ADVANTAGES_HEADING, getServiceKind } from '../data/serviceContent'
 import './Home.css'
 
@@ -44,7 +45,10 @@ const WU_POINTS = [
 
 // ================= WHY CHOOSE US SECTION =================
 
-function WhyChooseUs() {
+function WhyChooseUs({ data = {} }) {
+  const stats = cmsItems(data.stats, WU_STATS.map(([, value, label]) => ({ value, label })))
+  const points = cmsItems(data.items, WU_POINTS.map(([, text]) => ({ title: text })))
+  const copy = data.description || 'At CodeZyntax Softwares LLP, we specialize in progressive software solutions, creative online strategies, and seamless user experiences. Our mission is to empower businesses with custom websites, applications, and digital marketing solutions that support engagement and long-term growth. We focus on quality, creativity, and purpose in every project.'
   return (
     <section
       id="why-us"
@@ -57,26 +61,19 @@ function WhyChooseUs() {
             <div data-reveal className="hm-head">
               <span className="hm-pill">
                 <i aria-hidden="true" />
-                Our Approach
+                {data.eyebrow || 'Our Approach'}
               </span>
 
-              <h2 id="hm-wu-title">Why Choose Us?</h2>
+              <h2 id="hm-wu-title">{data.heading || 'Why Choose Us?'}</h2>
             </div>
 
-            <p data-reveal className="hm-wu-text">
-              At CodeZyntax Softwares LLP, we specialize in{' '}
-              <strong>progressive software solutions</strong>,{' '}
-              <strong>creative online strategies</strong>, and seamless
-              user experiences. Our mission is to empower businesses
-              with custom websites, applications, and digital marketing
-              solutions that support engagement and long-term growth.
-              We focus on quality, creativity, and purpose in every project.
-            </p>
+            <p data-reveal className="hm-wu-text">{copy}</p>
 
             <ul className="hm-wu-stats">
-              {WU_STATS.map(([Icon, value, label]) => (
-                <li
-                  key={label}
+              {stats.map((item, index) => {
+                const Icon = WU_STATS[index]?.[0] || Rocket
+                return <li
+                  key={item.label || index}
                   data-reveal
                   className="hm-wu-stat"
                 >
@@ -88,10 +85,10 @@ function WhyChooseUs() {
                     />
                   </span>
 
-                  <strong>{value}</strong>
-                  <span>{label}</span>
+                  <strong>{item.value}</strong>
+                  <span>{item.label}</span>
                 </li>
-              ))}
+              })}
             </ul>
           </div>
 
@@ -99,8 +96,10 @@ function WhyChooseUs() {
             <p className="hm-eyebrow">What You Get</p>
 
             <ul className="hm-wu-list">
-              {WU_POINTS.map(([Icon, text]) => (
-                <li key={text}>
+              {points.map((item, index) => {
+                const Icon = WU_POINTS[index]?.[0] || CheckCircle2
+                const text = typeof item === 'string' ? item : item.title || item.description || ''
+                return <li key={text || index}>
                   <span className="hm-wu-ico">
                     <Icon
                       size={22}
@@ -111,15 +110,13 @@ function WhyChooseUs() {
 
                   <span className="hm-wu-pt">{text}</span>
                 </li>
-              ))}
+              })}
             </ul>
           </div>
         </div>
 
         <p data-reveal className="hm-wu-note">
-          We combine creativity and technology to deliver customized
-          digital solutions that help businesses strengthen their
-          online presence and grow with confidence.
+          {data.note || 'We combine creativity and technology to deliver customized digital solutions that help businesses strengthen their online presence and grow with confidence.'}
         </p>
       </div>
     </section>
@@ -145,45 +142,22 @@ function CtaArt({ side, scoped = false }) {
       focusable="false"
     >
       <defs>
-        <linearGradient
-          id={`cta-top-${side}`}
-          x1="0"
-          y1="0"
-          x2="1"
-          y2="1"
-        >
+        <linearGradient id={`cta-top-${side}`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#d9e8ff" />
           <stop offset="100%" stopColor="#8fb6ff" />
         </linearGradient>
 
-        <linearGradient
-          id={`cta-left-${side}`}
-          x1="0"
-          y1="0"
-          x2="0"
-          y2="1"
-        >
+        <linearGradient id={`cta-left-${side}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#4d86ff" />
           <stop offset="100%" stopColor="#2a45d8" />
         </linearGradient>
 
-        <linearGradient
-          id={`cta-right-${side}`}
-          x1="1"
-          y1="0"
-          x2="0"
-          y2="1"
-        >
+        <linearGradient id={`cta-right-${side}`} x1="1" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#7f9bff" />
           <stop offset="100%" stopColor="#2b3fb8" />
         </linearGradient>
 
-        <radialGradient
-          id={`cta-orb-${side}`}
-          cx=".3"
-          cy=".25"
-          r=".8"
-        >
+        <radialGradient id={`cta-orb-${side}`} cx=".3" cy=".25" r=".8">
           <stop offset="0%" stopColor="#fff" />
           <stop offset="45%" stopColor="#7fb2ff" />
           <stop offset="100%" stopColor="#3b4fe0" />
@@ -201,86 +175,30 @@ function CtaArt({ side, scoped = false }) {
 
         {/* Large 3D cube */}
         <g className={flA}>
-          <path
-            d="M140 150 220 195 140 240 60 195Z"
-            fill={`url(#cta-top-${side})`}
-          />
-          <path
-            d="M60 195 140 240V340L60 295Z"
-            fill={`url(#cta-left-${side})`}
-          />
-          <path
-            d="M220 195 140 240V340L220 295Z"
-            fill={`url(#cta-right-${side})`}
-          />
+          <path d="M140 150 220 195 140 240 60 195Z" fill={`url(#cta-top-${side})`} />
+          <path d="M60 195 140 240V340L60 295Z" fill={`url(#cta-left-${side})`} />
+          <path d="M220 195 140 240V340L220 295Z" fill={`url(#cta-right-${side})`} />
         </g>
 
         {/* Small cube */}
         <g className={flB}>
-          <path
-            d="M268 90 312 114 268 138 224 114Z"
-            fill="#e6eeff"
-          />
-          <path
-            d="M224 114 268 138V192L224 168Z"
-            fill={`url(#cta-left-${side})`}
-          />
-          <path
-            d="M312 114 268 138V192L312 168Z"
-            fill="#2f55d8"
-          />
+          <path d="M268 90 312 114 268 138 224 114Z" fill="#e6eeff" />
+          <path d="M224 114 268 138V192L224 168Z" fill={`url(#cta-left-${side})`} />
+          <path d="M312 114 268 138V192L312 168Z" fill="#2f55d8" />
         </g>
 
         {/* Cyan 3D slab */}
         <g className={flC}>
-          <path
-            d="M60 78 112 104 60 130 8 104Z"
-            fill="#d9fbff"
-          />
-          <path
-            d="M8 104 60 130V146L8 120Z"
-            fill="#22b8ff"
-          />
-          <path
-            d="M112 104 60 130V146L112 120Z"
-            fill="#1494d8"
-          />
+          <path d="M60 78 112 104 60 130 8 104Z" fill="#d9fbff" />
+          <path d="M8 104 60 130V146L8 120Z" fill="#22b8ff" />
+          <path d="M112 104 60 130V146L112 120Z" fill="#1494d8" />
         </g>
 
         {/* Decorative rings and orbs */}
-        <circle
-          cx="300"
-          cy="260"
-          r="26"
-          fill="none"
-          stroke="#7aa6ff"
-          strokeWidth="5"
-          strokeOpacity=".65"
-        />
-
-        <circle
-          className={flB}
-          cx="196"
-          cy="86"
-          r="14"
-          fill={`url(#cta-orb-${side})`}
-        />
-
-        <circle
-          className={flC}
-          cx="30"
-          cy="250"
-          r="9"
-          fill={`url(#cta-orb-${side})`}
-        />
-
-        <circle
-          className={flA}
-          cx="330"
-          cy="352"
-          r="7"
-          fill={`url(#cta-orb-${side})`}
-        />
+        <circle cx="300" cy="260" r="26" fill="none" stroke="#7aa6ff" strokeWidth="5" strokeOpacity=".65" />
+        <circle className={flB} cx="196" cy="86" r="14" fill={`url(#cta-orb-${side})`} />
+        <circle className={flC} cx="30" cy="250" r="9" fill={`url(#cta-orb-${side})`} />
+        <circle className={flA} cx="330" cy="352" r="7" fill={`url(#cta-orb-${side})`} />
       </g>
     </svg>
   )
@@ -288,41 +206,30 @@ function CtaArt({ side, scoped = false }) {
 
 // ================= SHARED READY TO BUILD CTA =================
 
-function ReadyToBuildCTA() {
+function ReadyToBuildCTA({ data = {} }) {
   return (
-    <section
-      id="contact"
-      className="hm-final"
-      aria-labelledby="hm-final-title"
-    >
+    <section id="contact" className="hm-final" aria-labelledby="hm-final-title">
       <CtaArt side="left" />
       <CtaArt side="right" />
 
       <div className="hm-wrap hm-final-inner">
         <span className="hm-pill">
           <i aria-hidden="true" />
-          Let's Work Together
+          {data.eyebrow || "Let's Work Together"}
         </span>
 
-        <h2 id="hm-final-title">
-          Ready to Build the Version
-          <br />
-          Your Business Deserves?
-        </h2>
+        <h2 id="hm-final-title">{data.heading || 'Ready to Build the Version Your Business Deserves?'}</h2>
 
-        <p>
-          Share your goals with us, and let's turn your ideas into
-          practical digital solutions.
-        </p>
+        <p>{data.description || "Share your goals with us, and let's turn your ideas into practical digital solutions."}</p>
 
         <div className="hm-final-actions">
           <Link to="/contact" className="hm-btn hm-btn-primary">
-            Let's Discuss Your Project
+            {data.primaryText || "Let's Discuss Your Project"}
             <ArrowUpRight size={18} aria-hidden="true" />
           </Link>
 
           <Link to="/service" className="hm-btn hm-btn-outline">
-            Explore Our Services
+            {data.secondaryText || 'Explore Our Services'}
             <ArrowRight size={18} aria-hidden="true" />
           </Link>
         </div>
@@ -380,11 +287,19 @@ function ServiceCardFx({ index, children }) {
 // ================= SERVICES PAGE =================
 
 export function Services() {
+  const { content: cms = {} } = useCmsPage('services')
+  const serviceSection = cms.items || {}
+  const serviceItems = cmsItems(serviceSection.items, SERVICES).map((item, index) => ({
+    ...SERVICES[index % Math.max(SERVICES.length, 1)],
+    ...item,
+    slug: item.id || item.slug || SERVICES[index]?.slug,
+    summary: item.summary || SERVICES[index]?.summary,
+  }))
   return (
     <>
       <Seo
         title="Services"
-        description="Custom software, web, mobile, Windows, digital marketing and digital business card services from CodeZyntax."
+        description="Custom software, web, mobile, Windows, digital marketing, social media and digital business card services from CodeZyntax."
       />
 
       {/* Hero: text on the left, 3D illustration on the right */}
@@ -394,7 +309,7 @@ export function Services() {
       <section id="services-list" className="section svc-page-section">
         <div className="container-x">
           <ul className="svc-grid">
-            {SERVICES.map((service, index) => (
+            {serviceItems.map((service, index) => (
               <ServiceCardFx key={service.slug} index={index}>
                 <ServiceCard s={service} n={index + 1} full />
               </ServiceCardFx>
@@ -404,10 +319,10 @@ export function Services() {
       </section>
 
       {/* WHY CHOOSE US */}
-      <WhyChooseUs />
+      <WhyChooseUs data={cms.whyChooseUs || {}} />
 
       {/* READY TO BUILD CTA */}
-      <ReadyToBuildCTA />
+      <ReadyToBuildCTA data={cms.cta || {}} />
     </>
   )
 }
@@ -450,16 +365,17 @@ function Reveal({ as: Tag = 'div', className = '', delay = 0, children }) {
   )
 }
 
-// Render normal section headings as before. In the hero only, animate
-// the service keyword wherever it appears (e.g. Mobile App, Websites).
-const HERO_SERVICE_KEYWORDS =
-  /(custom software|websites?|web applications?|mobile apps?|mobile applications?)/gi
+// Hero keywords that get the animated gradient. One source of truth for split + test.
+const HERO_KEYWORD_SOURCE =
+  'custom software|websites?|web applications?|mobile apps?|mobile applications?|windows desktops?|v-cards?|digital marketing(?: & seo)?|social media marketing|software consulting'
+const HERO_SPLIT = new RegExp(`(${HERO_KEYWORD_SOURCE})`, 'gi')
+const HERO_TEST = new RegExp(`^(?:${HERO_KEYWORD_SOURCE})$`, 'i')
 
 function renderHeroKeywords(text) {
   if (!text) return text
 
-  return text.split(HERO_SERVICE_KEYWORDS).map((word, index) => {
-    if (/^(custom software|websites?|web applications?|mobile apps?|mobile applications?)$/i.test(word)) {
+  return text.split(HERO_SPLIT).map((word, index) => {
+    if (HERO_TEST.test(word)) {
       return (
         <span className="service-detail-hero-grad" key={`${word}-${index}`}>
           {word}
@@ -502,9 +418,15 @@ function SectionHeading({ label, parts, text }) {
   )
 }
 
-// A subtle pointer-follow tilt for desktop; touch devices remain unaffected.
-function IllustrationStage({ kind }) {
+// Hero visual: your own HD image if the service has one, otherwise the
+// per-service 3D scene. Includes a subtle pointer-follow tilt on desktop.
+function IllustrationStage({ kind, image, alt }) {
   const ref = useRef(null)
+  const [failed, setFailed] = useState(!image)
+
+  useEffect(() => {
+    setFailed(!image)
+  }, [image])
 
   const onMove = (e) => {
     const el = ref.current
@@ -532,7 +454,19 @@ function IllustrationStage({ kind }) {
       onPointerLeave={onLeave}
     >
       <div className="service-detail-stage">
-        <ServiceIllustration kind={kind} />
+        {failed ? (
+          <ServiceScene3D kind={kind} title={alt} />
+        ) : (
+          <img
+            src={image}
+            alt={alt}
+            width="1200"
+            height="900"
+            decoding="async"
+            onError={() => setFailed(true)}
+            style={{ width: '100%', height: 'auto', display: 'block' }}
+          />
+        )}
       </div>
     </div>
   )
@@ -556,6 +490,8 @@ export function ServiceDetail({ slug: fixed }) {
   const kind = getServiceKind(service)
   const c = SERVICE_CONTENT[kind]
   const enquiryUrl = `/contact?service=${encodeURIComponent(service.title)}`
+  // Optional HD render: set `image` on the service in site.js. Empty = use the 3D scene.
+  const image = service.image || ''
 
   return (
     <>
@@ -595,7 +531,11 @@ export function ServiceDetail({ slug: fixed }) {
               </ul>
             </div>
 
-            <IllustrationStage kind={kind} />
+            <IllustrationStage
+              kind={kind}
+              image={image}
+              alt={`${service.title} illustration`}
+            />
           </div>
         </section>
 
@@ -638,13 +578,8 @@ export function ServiceDetail({ slug: fixed }) {
 
             <div className="service-detail-benefit-grid">
               {c.benefits.map(([title, text], i) => {
-                // Use varied, professional icons instead of repeating the tick icon.
-                const benefitIcons = [
-                  Sparkles,
-                  MessageCircleMore,
-                  SearchCheck,
-                  Settings2,
-                ]
+                // Varied icons instead of repeating the tick icon.
+                const benefitIcons = [Sparkles, MessageCircleMore, SearchCheck, Settings2]
                 const BenefitIcon = benefitIcons[i % benefitIcons.length]
 
                 return (

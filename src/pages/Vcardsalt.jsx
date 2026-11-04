@@ -5,6 +5,7 @@ import {
   ShieldCheck, Smartphone, Star, Stethoscope, UserRound, Users, Wifi, Wrench, Zap,
 } from 'lucide-react'
 import './VCardsAlt.css'
+import { useCmsPage, items as cmsItems } from '../cms/useCmsPage'
 
 /*
   CodeZyntax V-Cards – premium responsive redesign (CSS-only isometric 3D, no images).
@@ -462,6 +463,29 @@ function Faq({ q, a, open, onToggle, id }) {
 export default function VCardsAlt() {
   const [open, setOpen] = useState(0)
   useReveal()
+  const { content: cms = {} } = useCmsPage('vcards')
+  const hero = cms.hero || {}
+  const products = cms.products || {}
+  const offer = cms.offer || {}
+  const steps = cms.steps || {}
+  const templates = cms.templates || {}
+  const why = cms.why || {}
+  const faqSection = cms.faq || {}
+  const marqueeSection = cms.marquee || {}
+  const cta = cms.cta || {}
+
+  const productCards = cmsItems(products.items, [
+    { title: 'All in One NFC & QR Stand', description: 'Make your business stand out with our premium NFC Stand in India, an all in one NFC + QR display solution perfect for cafés, salons, hotels, offices and retail counters.', features: STAND.map(([, title, description]) => ({ title, description })), buttonText: 'View Details', url: LINKS.instagram },
+    { title: 'Smart NFC Digital Business Cards', description: 'Replace traditional paper cards with a smart, modern solution. Share your contact info, website and social media profiles in seconds with a single tap.', features: CARDS.map(([, title, description]) => ({ title, description })), buttonText: 'View Details', url: LINKS.card },
+    { title: 'Smart Google Review Cards', description: 'Encourage your customers to share their experience instantly with a simple tap or scan.', features: REVIEW.map(([, title, description]) => ({ title, description })), buttonText: 'View Details', url: LINKS.card },
+  ])
+  const offerItems = cmsItems(offer.items, OFFER.map(([, color, title, description]) => ({ title, description, color })))
+  const stepItems = cmsItems(steps.items, STEPS.map(([, title, description]) => ({ title, description })))
+  const templateItems = cmsItems(templates.items, TEMPLATES.map(([, title, color, image]) => ({ title, color, image })))
+  const templateNotes = cmsItems(templates.notes, TPL_NOTES)
+  const faqs = cmsItems(faqSection.items, FAQ.map(([question, answer]) => ({ question, answer })))
+  const marqueeItems = cmsItems(marqueeSection.items, MARQUEE)
+  const whyItems = cmsItems(why.items, WHY.map(([, title, description]) => ({ title, description })))
 
   return (
     <main className="vx">
@@ -481,8 +505,8 @@ export default function VCardsAlt() {
          <p className="vx-in vx-hero__sub">Premium QR &amp; NFC Stand in India</p>
             <p className="vx-in vx-lead">Share your contact info, website and social profiles with a single tap or scan. No apps, no paper – just smooth, eco-friendly connections that work anytime, anywhere.</p>
             <div className="vx-in vx-row">
-              <Ext href={LINKS.card} className="vx-btn vx-btn--main">Get Your vCard Now <ArrowRight size={18} /></Ext>
-              <a href={LINKS.phone} className="vx-btn vx-btn--line"><Phone size={18} /> Call Now</a>
+              <Ext href={LINKS.card} className="vx-btn vx-btn--main">{hero.primaryText || "Get Your vCard Now"} <ArrowRight size={18} /></Ext>
+              <a href={LINKS.phone} className="vx-btn vx-btn--line"><Phone size={18} />{hero.secondaryText || "Call Now"}</a>
             </div>
             <div className="vx-in vx-pills">
               <span className="vx-pill"><Wifi size={15} /> NFC</span>
@@ -496,7 +520,7 @@ export default function VCardsAlt() {
 
       <div className="vx-marquee" aria-hidden="true">
         <div className="vx-marquee__t">
-          {[...MARQUEE, ...MARQUEE].map((m, i) => <span key={i}><Star size={14} fill="currentColor" strokeWidth={0} />{m}</span>)}
+          {[...marqueeItems, ...marqueeItems].map((entry, i) => { const m = typeof entry === 'string' ? entry : entry.text || entry.title || ''; return <span key={`${m}-${i}`}><Star size={14} fill="currentColor" strokeWidth={0} />{m}</span> })}
         </div>
       </div>
 
@@ -505,27 +529,27 @@ export default function VCardsAlt() {
         <div className="vx-wrap">
           <div className="vx-bento">
             <article className="vx-tile vx-s7 vx-reveal">
-              <h3>All in One NFC &amp; QR Stand</h3>
-              <p>Make your business stand out with our premium NFC Stand in India, an all in one NFC + QR display solution perfect for cafés, salons, hotels, offices and retail counters. This modern stand lets customers instantly connect, follow or write a review for your business with a simple tap or scan. Created for quick, contactless customer engagement, it is a stylish and effective way to increase your online presence and enhance customer interaction effortlessly.</p>
-              <Mini items={STAND} />
-              <div className="vx-row"><Ext href={LINKS.instagram}>View Details <ExternalLink size={16} /></Ext></div>
+              <h3>{productCards[0]?.title}</h3>
+              <p>{productCards[0]?.description}</p>
+              <Mini items={(productCards[0]?.features || []).map((x, i) => [STAND[i]?.[0] || Wifi, x.title, x.description])} />
+              <div className="vx-row"><Ext href={productCards[0]?.url || LINKS.instagram}>{productCards[0]?.buttonText || 'View Details'} <ExternalLink size={16} /></Ext></div>
               <StandScene />
             </article>
 
             <article className="vx-tile vx-s5 vx-reveal">
-              <h3>Smart NFC Digital Business Cards</h3>
-              <p>Replace traditional paper cards with a smart, modern solution. CodeZyntax Softwares LLP, trusted for our NFC Stand in India, provides NFC business cards that let you share your contact info, website and social media profiles in seconds, with just a single tap. Perfect for professionals, creators and entrepreneurs who want to make every introduction memorable and sustainable.</p>
-              <Mini items={CARDS} />
-              <div className="vx-row"><Ext href={LINKS.card}>View Details <ExternalLink size={16} /></Ext></div>
+              <h3>{productCards[1]?.title}</h3>
+              <p>{productCards[1]?.description}</p>
+              <Mini items={(productCards[1]?.features || []).map((x, i) => [CARDS[i]?.[0] || Smartphone, x.title, x.description])} />
+              <div className="vx-row"><Ext href={productCards[1]?.url || LINKS.card}>{productCards[1]?.buttonText || 'View Details'} <ExternalLink size={16} /></Ext></div>
               <FlipScene />
             </article>
 
             <article className="vx-tile vx-s12 vx-tile--row vx-reveal">
               <div className="vx-tile__copy">
-                <h3>Smart Google Review Cards</h3>
-                <p>Encourage your customers to share their experience instantly with our Google Review Cards, built with the same smart technology as our premium NFC Stand in India. With a simple tap or scan, they are taken directly to your Google review page, with no searching or typing. Perfect for cafés, salons, clinics and service-focused businesses that rely on positive client feedback and local SEO growth.</p>
-                <Mini items={REVIEW} />
-                <div className="vx-row"><Ext href={LINKS.card}>View Details <ExternalLink size={16} /></Ext></div>
+                <h3>{productCards[2]?.title}</h3>
+                <p>{productCards[2]?.description}</p>
+                <Mini items={(productCards[2]?.features || []).map((x, i) => [REVIEW[i]?.[0] || Star, x.title, x.description])} />
+                <div className="vx-row"><Ext href={productCards[2]?.url || LINKS.card}>{productCards[2]?.buttonText || 'View Details'} <ExternalLink size={16} /></Ext></div>
               </div>
               <ReviewScene />
             </article>
@@ -538,39 +562,47 @@ export default function VCardsAlt() {
         <div className="vx-wrap">
           <div className="vx-split vx-offerhead">
             <div className="vx-reveal">
-              <Eyebrow>Smart V-Cards</Eyebrow>
-              <h2 className="vx-h2">Connect Smarter with <span className="vx-grad">CodeZyntax V-Cards</span></h2>
-              <p className="vx-lead">Share your contact info and business details instantly with a single tap. Our digital products like Smart V-Cards, trusted by businesses that also use our NFC Stand in India, use NFC and QR technology for easy, eco-friendly and professional brand networking, anytime, anywhere.</p>
-              <p className="vx-tag"><span className="vx-grad">Sustainable. Smart. Seamless.</span></p>
-              <p className="vx-lead vx-lead--sm">Transform how you connect with a single tap. CodeZyntax provides Smart vCards that combine NFC and QR technology to instantly share your contact details, social profile links and portfolio, anytime, anywhere and on any device. Built for professionals, creators and businesses who value innovation, effective branding and eco-friendly digital networking.</p>
+              <Eyebrow>{offer.eyebrow || 'Smart V-Cards'}</Eyebrow>
+              <h2 className="vx-h2">{offer.heading || 'Connect Smarter with'} <span className="vx-grad">{offer.highlight || 'CodeZyntax V-Cards'}</span></h2>
+              <p className="vx-lead">{offer.description || 'Share your contact info and business details instantly with a single tap. Our digital products like Smart V-Cards use NFC and QR technology for easy, eco-friendly and professional brand networking, anytime, anywhere.'}</p>
+              <p className="vx-tag"><span className="vx-grad">{offer.tagline || 'Sustainable. Smart. Seamless.'}</span></p>
+              <p className="vx-lead vx-lead--sm">{offer.subdescription || 'Transform how you connect with a single tap. CodeZyntax provides Smart vCards that combine NFC and QR technology to instantly share your contact details, social profile links and portfolio, anytime, anywhere and on any device.'}</p>
               <div className="vx-row"><Ext href="/">Explore More Services <ArrowRight size={16} /></Ext></div>
             </div>
             <div className="vx-reveal vx-offerhead__art"><ConnectScene /></div>
           </div>
 
           <div className="vx-offer">
-            {OFFER.map(([Icon, color, title, text]) => (
-              <article className="vx-of vx-reveal" key={title}>
+            {offerItems.map((item, index) => {
+              const [Icon, fallbackColor] = [OFFER[index]?.[0] || Wifi, OFFER[index]?.[1] || 'blue']
+              const color = item.color || fallbackColor
+              const title = item.title || ''
+              const text = item.description || ''
+              return <article className="vx-of vx-reveal" key={title || index}>
                 <div className="vx-gem" aria-hidden="true">
                   <Cub w={52} h={52} d={52} color={color} front={<Icon size={24} color="#fff" strokeWidth={1.8} />} top={null} />
                 </div>
                 <h3>{title}</h3>
                 <p>{text}</p>
               </article>
-            ))}
+            })}
           </div>
 
           <div className="vx-steps vx-reveal">
-            <h3 className="vx-steps__h">How it works</h3>
+            <h3 className="vx-steps__h">{steps.heading || 'How it works'}</h3>
             <ol>
-              {STEPS.map(([Icon, t, d], i) => (
+              {stepItems.map((item, i) => {
+                const Icon = STEPS[i]?.[0] || Smartphone
+                const t = item.title || ''
+                const d = item.description || ''
+                return (
 <li key={t}>
   <div className="vx-steps__icon">
     <Icon size={22} strokeWidth={1.8} />
   </div>
   <b>{t}</b>
   <p>{d}</p>
-</li>             ))}
+</li>             )})}
             </ol>
           </div>
         </div>
@@ -580,19 +612,19 @@ export default function VCardsAlt() {
       <section className="vx-sec vx-bg--templates">
         <div className="vx-wrap vx-tpl">
           <div className="vx-reveal vx-tpl__copy">
-            <Eyebrow>Templates</Eyebrow>
+            <Eyebrow>{templates.eyebrow || 'Templates'}</Eyebrow>
 <h2 className="vx-h2 vx-tpl__title">
-  Explore Our{" "}
-  <span className="vx-grad">V-Card Templates</span>
-</h2>            <p className="vx-lead">Choose from our variety of premium, modern and fully customizable designs tailored to match your professional image. Every NFC profile layout is crafted to complement our NFC Stand in India, and is optimized for clarity, speed and visual appeal, giving your clients a seamless digital experience every time they scan your card.</p>
+  {templates.heading || 'Explore Our'}{" "}
+  <span className="vx-grad">{templates.highlight || 'V-Card Templates'}</span>
+</h2>            <p className="vx-lead">{templates.description || 'Choose from our variety of premium, modern and fully customizable designs tailored to match your professional image.'}</p>
             <ul className="vx-tpl__chips">
-              {TPL_NOTES.map((n) => <li key={n}><Check size={15} strokeWidth={2.6} />{n}</li>)}
+              {templateNotes.map((n, i) => <li key={`${n}-${i}`}><Check size={15} strokeWidth={2.6} />{typeof n === 'string' ? n : n.text || n.title}</li>)}
             </ul>
-            <div className="vx-row"><Ext href={LINKS.templates} className="vx-btn vx-btn--main">Explore More <ArrowRight size={18} /></Ext></div>
+            <div className="vx-row"><Ext href={templates.buttonUrl || LINKS.templates} className="vx-btn vx-btn--main">{templates.buttonText || 'Explore More'} <ArrowRight size={18} /></Ext></div>
           </div>
           <div className="vx-tpl__stage vx-reveal" role="group" aria-label="Sample V-Card templates">
-            <TplRow items={TPL_ROW_A} />
-            <TplRow items={TPL_ROW_B} reverse />
+            <TplRow items={templateItems.slice(0, 6).map((item, i) => [TEMPLATES[i]?.[0] || UserRound, item.title, item.color || TEMPLATES[i]?.[2] || 'blue', item.image || TEMPLATES[i]?.[3]])} />
+            <TplRow items={templateItems.slice(6).map((item, i) => [TEMPLATES[i + 6]?.[0] || UserRound, item.title, item.color || TEMPLATES[i + 6]?.[2] || 'blue', item.image || TEMPLATES[i + 6]?.[3]])} reverse />
           </div>
         </div>
       </section>
@@ -601,11 +633,11 @@ export default function VCardsAlt() {
       <section className="vx-sec vx-bg--why">
         <div className="vx-wrap vx-split vx-split--rev">
           <div className="vx-reveal">
-            <Eyebrow>Why CodeZyntax</Eyebrow>
-            <h2 className="vx-h2">Why <span className="vx-grad">Choose Us?</span></h2>
-            <p className="vx-lead">At CodeZyntax Softwares LLP, we are redefining how professionals and businesses network. Our smart NFC and QR vCards are trusted by customers who also choose our premium All in One NFC Stand in India and Google Review Scanner in Palakkad, built for those who value innovation, branding and effortless communication. With a simple tap or scan, you can share your complete profile details, including contact info, website and social profile links, instantly and securely.</p>
-            <Mini items={WHY.map(([I, t, d]) => [I, t, d])} />
-            <div className="vx-stat"><b className="vx-grad">900+</b><span>V-Cards Delivered</span></div>
+            <Eyebrow>{why.eyebrow || 'Why CodeZyntax'}</Eyebrow>
+            <h2 className="vx-h2">{why.heading || 'Why'} <span className="vx-grad">{why.highlight || 'Choose Us?'}</span></h2>
+            <p className="vx-lead">{why.description || 'At CodeZyntax Softwares LLP, we are redefining how professionals and businesses network. Our smart NFC and QR vCards are built for those who value innovation, branding and effortless communication.'}</p>
+            <Mini items={whyItems.map((item, i) => [WHY[i]?.[0] || ShieldCheck, item.title || '', item.description || ''])} />
+            <div className="vx-stat"><b className="vx-grad">{why.statValue || '900+'}</b><span>{why.statLabel || 'V-Cards Delivered'}</span></div>
           </div>
           <div className="vx-reveal"><StairScene /></div>
         </div>
@@ -616,13 +648,16 @@ export default function VCardsAlt() {
         <div className="vx-wrap vx-faqgrid">
           <div className="vx-reveal">
             <Eyebrow>FAQ</Eyebrow>
-            <h2 className="vx-h2">Frequently Asked <span className="vx-grad">Questions</span></h2>
+            <Eyebrow>{faqSection.eyebrow || 'FAQ'}</Eyebrow>
+            <h2 className="vx-h2">{faqSection.heading || 'Frequently Asked'} <span className="vx-grad">{faqSection.highlight || 'Questions'}</span></h2>
             <div className="vx-row"><Ext href={LINKS.instagram}>Follow Us on Instagram <ExternalLink size={16} /></Ext></div>
           </div>
           <div className="vx-faq vx-reveal">
-            {FAQ.map(([q, a], i) => (
-              <Faq key={q} id={`vx-faq-${i}`} q={q} a={a} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} />
-            ))}
+            {faqs.map((item, i) => {
+              const q = Array.isArray(item) ? item[0] : item.question
+              const a = Array.isArray(item) ? item[1] : item.answer
+              return <Faq key={q || i} id={`vx-faq-${i}`} q={q} a={a} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} />
+            })}
           </div>
         </div>
       </section>
@@ -632,11 +667,11 @@ export default function VCardsAlt() {
         <div className="vx-wrap">
           <div className="vx-cta vx-reveal">
             <div className="vx-cta__copy">
-              <h2>Smart Networking <span className="vx-grad">Starts Here</span></h2>
-              <p>Create your personalized Smart vCard and share your details instantly with just a tap or scan. No apps, no paper, just smooth, eco-friendly connections that work anytime, anywhere, perfectly paired with our premium all in one NFC Stand in India for enhanced digital engagement.</p>
+              <h2>{cta.heading || 'Smart Networking'} <span className="vx-grad">{cta.highlight || 'Starts Here'}</span></h2>
+              <p>{cta.description || 'Create your personalized Smart vCard and share your details instantly with just a tap or scan. No apps, no paper, just smooth, eco-friendly connections that work anytime, anywhere.'}</p>
               <div className="vx-row">
-                <Ext href={LINKS.card} className="vx-btn vx-btn--main">Get Your vCard Now <ArrowRight size={18} /></Ext>
-                <Ext href={LINKS.whatsapp} className="vx-btn vx-btn--line"><MessageCircle size={18} /> WhatsApp us</Ext>
+                <Ext href={cta.primaryUrl || LINKS.card} className="vx-btn vx-btn--main">{cta.primaryText || 'Get Your vCard Now'} <ArrowRight size={18} /></Ext>
+                <Ext href={cta.secondaryUrl || LINKS.whatsapp} className="vx-btn vx-btn--line"><MessageCircle size={18} /> {cta.secondaryText || 'WhatsApp us'}</Ext>
               </div>
             </div>
             <CtaScene />

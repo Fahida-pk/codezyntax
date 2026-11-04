@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useCmsPage, items as cmsItems } from '../cms/useCmsPage'
 import { Link } from 'react-router-dom'
 import {
   ArrowUpRight, ArrowRight, Search, ClipboardList, Code2, Rocket, Mail, Phone, MessageCircle, MapPin,
@@ -118,6 +119,20 @@ function Scene3D({ kind, className, ...rest }) {
 
 export default function About() {
   const root = useRef(null)
+  const { content: cms = {} } = useCmsPage('about')
+
+  const hero = cms.hero || {}
+  const whatWeDo = cms.whatWeDo || {}
+  const purpose = cms.purpose || {}
+  const technology = cms.technology || {}
+  const principles = cms.principles || {}
+  const cta = cms.cta || {}
+
+  const pillars = cmsItems(whatWeDo.items, DO.map(([, title, description]) => ({ title, description })))
+  const stats = cmsItems(purpose.stats, STATS.map(([, value, label]) => ({ value, label })))
+  const points = cmsItems(purpose.points, POINTS.map(([, label]) => label))
+  const techItems = cmsItems(technology.items, STACK.map(([, title, tools]) => ({ title, tools })))
+  const principleItems = cmsItems(principles.items, PRINCIPLES.map(([, title, description]) => ({ title, description })))
 
   /* Scroll-reveal. Content stays visible if JS / IntersectionObserver is unavailable. */
   useEffect(() => {
@@ -157,16 +172,16 @@ export default function About() {
           <div className="ab-hero-grid">
             <div className="ab-hero-copy">
               <div data-ab>
-                <p className="ab-kicker"><b aria-hidden="true">+</b> About the company</p>
+                <p className="ab-kicker"><b aria-hidden="true">+</b> {hero.eyebrow || "About the company"}</p>
 
 <h1 id="ab-title" className="ab-animated-title">
-  <span className="ab-title-base">Smart software.</span>
-  <span className="ab-title-gradient">Full responsibility.</span>
+  <span className="ab-title-base">{hero.line1 || "Smart software."}</span>
+  <span className="ab-title-gradient">{hero.line2 || "Full responsibility."}</span>
 </h1>
               </div>
               <div data-ab className="ab-hero-side" style={d(1)}>
-                <p>CodeZyntax Softwares LLP is a software development company in Palakkad. We connect planning, design, development, launch and support, so your business has one accountable technology partner.</p>
-                <Link to="/contact" className="ab-link">Start a conversation <ArrowUpRight size={20} strokeWidth={1.8} aria-hidden="true" /></Link>
+                <p>{hero.description || "CodeZyntax Softwares LLP is a software development company in Palakkad. We connect planning, design, development, launch and support, so your business has one accountable technology partner."}</p>
+                <Link to="/contact" className="ab-link">{hero.buttonText || "Start a conversation"} <ArrowUpRight size={20} strokeWidth={1.8} aria-hidden="true" /></Link>
               </div>
             </div>
             <Scene3D kind="stack" className="ab-stage" data-ab />
@@ -179,9 +194,9 @@ export default function About() {
         <div className="ab-wrap">
           <div className="ab-do-top">
             <div data-ab className="ab-do-copy">
-              <p className="ab-kicker"><b aria-hidden="true">+</b> What we do</p>
-              <h2 id="ab-do-title">Digital products built around a real business goal.</h2>
-              <p className="ab-lead">We provide <strong>custom software development</strong>, <strong>web and mobile applications</strong> and <strong>digital marketing</strong> created to improve your online presence and the way your business runs day to day.</p>
+              <p className="ab-kicker"><b aria-hidden="true">+</b> {whatWeDo.eyebrow || "What we do"}</p>
+              <h2 id="ab-do-title">{whatWeDo.heading || "Digital products built around a real business goal."}</h2>
+              <p className="ab-lead">{whatWeDo.description || "We provide custom software development, web and mobile applications and digital marketing created to improve your online presence and the way your business runs day to day."}</p>
               <Link to="/service" className="ab-link">Explore our services <ArrowUpRight size={20} strokeWidth={1.8} aria-hidden="true" /></Link>
             </div>
             {/* 3D illustration (SVG). See AboutScenes.jsx */}
@@ -189,18 +204,18 @@ export default function About() {
           </div>
 
           <ul className="ab-pillars">
-            {DO.map(([Icon, t, p], i) => (
-              <li key={t} data-ab className="ab-pillar" style={d(i)}>
-                <span className="ab-ico"><Icon size={22} strokeWidth={1.8} aria-hidden="true" /></span>
-                <h3>{t}</h3>
-                <p>{p}</p>
+            {pillars.map((item, i) => (
+              <li key={item.title || i} data-ab className="ab-pillar" style={d(i)}>
+                <span className="ab-ico">{(() => { const Icon = DO[i]?.[0] || Code2; return <Icon size={22} strokeWidth={1.8} aria-hidden="true" /> })()}</span>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
               </li>
             ))}
           </ul>
 
           <div data-ab className="ab-do-notes">
-            <p>We believe technology should be user-friendly, reliable and suited to your goals. A skilled team of developers and digital experts focuses on tools that solve real challenges, with transparency and collaboration at every step.</p>
-            <p>From startups to established enterprises, we adapt our approach to your market so every project has the most impact.</p>
+            <p>{whatWeDo.note1 || "We believe technology should be user-friendly, reliable and suited to your goals. A skilled team of developers and digital experts focuses on tools that solve real challenges, with transparency and collaboration at every step."}</p>
+            <p>{whatWeDo.note2 || "From startups to established enterprises, we adapt our approach to your market so every project has the most impact."}</p>
           </div>
 
           <ul className="ab-chips" aria-label="Our services" data-ab>
@@ -213,27 +228,33 @@ export default function About() {
       <section className="ab-sec ab-tint" aria-labelledby="ab-mv-title">
         <div className="ab-wrap">
           <div data-ab className="ab-head">
-            <p className="ab-kicker"><b aria-hidden="true">+</b> Why CodeZyntax</p>
-            <h2 id="ab-mv-title">Clear purpose, dependable delivery.</h2>
+            <p className="ab-kicker"><b aria-hidden="true">+</b> {purpose.eyebrow || "Why CodeZyntax"}</p>
+            <h2 id="ab-mv-title">{purpose.heading || "Clear purpose, dependable delivery."}</h2>
           </div>
           <ul className="ab-stats">
-            {STATS.map(([Icon, n, l], i) => (
-              <li key={l} data-ab style={d(i)}><Icon size={22} strokeWidth={1.7} aria-hidden="true" /><strong>{n}</strong><span>{l}</span></li>
-            ))}
+            {stats.map((item, i) => {
+              const Icon = STATS[i]?.[0] || ShieldCheck
+              return <li key={item.label || i} data-ab style={d(i)}><Icon size={22} strokeWidth={1.7} aria-hidden="true" /><strong>{item.value}</strong><span>{item.label}</span></li>
+            })}
           </ul>
           <div className="ab-mv">
-            {MV.map(([Icon, t, p], i) => (
-              <article key={t} data-ab className="ab-card" style={d(i)}>
+            {[
+              { title: purpose.missionTitle || MV[0][1], description: purpose.missionDescription || MV[0][2] },
+              { title: purpose.visionTitle || MV[1][1], description: purpose.visionDescription || MV[1][2] },
+            ].map((item, i) => {
+              const Icon = MV[i][0]
+              return <article key={item.title} data-ab className="ab-card" style={d(i)}>
                 <span className="ab-ico"><Icon size={22} strokeWidth={1.8} aria-hidden="true" /></span>
-                <h3>{t}</h3>
-                <p>{p}</p>
+                <h3>{item.title}</h3><p>{item.description}</p>
               </article>
-            ))}
+            })}
           </div>
           <ul className="ab-points">
-            {POINTS.map(([Icon, t], i) => (
-              <li key={t} data-ab style={d(i)}><span className="ab-ico ab-ico-sm"><Icon size={18} strokeWidth={1.8} aria-hidden="true" /></span>{t}</li>
-            ))}
+            {points.map((item, i) => {
+              const Icon = POINTS[i]?.[0] || Headphones
+              const label = typeof item === 'string' ? item : item.text || item.title || ''
+              return <li key={label || i} data-ab style={d(i)}><span className="ab-ico ab-ico-sm"><Icon size={18} strokeWidth={1.8} aria-hidden="true" /></span>{label}</li>
+            })}
           </ul>
         </div>
       </section>
@@ -243,21 +264,22 @@ export default function About() {
         <div className="ab-wrap">
           <div className="ab-headrow">
             <div data-ab className="ab-head">
-              <p className="ab-kicker"><b aria-hidden="true">+</b> Our technology</p>
-              <h2 id="ab-stack-title">Modern tools, chosen to fit your product.</h2>
-              <p className="ab-lead">We pick the right technology for your goals, budget and growth plans, then build it to be fast, secure and easy to maintain.</p>
+              <p className="ab-kicker"><b aria-hidden="true">+</b> {technology.eyebrow || "Our technology"}</p>
+              <h2 id="ab-stack-title">{technology.heading || "Modern tools, chosen to fit your product."}</h2>
+              <p className="ab-lead">{technology.description || "We pick the right technology for your goals, budget and growth plans, then build it to be fast, secure and easy to maintain."}</p>
             </div>
             {/* Professional 3D technology illustration (SVG). See TechScene.jsx / TechScene.css */}
             <div className="ab-tech-scene" data-ab><TechScene /></div>
           </div>
           <div className="ab-stack">
-            {STACK.map(([Icon, t, tools], i) => (
-              <article key={t} data-ab className="ab-tech" style={d(i)}>
+            {techItems.map((item, i) => {
+              const Icon = STACK[i]?.[0] || Code2
+              return <article key={item.title || i} data-ab className="ab-tech" style={d(i)}>
                 <span className="ab-ico"><Icon size={22} strokeWidth={1.8} aria-hidden="true" /></span>
-                <h3>{t}</h3>
-                <ul>{tools.map(x => <li key={x}>{x}</li>)}</ul>
+                <h3>{item.title}</h3>
+                <ul>{cmsItems(item.tools, STACK[i]?.[2] || []).map((tool, index) => <li key={`${tool}-${index}`}>{tool}</li>)}</ul>
               </article>
-            ))}
+            })}
           </div>
         </div>
       </section>
@@ -267,22 +289,22 @@ export default function About() {
         <div className="ab-wrap">
           <div className="ab-headrow">
             <div data-ab className="ab-head">
-              <p className="ab-kicker"><b aria-hidden="true">+</b> Working principles</p>
-              <h2 id="ab-pr-title">Clear scope. Visible progress. Useful outcomes.</h2>
-              <p className="ab-lead">The process stays practical from the first conversation through launch and support.</p>
+              <p className="ab-kicker"><b aria-hidden="true">+</b> {principles.eyebrow || "Working principles"}</p>
+              <h2 id="ab-pr-title">{principles.heading || "Clear scope. Visible progress. Useful outcomes."}</h2>
+              <p className="ab-lead">{principles.description || "The process stays practical from the first conversation through launch and support."}</p>
             </div>
             {/* 3D illustration (SVG). See AboutScenes.jsx */}
             <div className="as-wrap" data-ab><StepsScene /></div>
           </div>
           <ol className="ab-steps">
-            {PRINCIPLES.map(([Icon, t, p], i) => (
-              <li key={t} data-ab className="ab-step" style={d(i)}>
-                <span className="ab-step-n" aria-hidden="true">0{i + 1}</span>
+            {principleItems.map((item, i) => {
+              const Icon = PRINCIPLES[i]?.[0] || Rocket
+              return <li key={item.title || i} data-ab className="ab-step" style={d(i)}>
+                <span className="ab-step-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <Icon size={24} strokeWidth={1.6} aria-hidden="true" />
-                <h3>{t}</h3>
-                <p>{p}</p>
+                <h3>{item.title}</h3><p>{item.description}</p>
               </li>
-            ))}
+            })}
           </ol>
         </div>
       </section>
@@ -294,14 +316,14 @@ export default function About() {
         <div className="ab-wrap">
           <div data-ab className="ab-cta-box">
             <div className="ab-cta-text">
-              <p className="ab-kicker"><b aria-hidden="true">+</b> Work with CodeZyntax</p>
-              <h2 id="ab-cta-title">Bring the rough idea.</h2>
-              <p>We will help turn it into a clear project direction and an honest scope.</p>
+              <p className="ab-kicker"><b aria-hidden="true">+</b> {cta.eyebrow || "Work with CodeZyntax"}</p>
+              <h2 id="ab-cta-title">{cta.heading || "Bring the rough idea."}</h2>
+              <p>{cta.description || "We will help turn it into a clear project direction and an honest scope."}</p>
             </div>
             <Scene3D kind="orb" className="ab-orb-scene" />
             <div className="ab-cta-actions">
-              <Link to="/contact" className="ab-btn ab-btn-primary">Discuss your project <ArrowUpRight size={18} aria-hidden="true" /></Link>
-              <Link to="/service" className="ab-btn ab-btn-ghost">Explore our services <ArrowRight size={18} aria-hidden="true" /></Link>
+              <Link to="/contact" className="ab-btn ab-btn-primary">{cta.primaryText || "Discuss your project"} <ArrowUpRight size={18} aria-hidden="true" /></Link>
+              <Link to="/service" className="ab-btn ab-btn-ghost">{cta.secondaryText || "Explore our services"} <ArrowRight size={18} aria-hidden="true" /></Link>
             </div>
           </div>
         </div>
