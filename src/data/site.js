@@ -56,9 +56,9 @@ export const PROJECTS = [
 {
   slug: '1card-demo',
   title: 'Payroll',
-  category: 'Live Demo',
-  url: 'https://demo.payroll.zyntaweb.com/login.php',
-  image: '/images/projects/payroll.webp',
+  category: 'Selfi attenadance + payroll',
+  url: 'https://zyntaroll.com/',
+image: '/images/projects/payroll.jpeg',
   summary:
     'A reliable payroll management system for managing employee attendance, leave, and salary details in one place.',
 
@@ -92,7 +92,7 @@ export const PROJECTS = [
 {
   slug: 'zyntaweb',
   title: 'Serlog',
-  category: 'Website',
+  category: 'Service management system',
   url: 'https://zyntaweb.com/',
   image: '/images/projects/zynta.webp',
   summary: 'A comprehensive service management solution designed to streamline customer management, service operations, billing, and reporting.',
@@ -100,7 +100,7 @@ export const PROJECTS = [
   {
   slug: 'zynta-crm',
   title: 'Zynta CRM',
-  category: 'Software',
+  category: 'Complete CRM',
   url: 'https://crm.1card.co.in/',
   image: '/images/projects/hairship.webp',
   summary: 'A powerful CRM platform built to simplify customer relationships and streamline business operations.',

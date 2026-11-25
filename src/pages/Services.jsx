@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import * as LucideIcons from 'lucide-react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import {
   CheckCircle2,
@@ -288,13 +289,8 @@ function ServiceCardFx({ index, children }) {
 
 export function Services() {
   const { content: cms = {} } = useCmsPage('services')
-  const serviceSection = cms.items || {}
-  const serviceItems = cmsItems(serviceSection.items, SERVICES).map((item, index) => ({
-    ...SERVICES[index % Math.max(SERVICES.length, 1)],
-    ...item,
-    slug: item.id || item.slug || SERVICES[index]?.slug,
-    summary: item.summary || SERVICES[index]?.summary,
-  }))
+  const serviceItems = SERVICES
+  
   return (
     <>
       <Seo
@@ -408,6 +404,88 @@ function Hl({ parts, hero = false }) {
   )
 }
 
+
+// Convert the section-wise CMS record into the same structure used by the
+// existing service page. Static SERVICE_CONTENT remains the safe fallback.
+function buildServiceContent(base, saved = {}) {
+  const text = (value, fallback) =>
+    typeof value === 'string' && value.trim() !== '' ? value : fallback
+  const list = (value, fallback) =>
+    Array.isArray(value) && value.length > 0 ? value : fallback
+  const icon = (name, fallback) => {
+    if (!name || typeof name !== 'string') return fallback
+    return LucideIcons[name] || fallback
+  }
+
+  return {
+    ...base,
+    h: {
+      ...base.h,
+      hero: [
+        text(saved.heroTitle, base.h.hero[0]),
+        text(saved.heroHighlight, base.h.hero[1]),
+      ],
+      features: [
+        text(saved.featuresTitle, base.h.features[0]),
+        text(saved.featuresHighlight, base.h.features[1]),
+      ],
+      benefits: [
+        text(saved.benefitsTitle, base.h.benefits[0]),
+        text(saved.benefitsHighlight, base.h.benefits[1]),
+      ],
+      process: [
+        text(saved.processTitle, base.h.process[0]),
+        text(saved.processHighlight, base.h.process[1]),
+      ],
+    },
+    lead: text(saved.lead, base.lead),
+    points: list(saved.points, base.points),
+    features: list(saved.features, base.features).map((item, index) => {
+      if (Array.isArray(item)) return item
+      const fallback = base.features[index] || base.features[0]
+      return [
+        icon(item?.icon, fallback?.[0] || Code2),
+        text(item?.title, fallback?.[1] || 'Feature'),
+        text(item?.description, fallback?.[2] || ''),
+      ]
+    }),
+    benefits: list(saved.benefits, base.benefits).map((item, index) => {
+      if (Array.isArray(item)) return item
+      const fallback = base.benefits[index] || base.benefits[0]
+      return [
+        text(item?.title, fallback?.[0] || 'Benefit'),
+        text(item?.description, fallback?.[1] || ''),
+      ]
+    }),
+    value: text(saved.value, base.value),
+    advantagesLabel: text(saved.advantagesLabel, ADVANTAGES_HEADING.label),
+    advantagesTitle: text(saved.advantagesTitle, ADVANTAGES_HEADING.title),
+    advText: text(saved.advText, base.advText),
+    advantages: list(saved.advantages, base.advantages).map((item, index) => {
+      if (Array.isArray(item)) return item
+      const fallback = base.advantages[index] || base.advantages[0]
+      return [
+        icon(item?.icon, fallback?.[0] || Code2),
+        text(item?.title, fallback?.[1] || 'Advantage'),
+        text(item?.description, fallback?.[2] || ''),
+      ]
+    }),
+    process: list(saved.process, base.process).map((item, index) => {
+      if (Array.isArray(item)) return item
+      const fallback = base.process[index] || base.process[0]
+      return [
+        text(item?.title, fallback?.[0] || 'Step'),
+        text(item?.description, fallback?.[1] || ''),
+      ]
+    }),
+    cta: [
+      text(saved.ctaTitle, base.cta[0]),
+      text(saved.ctaHighlight, base.cta[1]),
+    ],
+    ctaText: text(saved.ctaText, base.ctaText),
+  }
+}
+
 function SectionHeading({ label, parts, text }) {
   return (
     <Reveal className="service-detail-heading">
@@ -482,13 +560,15 @@ export function ServiceDetail({ slug: fixed }) {
   }, [slug])
 
   const service = SERVICES.find((item) => item.slug === slug)
+  const { content: cmsPage = {} } = useCmsPage(slug)
 
   if (!service) {
     return <Navigate to="/service" replace />
   }
 
   const kind = getServiceKind(service)
-  const c = SERVICE_CONTENT[kind]
+  const baseContent = SERVICE_CONTENT[kind]
+  const c = buildServiceContent(baseContent, cmsPage.content || {})
   const enquiryUrl = `/contact?service=${encodeURIComponent(service.title)}`
   // Optional HD render: set `image` on the service in site.js. Empty = use the 3D scene.
   const image = service.image || ''
@@ -607,8 +687,8 @@ export function ServiceDetail({ slug: fixed }) {
         <section className="service-detail-section service-detail-adv">
           <div className="service-detail-container">
             <SectionHeading
-              label={ADVANTAGES_HEADING.label}
-              parts={[ADVANTAGES_HEADING.title, '']}
+              label={c.advantagesLabel || ADVANTAGES_HEADING.label}
+              parts={[c.advantagesTitle || ADVANTAGES_HEADING.title, '']}
               text={c.advText}
             />
 

@@ -5262,3 +5262,178 @@ p {
   word-spacing: normal !important;
   line-height: 1.7;
 }
+
+/* Mobile: Keep project buttons in one row */
+
+.hm-work-foot {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+  width: 100%;
+}
+
+.hm-work-foot .hm-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.hm-work-foot .hm-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 380px) {
+  .hm-work-foot {
+    gap: 7px;
+  }
+
+  .hm-work-foot .hm-btn {
+    padding: 11px 5px;
+    font-size: 11.5px;
+    gap: 4px;
+  }
+}
+
+/* ABOUT PARAGRAPH - MOBILE RESPONSIVE FIX */
+
+.hm-ab-copy .hm-ab-lead,
+.hm-ab-copy .hm-ab-text {
+  text-align: left !important;
+  word-spacing: normal !important;
+  letter-spacing: normal !important;
+  hyphens: none !important;
+  overflow-wrap: break-word;
+  word-break: normal;
+  text-wrap: pretty;
+}
+
+@media (max-width: 600px) {
+  .hm-ab-copy .hm-ab-lead {
+    font-size: 15.5px;
+    line-height: 1.8;
+    margin-top: 20px !important;
+  }
+
+  .hm-ab-copy .hm-ab-text {
+    font-size: 15px;
+    line-height: 1.8;
+    margin-top: 16px !important;
+  }
+}
+/* ==========================================================
+   ABOUT PARAGRAPHS - correct view on every screen size
+   ========================================================== */
+
+.hm .hm-ab-copy .hm-ab-lead,
+.hm .hm-ab-copy .hm-ab-text {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+
+  /* fill the full line width, no early breaks */
+  text-wrap: wrap !important;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: manual;
+  word-spacing: normal;
+  letter-spacing: normal;
+}
+
+/* Mobile and small tablets: clean left-aligned text */
+@media (max-width: 640px) {
+  .hm .hm-ab-copy .hm-ab-lead,
+  .hm .hm-ab-copy .hm-ab-text {
+    text-align: left !important;
+    line-height: 1.75;
+  }
+
+  .hm .hm-ab-copy .hm-ab-lead {
+    margin-top: 20px !important;
+    font-size: 16px;
+  }
+
+  .hm .hm-ab-copy .hm-ab-text {
+    margin-top: 14px !important;
+    font-size: 15px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .hm .hm-ab-copy .hm-ab-lead { font-size: 15px; }
+  .hm .hm-ab-copy .hm-ab-text { font-size: 14.5px; }
+}
+
+/* Tablet and desktop: justified, even left and right edges */
+@media (min-width: 641px) {
+  .hm .hm-ab-copy .hm-ab-lead,
+  .hm .hm-ab-copy .hm-ab-text {
+    text-align: justify !important;
+    text-justify: inter-word;
+    line-height: 1.8;
+  }
+}
+/* ==========================================================
+   ABOUT PARAGRAPHS - justified, edge-to-edge (all screens)
+   ========================================================== */
+
+.hm .hm-ab-copy .hm-ab-lead,
+.hm .hm-ab-copy .hm-ab-text {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+
+  text-align: justify !important;
+  text-align-last: left;          /* last line stays left, like the reference */
+  text-justify: inter-word;
+  text-wrap: wrap !important;     /* cancels the early line breaks */
+
+  hyphens: auto;                  /* splits long words so gaps stay small */
+  -webkit-hyphens: auto;
+  overflow-wrap: break-word;
+  word-break: normal;
+  word-spacing: normal;
+  letter-spacing: normal;
+  line-height: 1.85;
+}
+
+/* bold key phrases, like "Safety Solutions & Uniforms" in your reference */
+.hm .hm-ab-copy .hm-ab-lead strong,
+.hm .hm-ab-copy .hm-ab-text strong {
+  font-weight: 700;
+  color: rgb(var(--heading));
+  background: none;               /* removes the blue underline highlight */
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .hm .hm-ab-copy .hm-ab-lead {
+    margin-top: 18px !important;
+    font-size: 15px;
+  }
+
+  .hm .hm-ab-copy .hm-ab-text {
+    margin-top: 12px !important;
+    font-size: 14.5px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .hm .hm-ab-copy .hm-ab-lead { font-size: 14.5px; }
+  .hm .hm-ab-copy .hm-ab-text { font-size: 14px; }
+}

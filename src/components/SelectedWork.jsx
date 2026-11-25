@@ -33,9 +33,10 @@ const SHOWCASE = [
   { slug: '1card', title: '1Card', type: 'Web Application', label: 'Digital Business Card', url: 'https://1card.co.in/', image: '/images/projects/1card-home.webp' },
   { slug: 'zynta-erp', title: 'Zynta ERP', type: 'Web Application', label: 'ERP Software', url: 'https://zyntaerp.com/', image: '/images/projects/zynta-erp.webp' },
   // site.js points this at hairship.webp (a different project); overridden here.
-  { slug: 'zynta-crm', title: 'Zynta CRM', type: 'Web Application', label: 'CRM Software', url: 'https://crm.1card.co.in/', image: '/images/projects/hairship.webp' },
-  { slug: '1card-demo', title: 'Payroll Management System', type: 'Web Application', label: 'Live Demo', url: 'https://demo.payroll.zyntaweb.com/login.php', image: '/images/projects/payroll.webp' },
-  { slug: 'zyntaweb', title: 'Serlog', type: 'Web Application', label: 'Service Management', url: 'https://zyntaweb.com/', image: '/images/projects/zynta.webp' },
+  { slug: 'zynta-crm', title: 'Zynta CRM', type: 'Web Application', label: 'Complete CRM', url: 'https://crm.1card.co.in/', image: '/images/projects/hairship.webp' },
+  { slug: '1card-demo', title: 'Payroll Management System', type: 'Web Application', label: 'Selfi attenadance + payroll', url: 'https://zyntaroll.com/', image: '/images/projects/payroll.jpeg',
+ },
+  { slug: 'zyntaweb', title: 'Serlog', type: 'Web Application', label: 'Service management system', url: 'https://zyntaweb.com/', image: '/images/projects/zynta.webp' },
   { slug: 'qr-code-generator', title: 'QR Code Generator', type: 'Web Application', label: 'QR Code Generator', url: 'https://tools.zyntaweb.com/qrgen.php', image: '/images/projects/qr-code-generator.webp', summary: 'A fast online tool to create QR codes for links, text and contact details.' },
 
 {
